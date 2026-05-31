@@ -13,7 +13,7 @@
 // This function now calls your real backend instead of using mock data
 async function generateLessonPlanFromBackend(formData) {
     // Your backend URL (running locally on port 3000)
-    const API_URL = 'http://localhost:3000';
+    const API_URL = 'https://stemforge-backend.onrender.com/';
     
     try {
         const response = await fetch(`${API_URL}/api/generate`, {
