@@ -49,9 +49,7 @@ jobs:
           path: ${{ steps.apk-path.outputs.path }}
 
       - name: Create GitHub Release
-        id: create_release
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'push'
         with:
           tag_name: v${{ github.run_number }}
           name: Release v${{ github.run_number }}
