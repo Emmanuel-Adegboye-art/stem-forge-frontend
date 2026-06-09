@@ -8,7 +8,7 @@
 const CONFIG = {
     // Replace with your deployed backend URL (e.g., https://your-app.onrender.com)
     // For local testing on mobile, use your computer's local IP (e.g., http://192.168.1.5:3000)
-    API_URL: 'http://localhost:3000'
+    API_URL: 'https://stemforge-backend-1.onrender.com'
 };
 
 // ============================================
