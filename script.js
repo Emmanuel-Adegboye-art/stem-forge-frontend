@@ -37,7 +37,7 @@ async function generateLessonPlanFromBackend(formData) {
         
     } catch (error) {
         console.error('Backend error:', error);
-        throw new Error('Cannot connect to backend. Make sure server is running on http://localhost:3000');
+        throw new Error('Cannot connect to backend. Make sure server is running on ' + CONFIG.API_URL);
     }
 }
 
@@ -489,19 +489,25 @@ function showWebSearchResults(topic) {
     webSearchResults.style.display = 'block';
 }
 
+// FIX: Wrapped localStorage calls in try/catch to handle private/incognito mode
 function saveAILesson() {
     const titleElem = document.querySelector('#ai-lesson-content h2');
     if (!titleElem) return;
     
-    const title = titleElem.innerText;
-    const saved = JSON.parse(localStorage.getItem('savedLessons') || '[]');
-    saved.push({ 
-        title: title, 
-        date: new Date().toISOString(),
-        type: 'AI Generated'
-    });
-    localStorage.setItem('savedLessons', JSON.stringify(saved));
-    alert('💾 Lesson saved to your dashboard!');
+    try {
+        const title = titleElem.innerText;
+        const saved = JSON.parse(localStorage.getItem('savedLessons') || '[]');
+        saved.push({ 
+            title: title, 
+            date: new Date().toISOString(),
+            type: 'AI Generated'
+        });
+        localStorage.setItem('savedLessons', JSON.stringify(saved));
+        alert('💾 Lesson saved to your dashboard!');
+    } catch (err) {
+        console.error('Could not save lesson:', err);
+        alert('⚠️ Could not save lesson. Storage may be unavailable (e.g. private/incognito mode).');
+    }
 }
 
 function copyAILesson() {
@@ -548,24 +554,39 @@ if (aiForm) {
             aiStatus.style.display = 'block';
         }
         
-        // Simulate AI processing delay
-        setTimeout(() => {
-            const lessonPlan = generateMockAILesson(topic, grade, duration, subject, instructions);
+        // FIX: Use real backend API instead of mock setTimeout
+        try {
+            const lessonPlan = await callAIGeneration({ topic, grade, duration, subject, instructions });
             displayAILesson(lessonPlan);
-            
+
             if (enableWebSearch) {
                 showWebSearchResults(topic);
             }
-            
+
             if (aiStatus) {
                 aiStatus.innerHTML = '<span style="color: #27ae60;">✅ AI lesson plan generated successfully!</span>';
                 setTimeout(() => { if (aiStatus) aiStatus.style.display = 'none'; }, 3000);
             }
+        } catch (error) {
+            console.warn('Backend unavailable, falling back to mock data:', error.message);
+            // Graceful fallback to mock if backend is down
+            const lessonPlan = generateMockAILesson(topic, grade, duration, subject, instructions);
+            displayAILesson(lessonPlan);
+
+            if (enableWebSearch) {
+                showWebSearchResults(topic);
+            }
+
+            if (aiStatus) {
+                aiStatus.innerHTML = '<span style="color: #f39c12;">⚠️ Using offline mode (backend unavailable)</span>';
+                setTimeout(() => { if (aiStatus) aiStatus.style.display = 'none'; }, 4000);
+            }
+        } finally {
             if (aiGenerateBtn) {
                 aiGenerateBtn.disabled = false;
                 aiGenerateBtn.innerHTML = '<span class="btn-icon">✨</span> Generate with AI<span class="btn-icon">🤖</span>';
             }
-        }, 2000);
+        }
     });
 }
 
@@ -684,19 +705,25 @@ function generateSchemeHtml(startGrade, endGrade, components, competitions, econ
     return schemeHtml;
 }
 
+// FIX: Wrapped localStorage calls in try/catch to handle private/incognito mode
 function saveScheme() {
     const startGrade = document.getElementById('start-grade')?.value;
     const endGrade = document.getElementById('end-grade')?.value;
     if (!startGrade || !endGrade) return;
     
-    const saved = JSON.parse(localStorage.getItem('savedSchemes') || '[]');
-    saved.push({ 
-        grade: `${startGrade} - ${endGrade}`, 
-        date: new Date().toISOString(),
-        type: 'Robotics Scheme'
-    });
-    localStorage.setItem('savedSchemes', JSON.stringify(saved));
-    alert('💾 Scheme saved to your dashboard!');
+    try {
+        const saved = JSON.parse(localStorage.getItem('savedSchemes') || '[]');
+        saved.push({ 
+            grade: `${startGrade} - ${endGrade}`, 
+            date: new Date().toISOString(),
+            type: 'Robotics Scheme'
+        });
+        localStorage.setItem('savedSchemes', JSON.stringify(saved));
+        alert('💾 Scheme saved to your dashboard!');
+    } catch (err) {
+        console.error('Could not save scheme:', err);
+        alert('⚠️ Could not save scheme. Storage may be unavailable (e.g. private/incognito mode).');
+    }
 }
 
 function copyScheme() {
@@ -830,6 +857,7 @@ function updateAttendanceStats() {
     if (percentElem) percentElem.innerText = `${percent}%`;
 }
 
+// FIX: Wrapped localStorage calls in try/catch to handle private/incognito mode
 function saveAttendanceRecord() {
     const className = document.getElementById('attendance-class')?.value;
     const date = document.getElementById('attendance-date')?.value;
@@ -860,36 +888,46 @@ function saveAttendanceRecord() {
         absentCount: attendance.filter(s => !s.present).length
     };
     
-    const allAttendance = JSON.parse(localStorage.getItem('attendanceRecords') || '[]');
-    const existingIndex = allAttendance.findIndex(a => a.class === className && a.date === date);
-    
-    if (existingIndex >= 0) {
-        allAttendance[existingIndex] = attendanceData;
-    } else {
-        allAttendance.push(attendanceData);
+    try {
+        const allAttendance = JSON.parse(localStorage.getItem('attendanceRecords') || '[]');
+        const existingIndex = allAttendance.findIndex(a => a.class === className && a.date === date);
+        
+        if (existingIndex >= 0) {
+            allAttendance[existingIndex] = attendanceData;
+        } else {
+            allAttendance.push(attendanceData);
+        }
+        
+        localStorage.setItem('attendanceRecords', JSON.stringify(allAttendance));
+        showAttendanceStatus('✅ Attendance saved successfully!', 'success');
+        loadAttendanceHistory();
+    } catch (err) {
+        console.error('Could not save attendance:', err);
+        showAttendanceStatus('⚠️ Could not save. Storage may be unavailable.', 'error');
     }
-    
-    localStorage.setItem('attendanceRecords', JSON.stringify(allAttendance));
-    showAttendanceStatus('✅ Attendance saved successfully!', 'success');
-    loadAttendanceHistory();
 }
 
 function loadPreviousAttendanceRecord() {
     const className = document.getElementById('attendance-class')?.value;
     const date = document.getElementById('attendance-date')?.value;
     
-    const allAttendance = JSON.parse(localStorage.getItem('attendanceRecords') || '[]');
-    const record = allAttendance.find(a => a.class === className && a.date === date);
-    
-    if (record && record.students) {
-        record.students.forEach(s => {
-            const cb = document.querySelector(`.attendance-check[data-id="${s.id}"]`);
-            if (cb) cb.checked = s.present;
-        });
-        updateAttendanceStats();
-        showAttendanceStatus(`📜 Loaded attendance for ${date}`, 'success');
-    } else {
-        showAttendanceStatus(`No attendance record found for ${date}`, 'error');
+    try {
+        const allAttendance = JSON.parse(localStorage.getItem('attendanceRecords') || '[]');
+        const record = allAttendance.find(a => a.class === className && a.date === date);
+        
+        if (record && record.students) {
+            record.students.forEach(s => {
+                const cb = document.querySelector(`.attendance-check[data-id="${s.id}"]`);
+                if (cb) cb.checked = s.present;
+            });
+            updateAttendanceStats();
+            showAttendanceStatus(`📜 Loaded attendance for ${date}`, 'success');
+        } else {
+            showAttendanceStatus(`No attendance record found for ${date}`, 'error');
+        }
+    } catch (err) {
+        console.error('Could not load attendance:', err);
+        showAttendanceStatus('⚠️ Could not load record. Storage may be unavailable.', 'error');
     }
 }
 
@@ -897,26 +935,30 @@ function loadAttendanceHistory() {
     const className = document.getElementById('attendance-class')?.value;
     if (!className) return;
     
-    const allAttendance = JSON.parse(localStorage.getItem('attendanceRecords') || '[]');
-    const classRecords = allAttendance.filter(a => a.class === className).sort((a, b) => new Date(b.date) - new Date(a.date));
-    
-    const historyDiv = document.getElementById('attendance-history');
-    const historyList = document.getElementById('history-list');
-    
-    if (historyDiv && historyList) {
-        if (classRecords.length > 0) {
-            historyList.innerHTML = classRecords.map(record => `
-                <div class="student-item">
-                    <span>📅 ${record.date}</span>
-                    <span>✅ ${record.presentCount || record.students.filter(s => s.present).length} present</span>
-                    <span>❌ ${record.absentCount || record.students.filter(s => !s.present).length} absent</span>
-                    <span>📊 ${Math.round(((record.presentCount || record.students.filter(s => s.present).length) / record.students.length) * 100)}%</span>
-                </div>
-            `).join('');
-            historyDiv.style.display = 'block';
-        } else {
-            historyDiv.style.display = 'none';
+    try {
+        const allAttendance = JSON.parse(localStorage.getItem('attendanceRecords') || '[]');
+        const classRecords = allAttendance.filter(a => a.class === className).sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+        const historyDiv = document.getElementById('attendance-history');
+        const historyList = document.getElementById('history-list');
+        
+        if (historyDiv && historyList) {
+            if (classRecords.length > 0) {
+                historyList.innerHTML = classRecords.map(record => `
+                    <div class="student-item">
+                        <span>📅 ${record.date}</span>
+                        <span>✅ ${record.presentCount || record.students.filter(s => s.present).length} present</span>
+                        <span>❌ ${record.absentCount || record.students.filter(s => !s.present).length} absent</span>
+                        <span>📊 ${Math.round(((record.presentCount || record.students.filter(s => s.present).length) / record.students.length) * 100)}%</span>
+                    </div>
+                `).join('');
+                historyDiv.style.display = 'block';
+            } else {
+                historyDiv.style.display = 'none';
+            }
         }
+    } catch (err) {
+        console.error('Could not load attendance history:', err);
     }
 }
 
@@ -961,73 +1003,75 @@ window.markAllStudentsPresent = markAllStudentsPresent;
 // ============================================
 
 function loadDashboardData() {
-    const savedLessons = JSON.parse(localStorage.getItem('savedLessons') || '[]');
-    const savedSchemes = JSON.parse(localStorage.getItem('savedSchemes') || '[]');
-    const attendance = JSON.parse(localStorage.getItem('attendanceRecords') || '[]');
-    
-    const lessonsCountElem = document.getElementById('saved-lessons-count');
-    const schemesCountElem = document.getElementById('saved-schemes-count');
-    const attendanceCountElem = document.getElementById('attendance-count');
-    const lessonsListElem = document.getElementById('saved-lessons-list');
-    const schemesListElem = document.getElementById('saved-schemes-list');
-    const recentAttendanceElem = document.getElementById('recent-attendance');
-    
-    if (lessonsCountElem) lessonsCountElem.innerText = savedLessons.length;
-    if (schemesCountElem) schemesCountElem.innerText = savedSchemes.length;
-    if (attendanceCountElem) attendanceCountElem.innerText = attendance.length;
-    
-    if (lessonsListElem) {
-        if (savedLessons.length > 0) {
-            lessonsListElem.innerHTML = savedLessons.slice(-5).reverse().map(lesson => 
-                `<div class="recent-item">📖 ${lesson.title} - ${new Date(lesson.date).toLocaleDateString()}</div>`
-            ).join('');
-        } else {
-            lessonsListElem.innerHTML = '<div class="recent-item">No saved lessons yet. Generate one from AI Generate page!</div>';
+    try {
+        const savedLessons = JSON.parse(localStorage.getItem('savedLessons') || '[]');
+        const savedSchemes = JSON.parse(localStorage.getItem('savedSchemes') || '[]');
+        const attendance = JSON.parse(localStorage.getItem('attendanceRecords') || '[]');
+        
+        const lessonsCountElem = document.getElementById('saved-lessons-count');
+        const schemesCountElem = document.getElementById('saved-schemes-count');
+        const attendanceCountElem = document.getElementById('attendance-count');
+        const lessonsListElem = document.getElementById('saved-lessons-list');
+        const schemesListElem = document.getElementById('saved-schemes-list');
+        const recentAttendanceElem = document.getElementById('recent-attendance');
+        
+        if (lessonsCountElem) lessonsCountElem.innerText = savedLessons.length;
+        if (schemesCountElem) schemesCountElem.innerText = savedSchemes.length;
+        if (attendanceCountElem) attendanceCountElem.innerText = attendance.length;
+        
+        if (lessonsListElem) {
+            if (savedLessons.length > 0) {
+                lessonsListElem.innerHTML = savedLessons.slice(-5).reverse().map(lesson => 
+                    `<div class="recent-item">📖 ${lesson.title} - ${new Date(lesson.date).toLocaleDateString()}</div>`
+                ).join('');
+            } else {
+                lessonsListElem.innerHTML = '<div class="recent-item">No saved lessons yet. Generate one from AI Generate page!</div>';
+            }
         }
-    }
-    
-    if (schemesListElem) {
-        if (savedSchemes.length > 0) {
-            schemesListElem.innerHTML = savedSchemes.slice(-5).reverse().map(scheme => 
-                `<div class="recent-item">📅 ${scheme.grade} - ${new Date(scheme.date).toLocaleDateString()}</div>`
-            ).join('');
-        } else {
-            schemesListElem.innerHTML = '<div class="recent-item">No saved schemes yet. Generate one from Scheme page!</div>';
+        
+        if (schemesListElem) {
+            if (savedSchemes.length > 0) {
+                schemesListElem.innerHTML = savedSchemes.slice(-5).reverse().map(scheme => 
+                    `<div class="recent-item">📅 ${scheme.grade} - ${new Date(scheme.date).toLocaleDateString()}</div>`
+                ).join('');
+            } else {
+                schemesListElem.innerHTML = '<div class="recent-item">No saved schemes yet. Generate one from Scheme page!</div>';
+            }
         }
-    }
-    
-    if (recentAttendanceElem) {
-        if (attendance.length > 0) {
-            recentAttendanceElem.innerHTML = attendance.slice(-5).reverse().map(record => 
-                `<div class="recent-item">📋 ${record.class} - ${record.date} (${record.presentCount || record.students?.filter(s => s.present).length || 0}/${record.students?.length || 0} present)</div>`
-            ).join('');
-        } else {
-            recentAttendanceElem.innerHTML = '<div class="recent-item">No attendance records yet. Take attendance from Attendance page!</div>';
+        
+        if (recentAttendanceElem) {
+            if (attendance.length > 0) {
+                recentAttendanceElem.innerHTML = attendance.slice(-5).reverse().map(record => 
+                    `<div class="recent-item">📋 ${record.class} - ${record.date} (${record.presentCount || record.students?.filter(s => s.present).length || 0}/${record.students?.length || 0} present)</div>`
+                ).join('');
+            } else {
+                recentAttendanceElem.innerHTML = '<div class="recent-item">No attendance records yet. Take attendance from Attendance page!</div>';
+            }
         }
-    }
-    
-    // Calculate statistics
-    const totalLessons = savedLessons.length;
-    const totalSchemes = savedSchemes.length;
-    const totalAttendance = attendance.length;
-    const recentActivity = [...savedLessons, ...savedSchemes, ...attendance].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5);
-    
-    const statsContainer = document.getElementById('dashboard-stats');
-    if (statsContainer) {
-        statsContainer.innerHTML = `
-            <div class="stat-card">
-                <div class="stat-number">${totalLessons}</div>
-                <div>Total Lessons</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">${totalSchemes}</div>
-                <div>Total Schemes</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">${totalAttendance}</div>
-                <div>Attendance Records</div>
-            </div>
-        `;
+        
+        const totalLessons = savedLessons.length;
+        const totalSchemes = savedSchemes.length;
+        const totalAttendance = attendance.length;
+        
+        const statsContainer = document.getElementById('dashboard-stats');
+        if (statsContainer) {
+            statsContainer.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-number">${totalLessons}</div>
+                    <div>Total Lessons</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${totalSchemes}</div>
+                    <div>Total Schemes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${totalAttendance}</div>
+                    <div>Attendance Records</div>
+                </div>
+            `;
+        }
+    } catch (err) {
+        console.error('Could not load dashboard data:', err);
     }
 }
 
@@ -1039,47 +1083,7 @@ function showComingSoon() {
 }
 
 // ============================================
-// INITIALIZE ALL - Final function that runs on page load
-// ============================================
-function initializeApp() {
-    // Highlight active navigation button
-    highlightActiveNav();
-    
-    // Initialize contact form if it exists
-    initContactForm();
-    
-    // Initialize service buttons if they exist
-    initServiceButtons();
-    
-    // Initialize home page form if it exists
-    if (generatorForm) {
-        generatorForm.addEventListener("submit", handleGenerateLesson);
-    }
-    
-    // Initialize attendance page if on that page
-    if (attendanceClassSelect) {
-        loadStudentsForAttendance();
-        loadAttendanceHistory();
-    }
-    
-    // Initialize dashboard if on that page
-    if (document.getElementById('saved-lessons-count')) {
-        loadDashboardData();
-    }
-    
-    // Set default date for attendance
-    const dateInput = document.getElementById('attendance-date');
-    if (dateInput && !dateInput.value) {
-        dateInput.value = new Date().toISOString().split('T')[0];
-    }
-    
-    console.log("⚡ STEM Forge fully initialized | All features ready | Version 2.0");
-}
-
-// Start the app when DOM is fully loaded
-document.addEventListener("DOMContentLoaded", initializeApp);
-// ============================================
-// MOBILE MENU TOGGLE
+// MOBILE MENU
 // ============================================
 
 function initMobileMenu() {
@@ -1114,20 +1118,24 @@ function initMobileMenu() {
     });
 }
 
-// Call this in your initializeApp function
-// Add initMobileMenu(); inside initializeApp()
-// Replace the mock setTimeout with this
+// ============================================
+// AI GENERATION - Backend API Call
+// FIX: Now uses CONFIG.API_URL instead of hardcoded localhost
+// ============================================
 async function callAIGeneration(formData) {
-    const API_URL = 'http://localhost:3000'; // Or your Render URL
-    
     try {
-        const response = await fetch(`${API_URL}/api/ai-generate`, {
+        const response = await fetch(`${CONFIG.API_URL}/api/ai-generate`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(formData)
         });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error?.message || 'AI generation failed');
+        }
         
         const result = await response.json();
         return result.data;
@@ -1137,3 +1145,47 @@ async function callAIGeneration(formData) {
         throw error;
     }
 }
+
+// ============================================
+// INITIALIZE ALL - Final function that runs on page load
+// ============================================
+function initializeApp() {
+    // Highlight active navigation button
+    highlightActiveNav();
+    
+    // Initialize contact form if it exists
+    initContactForm();
+    
+    // Initialize service buttons if they exist
+    initServiceButtons();
+
+    // FIX: initMobileMenu() is now actually called
+    initMobileMenu();
+    
+    // Initialize home page form if it exists
+    if (generatorForm) {
+        generatorForm.addEventListener("submit", handleGenerateLesson);
+    }
+    
+    // Initialize attendance page if on that page
+    if (attendanceClassSelect) {
+        loadStudentsForAttendance();
+        loadAttendanceHistory();
+    }
+    
+    // Initialize dashboard if on that page
+    if (document.getElementById('saved-lessons-count')) {
+        loadDashboardData();
+    }
+    
+    // Set default date for attendance
+    const dateInput = document.getElementById('attendance-date');
+    if (dateInput && !dateInput.value) {
+        dateInput.value = new Date().toISOString().split('T')[0];
+    }
+    
+    console.log("⚡ STEM Forge fully initialized | All features ready | Version 2.0");
+}
+
+// Start the app when DOM is fully loaded
+document.addEventListener("DOMContentLoaded", initializeApp);
