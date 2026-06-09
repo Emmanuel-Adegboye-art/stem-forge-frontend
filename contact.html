@@ -9,16 +9,35 @@
 </head>
 <body>
 <div class="app-container">
- <nav id="main-nav">
+  <!-- Navigation Bar -->
+<nav id="main-nav">
     <div class="nav-brand">
-      <span class="brand-icon">⚡</span>
-      <span class="brand-text">STEM Forge</span>
+        <span class="brand-icon">⚡</span>
+        <span class="brand-text">STEM Forge</span>
     </div>
-    <div class="nav-links">
-      <a href="index.html" class="nav-btn">🏠 Home</a>
-      <a href="about.html" class="nav-btn">📖 About</a>
-      <a href="services.html" class="nav-btn">🛠️ Services</a>
-      <a href="contact.html" class="nav-btn active">📞 Contact</a>
+    
+    <button class="mobile-menu-toggle" id="mobile-menu-toggle">☰ Menu</button>
+    
+    <div class="nav-links" id="nav-links">
+        <!-- Primary Pages (Always visible on desktop) -->
+        <a href="index.html" class="nav-btn">🏠 Home</a>
+        <a href="ai-generate.html" class="nav-btn">🤖 AI Generate</a>
+        <a href="scheme.html" class="nav-btn">📅 Scheme</a>
+        <a href="attendance.html" class="nav-btn">📋 Attendance</a>
+        <a href="dashboard.html" class="nav-btn">📊 Dashboard</a>
+        
+        <!-- Secondary Pages in Dropdown -->
+        <div class="nav-dropdown">
+            <button class="nav-dropdown-btn">📁 More ▼</button>
+            <div class="nav-dropdown-content">
+                <a href="pricing.html">💰 Pricing</a>
+                <a href="exams.html">📝 Exams</a>
+                <a href="virtual.html">🎥 Virtual Class</a>
+                <a href="about.html">📖 About</a>
+                <a href="services.html">🛠️ Services</a>
+                <a href="contact.html">📞 Contact</a>
+            </div>
+        </div>
     </div>
 </nav>
 
