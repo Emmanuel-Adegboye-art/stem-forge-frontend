@@ -1,0 +1,6 @@
+{
+  "appId": "com.stemforge.app",
+  "appName": "STEM Forge",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}

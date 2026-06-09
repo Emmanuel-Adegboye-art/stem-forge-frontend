@@ -4,12 +4,19 @@
 // COMPLETE VERSION - Includes all functionality for all pages
 // ============================================
 
+// CONFIGURATION
+const CONFIG = {
+    // Replace with your deployed backend URL (e.g., https://your-app.onrender.com)
+    // For local testing on mobile, use your computer's local IP (e.g., http://192.168.1.5:3000)
+    API_URL: 'http://localhost:3000'
+};
+
 // ============================================
 // BACKEND API CALL
 // ============================================
 
 async function generateLessonPlanFromBackend(formData) {
-    const API_URL = 'http://localhost:3000';
+    const API_URL = CONFIG.API_URL;
     
     try {
         const response = await fetch(`${API_URL}/api/generate`, {
