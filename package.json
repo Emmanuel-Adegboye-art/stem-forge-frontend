@@ -4,7 +4,7 @@
   "description": "Front-end for STEM Forge Lesson Plan Generator",
   "main": "index.html",
   "scripts": {
-    "build": "mkdir -p dist && cp -r Images *.html *.css *.js dist/ || xcopy /E /I /Y Images dist\\Images && xcopy /Y *.html dist\\ && xcopy /Y *.css dist\\ && xcopy /Y *.js dist\\",
+    "build": "mkdir -p dist && (cp -r Images dist/ 2>/dev/null || true) && (cp *.html dist/ 2>/dev/null || true) && (cp *.css dist/ 2>/dev/null || true) && (cp *.js dist/ 2>/dev/null || true)",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
