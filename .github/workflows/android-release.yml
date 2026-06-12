@@ -29,6 +29,9 @@ jobs:
       - name: Build Web Assets
         run: npm run build
 
+      - name: Add Android Platform
+        run: npx cap add android
+
       - name: Sync Capacitor
         run: npx cap sync android
 
@@ -40,7 +43,7 @@ jobs:
 
       - name: Get APK Path
         id: apk-path
-        run: echo "path=$(find android/app/build/outputs/apk/debug -name "*.apk" | head -n 1)" >> $GITHUB_OUTPUT
+        run: echo "path=$(find android/app/build/outputs/apk/debug -name '*.apk' | head -n 1)" >> $GITHUB_OUTPUT
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
