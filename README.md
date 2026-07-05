@@ -1,4 +1,4 @@
-# STEM Forge - Lesson Plan Generator
+# STEM Forge - Lesson Plan Generator.
 
 ## 📋 Overview
 
