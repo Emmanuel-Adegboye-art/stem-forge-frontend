@@ -1,13 +1,12 @@
 // ============================================
 // STEM Forge - Main JavaScript (script.js)
 // File Reference: JFE - 1
-// COMPLETE VERSION - Includes all functionality for all pages
+// UPDATED: Added fallback for home page generator
 // ============================================
 
 // CONFIGURATION
 const CONFIG = {
-    // Replace with your deployed backend URL (e.g., https://your-app.onrender.com)
-    // For local testing on mobile, use your computer's local IP (e.g., http://192.168.1.5:3000)
+    // Replace with your deployed backend URL
     API_URL: 'https://stemforge-backend-1.onrender.com'
 };
 
@@ -37,8 +36,133 @@ async function generateLessonPlanFromBackend(formData) {
         
     } catch (error) {
         console.error('Backend error:', error);
-        throw new Error('Cannot connect to backend. Make sure server is running on ' + CONFIG.API_URL);
+        throw new Error('Cannot connect to backend. Using fallback template.');
     }
+}
+
+// ============================================
+// FALLBACK: Generate Lesson Plan Locally (Offline Mode)
+// ============================================
+
+function generateLocalLessonPlan(formData) {
+    const { classLevel, term, subject, duration, topic, additionalNotes } = formData;
+    
+    const classLevelMap = {
+        'grade-7': 'Grade 7 (Ages 12-13)',
+        'grade-8': 'Grade 8 (Ages 13-14)',
+        'grade-9': 'Grade 9 (Ages 14-15)',
+        'grade-10': 'Grade 10 (Ages 15-16)',
+        'grade-11': 'Grade 11 (Ages 16-17)',
+        'grade-12': 'Grade 12 (Ages 17-18)'
+    };
+    
+    const termMap = {
+        'term-1': 'Term 1 (Fall)',
+        'term-2': 'Term 2 (Winter)',
+        'term-3': 'Term 3 (Spring)',
+        'term-4': 'Term 4 (Summer)'
+    };
+    
+    const subjectMap = {
+        'robotics': { icon: '🤖', name: 'Robotics & Automation' },
+        'electronics': { icon: '⚡', name: 'Electronics & Circuits' },
+        'programming': { icon: '💻', name: 'Programming for Robotics' },
+        'mechanics': { icon: '🔩', name: 'Mechanics & Mechanisms' },
+        'physics': { icon: '⚛️', name: 'Physics (Forces & Motion)' },
+        'chemistry': { icon: '🧪', name: 'Chemistry (Materials Science)' },
+        'engineering': { icon: '🏗️', name: 'Engineering Design' }
+    };
+    
+    const className = classLevelMap[classLevel] || 'Grade 9-12';
+    const termName = termMap[term] || 'Current Term';
+    const subjectInfo = subjectMap[subject] || subjectMap['engineering'];
+    const displayTopic = topic || 'Introduction to ' + subjectInfo.name;
+    const durationNum = parseInt(duration) || 90;
+    
+    // Generate timeline
+    const phases = [
+        { name: "Engage & Introduce", percent: 0.12 },
+        { name: "EDP - Ask & Imagine", percent: 0.15 },
+        { name: "Plan & Design", percent: 0.15 },
+        { name: "Create & Build", percent: 0.35 },
+        { name: "Test & Iterate", percent: 0.15 },
+        { name: "Reflect & Share", percent: 0.08 }
+    ];
+    
+    let currentTime = 0;
+    const timeline = [];
+    for (const phase of phases) {
+        const phaseDuration = Math.round(durationNum * phase.percent);
+        timeline.push({
+            phase: phase.name,
+            duration: `${phaseDuration} min`,
+            start: currentTime,
+            end: currentTime + phaseDuration,
+            description: getPhaseDescription(phase.name)
+        });
+        currentTime += phaseDuration;
+    }
+    
+    return {
+        metadata: {
+            title: `${subjectInfo.icon} ${displayTopic}`,
+            classLevel: className,
+            term: termName,
+            subject: subjectInfo.name,
+            duration: `${durationNum} minutes`,
+            generatedDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+        },
+        learningObjectives: [
+            `Apply the Engineering Design Process to solve problems related to ${displayTopic}`,
+            `Demonstrate understanding of ${displayTopic} through hands-on prototyping`,
+            `Collaborate effectively in teams to iterate and improve designs`,
+            `Master key concepts of ${subjectInfo.name.toLowerCase()}`
+        ],
+        edpSteps: [
+            "Ask: Define the Problem",
+            "Imagine: Brainstorm Solutions",
+            "Plan: Design & Select",
+            "Create: Build Prototype",
+            "Test & Improve: Iterate"
+        ],
+        safetyProtocols: [
+            "Follow all school laboratory safety guidelines",
+            "Wear appropriate personal protective equipment (PPE)",
+            "Report any accidents immediately to instructor",
+            "Keep workspace clean and organized",
+            "Disconnect power before adjusting wiring"
+        ],
+        timeline: timeline,
+        experientialActivity: `🔧 HANDS-ON CHALLENGE: Students will work in teams to design and build a solution related to ${displayTopic}. They will test, iterate, and present their findings.`,
+        materials: [
+            "Microcontroller board (Arduino or compatible)",
+            "Sensors and actuators",
+            "Jumper wires and breadboard",
+            "Structural materials (cardboard, 3D printed parts)",
+            "Battery pack and power supply",
+            "Computer with programming environment",
+            "Engineering notebooks"
+        ],
+        assessment: [
+            "Formative: Observation during build phase and team discussions",
+            "Performance: Functionality of prototype against success criteria",
+            "Summative: Engineering notebook documentation of complete EDP cycle",
+            "Reflection: Exit ticket on one iteration made and why"
+        ],
+        additionalNotes: additionalNotes || ""
+    };
+}
+
+function getPhaseDescription(phase) {
+    const descriptions = {
+        "Engage & Introduce": "Hook students with a real-world problem. Discuss relevance and spark curiosity.",
+        "EDP - Ask & Imagine": "Students define the problem, ask questions, and brainstorm possible solutions.",
+        "Plan & Design": "Teams select best solution, sketch designs, list materials, and plan build sequence.",
+        "Create & Build": "Hands-on prototyping phase. Students construct their solution following safety protocols.",
+        "Test & Iterate": "Test prototypes, collect data, identify failures, and make improvements.",
+        "Reflect & Share": "Teams present their design process, challenges faced, and final outcomes."
+    };
+    return descriptions[phase] || "Active student-centered learning.";
 }
 
 // ============================================
@@ -83,72 +207,74 @@ function displayLessonPlan(lessonData) {
     if (!lessonPlanContent) return;
     
     const metadata = lessonData.metadata;
-    const objectives = lessonData.learningObjectives;
-    const edpSteps = lessonData.edpSteps;
-    const safety = lessonData.safetyProtocols;
-    const timeline = lessonData.timeline;
-    const experiential = lessonData.experientialActivity;
-    const materials = lessonData.materials;
-    const assessment = lessonData.assessment;
+    const objectives = lessonData.learningObjectives || [];
+    const edpSteps = lessonData.edpSteps || [];
+    const safety = lessonData.safetyProtocols || [];
+    const timeline = lessonData.timeline || [];
+    const experiential = lessonData.experientialActivity || '';
+    const materials = lessonData.materials || [];
+    const assessment = lessonData.assessment || [];
     
     let timelineHtml = "";
-    timeline.forEach(item => {
-        timelineHtml += `
-            <div class="timeline-item-preview">
-                <div class="timeline-time-preview">${item.start}-${item.end} min</div>
-                <div class="timeline-content-preview">
-                    <strong>${item.phase}</strong> (${item.duration})
-                    <p>${item.description}</p>
+    if (timeline.length > 0) {
+        timeline.forEach(item => {
+            timelineHtml += `
+                <div class="timeline-item-preview">
+                    <div class="timeline-time-preview">${item.start || 0}-${item.end || 0} min</div>
+                    <div class="timeline-content-preview">
+                        <strong>${item.phase || 'Activity'}</strong> (${item.duration || 'N/A'})
+                        <p>${item.description || ''}</p>
+                    </div>
                 </div>
-            </div>
-        `;
-    });
+            `;
+        });
+    }
     
     const html = `
         <div class="lesson-plan-header">
-            <h2>${metadata.title}</h2>
+            <h2>${metadata.title || 'Lesson Plan'}</h2>
             <div class="meta-info">
-                <span>📚 ${metadata.classLevel}</span>
-                <span>📅 ${metadata.term}</span>
-                <span>🔧 ${metadata.subject}</span>
-                <span>⏱️ ${metadata.duration}</span>
-                <span>📆 ${metadata.generatedDate}</span>
+                <span>📚 ${metadata.classLevel || 'N/A'}</span>
+                <span>📅 ${metadata.term || 'N/A'}</span>
+                <span>🔧 ${metadata.subject || 'N/A'}</span>
+                <span>⏱️ ${metadata.duration || 'N/A'}</span>
+                <span>📆 ${metadata.generatedDate || new Date().toLocaleDateString()}</span>
             </div>
         </div>
         
         <div class="plan-section">
             <h3>🎯 Learning Objectives</h3>
-            <ul>${objectives.map(obj => `<li>${obj}</li>`).join('')}</ul>
+            <ul>${objectives.map(obj => `<li>${obj}</li>`).join('') || '<li>No objectives specified</li>'}</ul>
         </div>
         
         <div class="plan-section">
             <h3>🧠 Engineering Design Process</h3>
-            <div class="edp-steps-preview">${edpSteps.map(step => `<span class="edp-step-preview">${step}</span>`).join('')}</div>
+            <div class="edp-steps-preview">${edpSteps.map(step => `<span class="edp-step-preview">${step}</span>`).join('') || '<span>No EDP steps specified</span>'}</div>
         </div>
         
         <div class="plan-section">
             <h3>⚠️ Safety Protocols</h3>
-            <ul class="safety-list">${safety.map(s => `<li>${s}</li>`).join('')}</ul>
+            <ul class="safety-list">${safety.map(s => `<li>${s}</li>`).join('') || '<li>No safety protocols specified</li>'}</ul>
         </div>
         
         <div class="plan-section">
             <h3>⏱️ Lesson Timeline</h3>
-            <div class="timeline-preview">${timelineHtml}</div>
+            <div class="timeline-preview">${timelineHtml || '<p>Timeline not available</p>'}</div>
         </div>
         
         <div class="plan-section highlight">
             <h3>🧪 Experiential Activity</h3>
-            <p>${experiential}</p>
+            <p>${experiential || 'Hands-on activity will be provided during the lesson.'}</p>
         </div>
         
         <div class="plan-section">
             <h3>📦 Materials & Equipment</h3>
-            <ul><li>${materials.join('</li><li>')}</li></ul>
+            <ul><li>${materials.join('</li><li>') || 'Materials list not available'}</li></ul>
         </div>
         
         <div class="plan-section">
             <h3>📝 Assessment Methods</h3>
-            <ul>${assessment.map(a => `<li>${a}</li>`).join('')}</ul>
+            <ul>${assessment.map(a => `<li>${a}</li>`).join('') || '<li>Assessment methods not available</li>'}</ul>
         </div>
         
         ${lessonData.additionalNotes ? `
@@ -165,7 +291,7 @@ function displayLessonPlan(lessonData) {
 }
 
 // ============================================
-// Handle Form Submission - Calls Backend
+// Handle Form Submission - Calls Backend with Fallback
 // ============================================
 async function handleGenerateLesson(e) {
     e.preventDefault();
@@ -199,17 +325,36 @@ async function handleGenerateLesson(e) {
     };
     
     try {
+        // Try backend first
         const lessonPlan = await generateLessonPlanFromBackend(formData);
         displayLessonPlan(lessonPlan);
         
         if (generationStatus) {
-            generationStatus.innerHTML = '<span style="color: #27ae60;">✅ Lesson plan generated successfully!</span>';
+            generationStatus.innerHTML = '<span style="color: #27ae60;">✅ Lesson plan generated successfully via backend!</span>';
             setTimeout(() => { if (generationStatus) generationStatus.style.display = "none"; }, 2000);
         }
     } catch (error) {
+        console.warn('Backend failed, using local fallback:', error.message);
+        
+        // Fallback to local generation
         if (generationStatus) {
-            generationStatus.innerHTML = `<span style="color: #e74c4c;">❌ ${error.message}</span>`;
-            setTimeout(() => { if (generationStatus) generationStatus.style.display = "none"; }, 4000);
+            generationStatus.innerHTML = '<span style="color: #f39c12;">⚠️ Backend offline. Generating using offline template...</span>';
+            generationStatus.style.display = "block";
+        }
+        
+        try {
+            const localLesson = generateLocalLessonPlan(formData);
+            displayLessonPlan(localLesson);
+            
+            if (generationStatus) {
+                generationStatus.innerHTML = '<span style="color: #27ae60;">✅ Lesson plan generated successfully (offline mode)!</span>';
+                setTimeout(() => { if (generationStatus) generationStatus.style.display = "none"; }, 3000);
+            }
+        } catch (fallbackError) {
+            if (generationStatus) {
+                generationStatus.innerHTML = '<span style="color: #e74c4c;">❌ Failed to generate lesson plan. Please try again.</span>';
+                setTimeout(() => { if (generationStatus) generationStatus.style.display = "none"; }, 4000);
+            }
         }
     } finally {
         if (generateBtn) {
@@ -274,6 +419,40 @@ function initServiceButtons() {
 }
 
 // ============================================
+// MOBILE MENU TOGGLE
+// ============================================
+
+function initMobileMenu() {
+    const toggleBtn = document.getElementById('mobile-menu-toggle');
+    const navLinks = document.getElementById('nav-links');
+    
+    if (toggleBtn && navLinks) {
+        toggleBtn.addEventListener('click', () => {
+            navLinks.classList.toggle('show');
+        });
+        
+        document.addEventListener('click', (e) => {
+            if (!navLinks.contains(e.target) && !toggleBtn.contains(e.target)) {
+                navLinks.classList.remove('show');
+            }
+        });
+    }
+    
+    const dropdowns = document.querySelectorAll('.nav-dropdown');
+    dropdowns.forEach(dropdown => {
+        const btn = dropdown.querySelector('.nav-dropdown-btn');
+        if (btn) {
+            btn.addEventListener('click', (e) => {
+                if (window.innerWidth <= 900) {
+                    e.preventDefault();
+                    dropdown.classList.toggle('active');
+                }
+            });
+        }
+    });
+}
+
+// ============================================
 // ============================================
 // ============================================
 // AI LESSON PLAN GENERATOR - COMPLETE CODE
@@ -281,7 +460,35 @@ function initServiceButtons() {
 // ============================================
 // ============================================
 
-// Student database for attendance (used across features)
+async function callAIGeneration(formData) {
+    const API_URL = CONFIG.API_URL;
+    
+    try {
+        const response = await fetch(`${API_URL}/api/ai-generate`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        if (!result.success) {
+            throw new Error(result.error?.message || 'AI generation failed');
+        }
+        return result.data;
+        
+    } catch (error) {
+        console.error('AI API error:', error);
+        throw error;
+    }
+}
+
+// Student database for attendance
 const studentsByClass = {
     JSS1: [
         { id: 1, name: "Adebayo Tunde" },
@@ -489,25 +696,19 @@ function showWebSearchResults(topic) {
     webSearchResults.style.display = 'block';
 }
 
-// FIX: Wrapped localStorage calls in try/catch to handle private/incognito mode
 function saveAILesson() {
     const titleElem = document.querySelector('#ai-lesson-content h2');
     if (!titleElem) return;
     
-    try {
-        const title = titleElem.innerText;
-        const saved = JSON.parse(localStorage.getItem('savedLessons') || '[]');
-        saved.push({ 
-            title: title, 
-            date: new Date().toISOString(),
-            type: 'AI Generated'
-        });
-        localStorage.setItem('savedLessons', JSON.stringify(saved));
-        alert('💾 Lesson saved to your dashboard!');
-    } catch (err) {
-        console.error('Could not save lesson:', err);
-        alert('⚠️ Could not save lesson. Storage may be unavailable (e.g. private/incognito mode).');
-    }
+    const title = titleElem.innerText;
+    const saved = JSON.parse(localStorage.getItem('savedLessons') || '[]');
+    saved.push({ 
+        title: title, 
+        date: new Date().toISOString(),
+        type: 'AI Generated'
+    });
+    localStorage.setItem('savedLessons', JSON.stringify(saved));
+    alert('💾 Lesson saved to your dashboard!');
 }
 
 function copyAILesson() {
@@ -554,33 +755,35 @@ if (aiForm) {
             aiStatus.style.display = 'block';
         }
         
-        // FIX: Use real backend API instead of mock setTimeout
         try {
-            const lessonPlan = await callAIGeneration({ topic, grade, duration, subject, instructions });
+            const formData = {
+                topic,
+                grade,
+                duration: parseInt(duration),
+                subject,
+                instructions,
+                enableWebSearch
+            };
+            const lessonPlan = await callAIGeneration(formData);
             displayAILesson(lessonPlan);
-
+            
             if (enableWebSearch) {
                 showWebSearchResults(topic);
             }
-
+            
             if (aiStatus) {
                 aiStatus.innerHTML = '<span style="color: #27ae60;">✅ AI lesson plan generated successfully!</span>';
                 setTimeout(() => { if (aiStatus) aiStatus.style.display = 'none'; }, 3000);
             }
         } catch (error) {
-            console.warn('Backend unavailable, falling back to mock data:', error.message);
-            // Graceful fallback to mock if backend is down
-            const lessonPlan = generateMockAILesson(topic, grade, duration, subject, instructions);
-            displayAILesson(lessonPlan);
-
-            if (enableWebSearch) {
-                showWebSearchResults(topic);
-            }
-
+            console.error('AI Generation backend error:', error);
             if (aiStatus) {
-                aiStatus.innerHTML = '<span style="color: #f39c12;">⚠️ Using offline mode (backend unavailable)</span>';
+                aiStatus.innerHTML = '<span style="color: #f39c12;">⚠️ Backend offline. Generating using offline template...</span>';
                 setTimeout(() => { if (aiStatus) aiStatus.style.display = 'none'; }, 4000);
             }
+            // Fallback to local offline template generation
+            const lessonPlan = generateMockAILesson(topic, grade, duration, subject, instructions);
+            displayAILesson(lessonPlan);
         } finally {
             if (aiGenerateBtn) {
                 aiGenerateBtn.disabled = false;
@@ -611,11 +814,7 @@ if (copyAiLessonBtn) {
 }
 
 // ============================================
-// ============================================
-// ============================================
-// SCHEME OF WORK GENERATOR - COMPLETE CODE
-// ============================================
-// ============================================
+// SCHEME OF WORK GENERATOR
 // ============================================
 
 function generateSchemeHtml(startGrade, endGrade, components, competitions, economicActivities) {
@@ -624,7 +823,6 @@ function generateSchemeHtml(startGrade, endGrade, components, competitions, econ
     for (let grade = parseInt(startGrade); grade <= parseInt(endGrade); grade++) {
         const topics = topicsByGrade[grade] || topicsByGrade[7];
         
-        // Generate term-based structure (3 terms per grade)
         schemeHtml += `
             <div class="term-section">
                 <h3 class="term-title">🎓 Grade ${grade} - First Term</h3>
@@ -705,25 +903,19 @@ function generateSchemeHtml(startGrade, endGrade, components, competitions, econ
     return schemeHtml;
 }
 
-// FIX: Wrapped localStorage calls in try/catch to handle private/incognito mode
 function saveScheme() {
     const startGrade = document.getElementById('start-grade')?.value;
     const endGrade = document.getElementById('end-grade')?.value;
     if (!startGrade || !endGrade) return;
     
-    try {
-        const saved = JSON.parse(localStorage.getItem('savedSchemes') || '[]');
-        saved.push({ 
-            grade: `${startGrade} - ${endGrade}`, 
-            date: new Date().toISOString(),
-            type: 'Robotics Scheme'
-        });
-        localStorage.setItem('savedSchemes', JSON.stringify(saved));
-        alert('💾 Scheme saved to your dashboard!');
-    } catch (err) {
-        console.error('Could not save scheme:', err);
-        alert('⚠️ Could not save scheme. Storage may be unavailable (e.g. private/incognito mode).');
-    }
+    const saved = JSON.parse(localStorage.getItem('savedSchemes') || '[]');
+    saved.push({ 
+        grade: `${startGrade} - ${endGrade}`, 
+        date: new Date().toISOString(),
+        type: 'Robotics Scheme'
+    });
+    localStorage.setItem('savedSchemes', JSON.stringify(saved));
+    alert('💾 Scheme saved to your dashboard!');
 }
 
 function copyScheme() {
@@ -748,17 +940,14 @@ if (schemeForm) {
         const schemeContent = document.getElementById('scheme-content');
         const schemeStatus = document.getElementById('scheme-status');
         
-        // Get selected components
         const components = Array.from(document.querySelectorAll('input[type="checkbox"][value]'))
             .filter(cb => cb.checked && cb.closest('.form-group-generator')?.innerText.includes('Components'))
             .map(cb => cb.value);
         
-        // Get selected competitions
         const competitions = Array.from(document.querySelectorAll('input[type="checkbox"][value]'))
             .filter(cb => cb.checked && cb.closest('.form-group-generator')?.innerText.includes('Competitions'))
             .map(cb => cb.value);
         
-        // Get selected economic activities
         const economicActivities = Array.from(document.querySelectorAll('input[type="checkbox"][value]'))
             .filter(cb => cb.checked && cb.closest('.form-group-generator')?.innerText.includes('Economic'))
             .map(cb => cb.value);
@@ -789,11 +978,7 @@ if (copySchemeBtn) {
 }
 
 // ============================================
-// ============================================
-// ============================================
-// ATTENDANCE SYSTEM - COMPLETE CODE
-// ============================================
-// ============================================
+// ATTENDANCE SYSTEM
 // ============================================
 
 let currentAttendanceStudents = [];
@@ -833,7 +1018,6 @@ function loadStudentsForAttendance() {
     
     updateAttendanceStats();
     
-    // Add event listeners to checkboxes
     document.querySelectorAll('.attendance-check').forEach(cb => {
         cb.addEventListener('change', updateAttendanceStats);
     });
@@ -857,7 +1041,6 @@ function updateAttendanceStats() {
     if (percentElem) percentElem.innerText = `${percent}%`;
 }
 
-// FIX: Wrapped localStorage calls in try/catch to handle private/incognito mode
 function saveAttendanceRecord() {
     const className = document.getElementById('attendance-class')?.value;
     const date = document.getElementById('attendance-date')?.value;
@@ -888,46 +1071,36 @@ function saveAttendanceRecord() {
         absentCount: attendance.filter(s => !s.present).length
     };
     
-    try {
-        const allAttendance = JSON.parse(localStorage.getItem('attendanceRecords') || '[]');
-        const existingIndex = allAttendance.findIndex(a => a.class === className && a.date === date);
-        
-        if (existingIndex >= 0) {
-            allAttendance[existingIndex] = attendanceData;
-        } else {
-            allAttendance.push(attendanceData);
-        }
-        
-        localStorage.setItem('attendanceRecords', JSON.stringify(allAttendance));
-        showAttendanceStatus('✅ Attendance saved successfully!', 'success');
-        loadAttendanceHistory();
-    } catch (err) {
-        console.error('Could not save attendance:', err);
-        showAttendanceStatus('⚠️ Could not save. Storage may be unavailable.', 'error');
+    const allAttendance = JSON.parse(localStorage.getItem('attendanceRecords') || '[]');
+    const existingIndex = allAttendance.findIndex(a => a.class === className && a.date === date);
+    
+    if (existingIndex >= 0) {
+        allAttendance[existingIndex] = attendanceData;
+    } else {
+        allAttendance.push(attendanceData);
     }
+    
+    localStorage.setItem('attendanceRecords', JSON.stringify(allAttendance));
+    showAttendanceStatus('✅ Attendance saved successfully!', 'success');
+    loadAttendanceHistory();
 }
 
 function loadPreviousAttendanceRecord() {
     const className = document.getElementById('attendance-class')?.value;
     const date = document.getElementById('attendance-date')?.value;
     
-    try {
-        const allAttendance = JSON.parse(localStorage.getItem('attendanceRecords') || '[]');
-        const record = allAttendance.find(a => a.class === className && a.date === date);
-        
-        if (record && record.students) {
-            record.students.forEach(s => {
-                const cb = document.querySelector(`.attendance-check[data-id="${s.id}"]`);
-                if (cb) cb.checked = s.present;
-            });
-            updateAttendanceStats();
-            showAttendanceStatus(`📜 Loaded attendance for ${date}`, 'success');
-        } else {
-            showAttendanceStatus(`No attendance record found for ${date}`, 'error');
-        }
-    } catch (err) {
-        console.error('Could not load attendance:', err);
-        showAttendanceStatus('⚠️ Could not load record. Storage may be unavailable.', 'error');
+    const allAttendance = JSON.parse(localStorage.getItem('attendanceRecords') || '[]');
+    const record = allAttendance.find(a => a.class === className && a.date === date);
+    
+    if (record && record.students) {
+        record.students.forEach(s => {
+            const cb = document.querySelector(`.attendance-check[data-id="${s.id}"]`);
+            if (cb) cb.checked = s.present;
+        });
+        updateAttendanceStats();
+        showAttendanceStatus(`📜 Loaded attendance for ${date}`, 'success');
+    } else {
+        showAttendanceStatus(`No attendance record found for ${date}`, 'error');
     }
 }
 
@@ -935,30 +1108,26 @@ function loadAttendanceHistory() {
     const className = document.getElementById('attendance-class')?.value;
     if (!className) return;
     
-    try {
-        const allAttendance = JSON.parse(localStorage.getItem('attendanceRecords') || '[]');
-        const classRecords = allAttendance.filter(a => a.class === className).sort((a, b) => new Date(b.date) - new Date(a.date));
-        
-        const historyDiv = document.getElementById('attendance-history');
-        const historyList = document.getElementById('history-list');
-        
-        if (historyDiv && historyList) {
-            if (classRecords.length > 0) {
-                historyList.innerHTML = classRecords.map(record => `
-                    <div class="student-item">
-                        <span>📅 ${record.date}</span>
-                        <span>✅ ${record.presentCount || record.students.filter(s => s.present).length} present</span>
-                        <span>❌ ${record.absentCount || record.students.filter(s => !s.present).length} absent</span>
-                        <span>📊 ${Math.round(((record.presentCount || record.students.filter(s => s.present).length) / record.students.length) * 100)}%</span>
-                    </div>
-                `).join('');
-                historyDiv.style.display = 'block';
-            } else {
-                historyDiv.style.display = 'none';
-            }
+    const allAttendance = JSON.parse(localStorage.getItem('attendanceRecords') || '[]');
+    const classRecords = allAttendance.filter(a => a.class === className).sort((a, b) => new Date(b.date) - new Date(a.date));
+    
+    const historyDiv = document.getElementById('attendance-history');
+    const historyList = document.getElementById('history-list');
+    
+    if (historyDiv && historyList) {
+        if (classRecords.length > 0) {
+            historyList.innerHTML = classRecords.map(record => `
+                <div class="student-item">
+                    <span>📅 ${record.date}</span>
+                    <span>✅ ${record.presentCount || record.students.filter(s => s.present).length} present</span>
+                    <span>❌ ${record.absentCount || record.students.filter(s => !s.present).length} absent</span>
+                    <span>📊 ${Math.round(((record.presentCount || record.students.filter(s => s.present).length) / record.students.length) * 100)}%</span>
+                </div>
+            `).join('');
+            historyDiv.style.display = 'block';
+        } else {
+            historyDiv.style.display = 'none';
         }
-    } catch (err) {
-        console.error('Could not load attendance history:', err);
     }
 }
 
@@ -995,83 +1164,75 @@ window.loadPreviousAttendanceRecord = loadPreviousAttendanceRecord;
 window.markAllStudentsPresent = markAllStudentsPresent;
 
 // ============================================
-// ============================================
-// ============================================
-// DASHBOARD - COMPLETE CODE
-// ============================================
-// ============================================
+// DASHBOARD
 // ============================================
 
 function loadDashboardData() {
-    try {
-        const savedLessons = JSON.parse(localStorage.getItem('savedLessons') || '[]');
-        const savedSchemes = JSON.parse(localStorage.getItem('savedSchemes') || '[]');
-        const attendance = JSON.parse(localStorage.getItem('attendanceRecords') || '[]');
-        
-        const lessonsCountElem = document.getElementById('saved-lessons-count');
-        const schemesCountElem = document.getElementById('saved-schemes-count');
-        const attendanceCountElem = document.getElementById('attendance-count');
-        const lessonsListElem = document.getElementById('saved-lessons-list');
-        const schemesListElem = document.getElementById('saved-schemes-list');
-        const recentAttendanceElem = document.getElementById('recent-attendance');
-        
-        if (lessonsCountElem) lessonsCountElem.innerText = savedLessons.length;
-        if (schemesCountElem) schemesCountElem.innerText = savedSchemes.length;
-        if (attendanceCountElem) attendanceCountElem.innerText = attendance.length;
-        
-        if (lessonsListElem) {
-            if (savedLessons.length > 0) {
-                lessonsListElem.innerHTML = savedLessons.slice(-5).reverse().map(lesson => 
-                    `<div class="recent-item">📖 ${lesson.title} - ${new Date(lesson.date).toLocaleDateString()}</div>`
-                ).join('');
-            } else {
-                lessonsListElem.innerHTML = '<div class="recent-item">No saved lessons yet. Generate one from AI Generate page!</div>';
-            }
+    const savedLessons = JSON.parse(localStorage.getItem('savedLessons') || '[]');
+    const savedSchemes = JSON.parse(localStorage.getItem('savedSchemes') || '[]');
+    const attendance = JSON.parse(localStorage.getItem('attendanceRecords') || '[]');
+    
+    const lessonsCountElem = document.getElementById('saved-lessons-count');
+    const schemesCountElem = document.getElementById('saved-schemes-count');
+    const attendanceCountElem = document.getElementById('attendance-count');
+    const lessonsListElem = document.getElementById('saved-lessons-list');
+    const schemesListElem = document.getElementById('saved-schemes-list');
+    const recentAttendanceElem = document.getElementById('recent-attendance');
+    
+    if (lessonsCountElem) lessonsCountElem.innerText = savedLessons.length;
+    if (schemesCountElem) schemesCountElem.innerText = savedSchemes.length;
+    if (attendanceCountElem) attendanceCountElem.innerText = attendance.length;
+    
+    if (lessonsListElem) {
+        if (savedLessons.length > 0) {
+            lessonsListElem.innerHTML = savedLessons.slice(-5).reverse().map(lesson => 
+                `<div class="recent-item">📖 ${lesson.title} - ${new Date(lesson.date).toLocaleDateString()}</div>`
+            ).join('');
+        } else {
+            lessonsListElem.innerHTML = '<div class="recent-item">No saved lessons yet. Generate one from AI Generate page!</div>';
         }
-        
-        if (schemesListElem) {
-            if (savedSchemes.length > 0) {
-                schemesListElem.innerHTML = savedSchemes.slice(-5).reverse().map(scheme => 
-                    `<div class="recent-item">📅 ${scheme.grade} - ${new Date(scheme.date).toLocaleDateString()}</div>`
-                ).join('');
-            } else {
-                schemesListElem.innerHTML = '<div class="recent-item">No saved schemes yet. Generate one from Scheme page!</div>';
-            }
+    }
+    
+    if (schemesListElem) {
+        if (savedSchemes.length > 0) {
+            schemesListElem.innerHTML = savedSchemes.slice(-5).reverse().map(scheme => 
+                `<div class="recent-item">📅 ${scheme.grade} - ${new Date(scheme.date).toLocaleDateString()}</div>`
+            ).join('');
+        } else {
+            schemesListElem.innerHTML = '<div class="recent-item">No saved schemes yet. Generate one from Scheme page!</div>';
         }
-        
-        if (recentAttendanceElem) {
-            if (attendance.length > 0) {
-                recentAttendanceElem.innerHTML = attendance.slice(-5).reverse().map(record => 
-                    `<div class="recent-item">📋 ${record.class} - ${record.date} (${record.presentCount || record.students?.filter(s => s.present).length || 0}/${record.students?.length || 0} present)</div>`
-                ).join('');
-            } else {
-                recentAttendanceElem.innerHTML = '<div class="recent-item">No attendance records yet. Take attendance from Attendance page!</div>';
-            }
+    }
+    
+    if (recentAttendanceElem) {
+        if (attendance.length > 0) {
+            recentAttendanceElem.innerHTML = attendance.slice(-5).reverse().map(record => 
+                `<div class="recent-item">📋 ${record.class} - ${record.date} (${record.presentCount || record.students?.filter(s => s.present).length || 0}/${record.students?.length || 0} present)</div>`
+            ).join('');
+        } else {
+            recentAttendanceElem.innerHTML = '<div class="recent-item">No attendance records yet. Take attendance from Attendance page!</div>';
         }
-        
-        const totalLessons = savedLessons.length;
-        const totalSchemes = savedSchemes.length;
-        const totalAttendance = attendance.length;
-        
-        const statsContainer = document.getElementById('dashboard-stats');
-        if (statsContainer) {
-            statsContainer.innerHTML = `
-                <div class="stat-card">
-                    <div class="stat-number">${totalLessons}</div>
-                    <div>Total Lessons</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">${totalSchemes}</div>
-                    <div>Total Schemes</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">${totalAttendance}</div>
-                    <div>Attendance Records</div>
-                </div>
-            `;
-        }
-    } catch (err) {
-        console.error('Could not load dashboard data:', err);
+    }
+    
+    const totalLessons = savedLessons.length;
+    const totalSchemes = savedSchemes.length;
+    const totalAttendance = attendance.length;
+    
+    const statsContainer = document.getElementById('dashboard-stats');
+    if (statsContainer) {
+        statsContainer.innerHTML = `
+            <div class="stat-card">
+                <div class="stat-number">${totalLessons}</div>
+                <div>Total Lessons</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">${totalSchemes}</div>
+                <div>Total Schemes</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">${totalAttendance}</div>
+                <div>Attendance Records</div>
+            </div>
+        `;
     }
 }
 
@@ -1083,102 +1244,27 @@ function showComingSoon() {
 }
 
 // ============================================
-// MOBILE MENU
-// ============================================
-
-function initMobileMenu() {
-    const toggleBtn = document.getElementById('mobile-menu-toggle');
-    const navLinks = document.getElementById('nav-links');
-    
-    if (toggleBtn && navLinks) {
-        toggleBtn.addEventListener('click', () => {
-            navLinks.classList.toggle('show');
-        });
-        
-        // Close menu when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!navLinks.contains(e.target) && !toggleBtn.contains(e.target)) {
-                navLinks.classList.remove('show');
-            }
-        });
-    }
-    
-    // Handle dropdown on mobile
-    const dropdowns = document.querySelectorAll('.nav-dropdown');
-    dropdowns.forEach(dropdown => {
-        const btn = dropdown.querySelector('.nav-dropdown-btn');
-        if (btn) {
-            btn.addEventListener('click', (e) => {
-                if (window.innerWidth <= 900) {
-                    e.preventDefault();
-                    dropdown.classList.toggle('active');
-                }
-            });
-        }
-    });
-}
-
-// ============================================
-// AI GENERATION - Backend API Call
-// FIX: Now uses CONFIG.API_URL instead of hardcoded localhost
-// ============================================
-async function callAIGeneration(formData) {
-    try {
-        const response = await fetch(`${CONFIG.API_URL}/api/ai-generate`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formData)
-        });
-
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.error?.message || 'AI generation failed');
-        }
-        
-        const result = await response.json();
-        return result.data;
-        
-    } catch (error) {
-        console.error('AI API error:', error);
-        throw error;
-    }
-}
-
-// ============================================
-// INITIALIZE ALL - Final function that runs on page load
+// INITIALIZE ALL
 // ============================================
 function initializeApp() {
-    // Highlight active navigation button
     highlightActiveNav();
-    
-    // Initialize contact form if it exists
     initContactForm();
-    
-    // Initialize service buttons if they exist
     initServiceButtons();
-
-    // FIX: initMobileMenu() is now actually called
     initMobileMenu();
     
-    // Initialize home page form if it exists
     if (generatorForm) {
         generatorForm.addEventListener("submit", handleGenerateLesson);
     }
     
-    // Initialize attendance page if on that page
     if (attendanceClassSelect) {
         loadStudentsForAttendance();
         loadAttendanceHistory();
     }
     
-    // Initialize dashboard if on that page
     if (document.getElementById('saved-lessons-count')) {
         loadDashboardData();
     }
     
-    // Set default date for attendance
     const dateInput = document.getElementById('attendance-date');
     if (dateInput && !dateInput.value) {
         dateInput.value = new Date().toISOString().split('T')[0];
