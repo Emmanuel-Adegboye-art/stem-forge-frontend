@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Manage Students | STEM Forge</title>
+    <!-- Same CSS as other pages + css/pages/manage-students.css -->
+</head>
+<body data-page="manage-students">
+    
+    <!-- Nav (same as other pages) -->
+    
+    <div class="app-container">
+        <h1>👥 Student Management</h1>
+        <p>Add, edit, and manage students across all classes</p>
+        
+        <!-- Add Student Form -->
+        <div class="add-student-card">
+            <h3>➕ Add New Student</h3>
+            <form id="add-student-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Class</label>
+                        <select id="student-class" required>
+                            <option value="">Select class</option>
+                            <!-- Populated from API -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="student-name" required>
+                    </div>
+                </div>
+                <button type="submit" class="primary-btn">Add Student</button>
+            </form>
+        </div>
+        
+        <!-- Student List (editable) -->
+        <div class="students-table">
+            <h3>All Students</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Class</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="students-table-body">
+                    <!-- Populated by JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        // Quick test in browser console
+import { generateStudentId } from './js/core/studentIdGenerator.js';
+
+const existing = [
+    { id: 'J1A001', name: 'Adebayo' },
+    { id: 'J1A002', name: 'Okafor' },
+    { id: 'J1A005', name: 'Eze' }
+];
+
+console.log(generateStudentId('JSS1A', existing)); // Should output "J1A006"
+console.log(generateStudentId('JSS2A', []));        // Should output "J2A001"
+
+    </script>
+</body>
+</html>

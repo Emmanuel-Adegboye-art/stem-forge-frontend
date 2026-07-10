@@ -1,0 +1,50 @@
+/* ============================================
+   DARK MODE PAGE BACKGROUNDS
+   Applied to all pages in dark mode
+   ============================================ */
+
+[data-theme="dark"] body {
+    background: linear-gradient(135deg, #151929 0%, #3d2556 100%) !important;
+    background-attachment: fixed !important;
+    color: #f1f5f9;
+    min-height: 100vh;
+}
+
+/* Override any page-specific background colors */
+[data-theme="dark"] body[data-page="dashboard"],
+[data-theme="dark"] body[data-page="ai-generate"],
+[data-theme="dark"] body[data-page="scheme"],
+[data-theme="dark"] body[data-page="attendance"],
+[data-theme="dark"] body[data-page="about"],
+[data-theme="dark"] body[data-page="services"],
+[data-theme="dark"] body[data-page="contact"],
+[data-theme="dark"] body[data-page="pricing"],
+[data-theme="dark"] body[data-page="coming-soon"] {
+    background: linear-gradient(135deg, #151929 0%, #3d2556 100%) !important;
+    background-attachment: fixed !important;
+}
+
+/* Keep AI Generate's specific gradient if you want it different */
+/* Uncomment below if AI generate should keep its own gradient in dark mode */
+/*
+[data-theme="dark"] body[data-page="ai-generate"] {
+    background: linear-gradient(135deg, #1a1f3a 0%, #4a2c5e 100%) !important;
+}
+*/
+
+/* Override light mode backgrounds that used var(--bg-secondary) */
+[data-theme="dark"] body[data-page="dashboard"],
+[data-theme="dark"] body[data-page="scheme"],
+[data-theme="dark"] body[data-page="attendance"],
+[data-theme="dark"] body[data-page="about"],
+[data-theme="dark"] body[data-page="services"],
+[data-theme="dark"] body[data-page="contact"],
+[data-theme="dark"] body[data-page="pricing"],
+[data-theme="dark"] body[data-page="coming-soon"] {
+    background-color: transparent !important;
+}
+
+/* Smooth transition when switching themes */
+body {
+    transition: background 0.5s ease, color 0.3s ease;
+}

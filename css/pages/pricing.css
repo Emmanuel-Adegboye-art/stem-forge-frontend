@@ -1,0 +1,221 @@
+body[data-page="pricing"] {
+    background: var(--bg-secondary);
+}
+
+.packages-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-6);
+    margin: var(--space-8) 0;
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.package-card {
+    background: var(--bg-elevated);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+    text-align: center;
+    transition: all var(--transition-base);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.package-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--color-primary);
+}
+
+.featured-package {
+    border-color: var(--color-primary);
+    background: linear-gradient(135deg, var(--bg-elevated), var(--color-primary-light));
+    transform: scale(1.05);
+}
+
+.featured-package:hover {
+    transform: scale(1.05) translateY(-4px);
+}
+
+.package-badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+    color: white;
+    padding: var(--space-1) var(--space-4);
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.package-name {
+    font-family: var(--font-heading);
+    font-size: var(--text-2xl);
+    font-weight: var(--weight-bold);
+    color: var(--text-primary);
+    margin-bottom: var(--space-2);
+}
+
+.package-price {
+    font-family: var(--font-heading);
+    font-size: var(--text-5xl);
+    font-weight: var(--weight-bold);
+    color: var(--color-primary);
+    margin-bottom: var(--space-4);
+    line-height: 1;
+}
+
+.package-price span {
+    font-size: var(--text-base);
+    color: var(--text-tertiary);
+    font-weight: var(--weight-normal);
+}
+
+.package-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 var(--space-6) 0;
+    text-align: left;
+    flex-grow: 1;
+}
+
+.package-features li {
+    padding: var(--space-2) 0;
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.package-features li:last-child {
+    border-bottom: none;
+}
+
+.package-cta {
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+    font-weight: var(--weight-semibold);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    margin-top: auto;
+}
+
+.pricing-note {
+    text-align: center;
+    padding: var(--space-4);
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    border-radius: var(--radius-md);
+    margin: var(--space-6) auto;
+    max-width: 1100px;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+}
+
+@media (max-width: 768px) {
+    .featured-package {
+        transform: none;
+    }
+    
+    .featured-package:hover {
+        transform: translateY(-4px);
+    }
+    
+    .package-price {
+        font-size: var(--text-4xl);
+    }
+}
+/* ============================================
+   DARK MODE FIXES
+   ============================================ */
+
+[data-theme="dark"] body[data-page="ai-generate"] .glass-card {
+    background: rgba(15, 23, 42, 0.95) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #f1f5f9 !important;
+}
+
+/* All text in dark mode should be light */
+[data-theme="dark"] body[data-page="ai-generate"] .glass-card,
+[data-theme="dark"] body[data-page="ai-generate"] .glass-card * {
+    color: #f1f5f9 !important;
+}
+
+/* Form labels - bright in dark mode */
+[data-theme="dark"] body[data-page="ai-generate"] label {
+    color: #cbd5e0 !important;
+    font-weight: 500;
+}
+
+/* Headers */
+[data-theme="dark"] body[data-page="ai-generate"] h2,
+[data-theme="dark"] body[data-page="ai-generate"] h3 {
+    color: #ffffff !important;
+    font-weight: 600;
+}
+
+/* Form inputs - dark background, light text */
+[data-theme="dark"] body[data-page="ai-generate"] input,
+[data-theme="dark"] body[data-page="ai-generate"] select,
+[data-theme="dark"] body[data-page="ai-generate"] textarea {
+    background: #1e293b !important;
+    border-color: #475569 !important;
+    color: #f1f5f9 !important;
+}
+
+[data-theme="dark"] body[data-page="ai-generate"] input::placeholder,
+[data-theme="dark"] body[data-page="ai-generate"] textarea::placeholder {
+    color: #94a3b8 !important;
+}
+
+/* Select dropdown options */
+[data-theme="dark"] body[data-page="ai-generate"] select option {
+    background: #1e293b !important;
+    color: #f1f5f9 !important;
+}
+
+/* Icons in inputs */
+[data-theme="dark"] body[data-page="ai-generate"] .absolute i {
+    color: #94a3b8 !important;
+}
+
+/* Empty state */
+[data-theme="dark"] body[data-page="ai-generate"] #empty-state h3 {
+    color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] body[data-page="ai-generate"] #empty-state p {
+    color: #94a3b8 !important;
+}
+
+[data-theme="dark"] body[data-page="ai-generate"] #empty-state i {
+    color: #64748b !important;
+}
+
+/* Error message - keep red but lighter */
+[data-theme="dark"] body[data-page="ai-generate"] #error-message {
+    background: rgba(239, 68, 68, 0.15) !important;
+    border-color: rgba(239, 68, 68, 0.4) !important;
+    color: #fca5a5 !important;
+}
+
+/* Header icon box */
+[data-theme="dark"] body[data-page="ai-generate"] header .inline-flex {
+    background: #1e293b !important;
+}
+
+/* Copy button */
+[data-theme="dark"] body[data-page="ai-generate"] #copy-btn {
+    color: #818cf8 !important;
+}
+
+[data-theme="dark"] body[data-page="ai-generate"] #copy-btn:hover {
+    background: rgba(99, 102, 241, 0.15) !important;
+}

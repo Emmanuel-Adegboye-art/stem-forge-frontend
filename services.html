@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ffffff">
+    <title>STEM Forge | Services - Robotics Curriculum & PD</title>
+    
+    <!-- Prevent theme flash -->
+    <script>
+        (function() {
+            const saved = localStorage.getItem('stemforge-theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = saved || (prefersDark ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+            const meta = document.querySelector('meta[name="theme-color"]');
+            if (meta) meta.setAttribute('content', theme === 'dark' ? '#0f172a' : '#ffffff');
+        })();
+    </script>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/base/dark-background.css">
+    <link rel="stylesheet" href="css/theme-toggle.css">
+    <link rel="stylesheet" href="css/layout/container.css">
+    <link rel="stylesheet" href="css/layout/nav.css">
+    <link rel="stylesheet" href="css/layout/footer.css">
+    <link rel="stylesheet" href="css/components/cards.css">
+    <link rel="stylesheet" href="css/components/buttons.css">
+    <link rel="stylesheet" href="css/pages/services.css">
+</head>
+<body data-page="services">
+
+<div class="app-container">
+    
+    <!-- Navigation -->
+    <nav id="main-nav">
+        <div class="nav-brand">
+            <span class="brand-icon">⚡</span>
+            <span class="brand-text">STEM Forge</span>
+        </div>
+        
+        <button class="mobile-menu-toggle" id="mobile-menu-toggle">☰ Menu</button>
+        
+        <div class="nav-links" id="nav-links">
+            <a href="index.html" class="nav-btn">🏠 Dashboard</a>
+            <a href="ai-generate.html" class="nav-btn">🤖 AI Generate</a>
+            <a href="scheme.html" class="nav-btn">📅 Scheme</a>
+            <a href="attendance.html" class="nav-btn">📋 Attendance</a>
+            
+            <div class="nav-dropdown active">
+                <button class="nav-dropdown-btn">📁 More ▼</button>
+                <div class="nav-dropdown-content">
+                    <a href="pricing.html">💰 Pricing</a>
+                    <a href="exams.html">📝 Exams</a>
+                    <a href="virtual.html">🎥 Virtual Class</a>
+                    <a href="about.html">📖 About</a>
+                    <a href="services.html" class="active">🛠️ Services</a>
+                    <a href="contact.html">📞 Contact</a>
+                </div>
+            </div>
+            
+            <!-- Theme Toggle -->
+            <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+                <svg class="icon-moon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                </svg>
+                <svg class="icon-sun" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="services-hero">
+        <div class="services-icon">⚙️</div>
+        <h1>Our STEM Services</h1>
+        <p class="services-tagline">Comprehensive robotics & engineering solutions for secondary education</p>
+    </div>
+
+    <!-- Service Cards -->
+    <div class="services-grid">
+        
+        <div class="service-card primary-service">
+            <div class="service-badge">Most Popular</div>
+            <div class="service-icon">🤖</div>
+            <h3>Robotics Curriculum Design</h3>
+            <p>Standards-aligned, EDP-infused lesson plans for grades 8-12. Includes Arduino projects, sensor integration, and autonomous systems.</p>
+            <ul class="service-features">
+                <li><span class="check">✓</span> 20+ robotics modules</li>
+                <li><span class="check">✓</span> Code templates & wiring guides</li>
+                <li><span class="check">✓</span> Assessment rubrics</li>
+            </ul>
+        </div>
+
+        <div class="service-card">
+            <div class="service-icon">🔧</div>
+            <h3>Professional Development</h3>
+            <p>Hands-on teacher training for robotics implementation, EDP facilitation, and safety protocols in makerspaces.</p>
+            <ul class="service-features">
+                <li><span class="check">✓</span> 6-hour intensive workshops</li>
+                <li><span class="check">✓</span> Virtual or on-site options</li>
+                <li><span class="check">✓</span> Certificate of completion</li>
+            </ul>
+        </div>
+
+        <div class="service-card">
+            <div class="service-icon">🏆</div>
+            <h3>Robotics Competition Prep</h3>
+            <p>Coaching for VEX, FIRST Robotics, and local STEM competitions. Strategy, prototyping, and engineering notebooks.</p>
+            <ul class="service-features">
+                <li><span class="check">✓</span> 8-week bootcamp</li>
+                <li><span class="check">✓</span> Mock competition runs</li>
+                <li><span class="check">✓</span> Judge panel feedback</li>
+            </ul>
+        </div>
+
+        <div class="service-card">
+            <div class="service-icon">📡</div>
+            <h3>IoT & Smart Systems Lab</h3>
+            <p>Advanced module for environmental sensing, data logging, and wireless control using microcontrollers.</p>
+            <ul class="service-features">
+                <li><span class="check">✓</span> ESP32 & sensor kits</li>
+                <li><span class="check">✓</span> Cloud data visualization</li>
+                <li><span class="check">✓</span> Real-world engineering projects</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Packages -->
+    <div class="packages-section">
+        <h2>📦 Implementation Packages</h2>
+        <div class="packages-grid">
+            
+            <div class="package-card">
+                <div class="package-name">Starter Kit</div>
+                <div class="package-price">$249<span>/school</span></div>
+                <ul class="package-features">
+                    <li>5 robotics lesson plans</li>
+                    <li>Basic EDP framework</li>
+                    <li>Email support (30 days)</li>
+                </ul>
+                <button class="package-cta secondary-btn">Get Quote</button>
+            </div>
+            
+            <div class="package-card featured-package">
+                <div class="package-badge">Recommended</div>
+                <div class="package-name">Pro Curriculum</div>
+                <div class="package-price">$899<span>/year</span></div>
+                <ul class="package-features">
+                    <li>Full robotics library (40+ lessons)</li>
+                    <li>Live virtual PD session</li>
+                    <li>Customizable assessments</li>
+                    <li>Priority support + hardware guides</li>
+                </ul>
+                <button class="package-cta primary-btn">Contact Sales</button>
+            </div>
+            
+            <div class="package-card">
+                <div class="package-name">District Partnership</div>
+                <div class="package-price">Custom</div>
+                <ul class="package-features">
+                    <li>Unlimited teacher licenses</li>
+                    <li>On-site training (2 days)</li>
+                    <li>Curriculum alignment services</li>
+                    <li>Annual robotics showcase support</li>
+                </ul>
+                <button class="package-cta secondary-btn">Request Demo</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Guarantee -->
+    <div class="service-guarantee">
+        <div class="guarantee-icon">🛡️</div>
+        <div class="guarantee-text">
+            <strong>100% EDP Integration Guarantee</strong> — Every service includes explicit Engineering Design Process scaffolding. If your students don't engage in iterative prototyping, we'll revise the materials for free.
+        </div>
+    </div>
+    
+    <div class="footer-note">
+        🔧 All services emphasize hands-on robotics, safety protocols, and real-world engineering applications.
+    </div>
+</div>
+
+<!-- Modular JavaScript -->
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
+

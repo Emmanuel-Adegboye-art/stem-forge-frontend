@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ffffff">
+    <title>STEM Forge | About - Our Mission</title>
+    
+    <!-- Prevent theme flash -->
+    <script>
+        (function() {
+            const saved = localStorage.getItem('stemforge-theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = saved || (prefersDark ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+            const meta = document.querySelector('meta[name="theme-color"]');
+            if (meta) meta.setAttribute('content', theme === 'dark' ? '#0f172a' : '#ffffff');
+        })();
+    </script>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/base/dark-background.css">
+    <link rel="stylesheet" href="css/theme-toggle.css">
+    <link rel="stylesheet" href="css/layout/container.css">
+    <link rel="stylesheet" href="css/layout/nav.css">
+    <link rel="stylesheet" href="css/layout/footer.css">
+    <link rel="stylesheet" href="css/components/cards.css">
+    <link rel="stylesheet" href="css/pages/about.css">
+</head>
+<body data-page="about">
+
+<div class="app-container">
+    
+    <!-- Navigation -->
+    <nav id="main-nav">
+        <div class="nav-brand">
+            <span class="brand-icon">⚡</span>
+            <span class="brand-text">STEM Forge</span>
+        </div>
+        
+        <button class="mobile-menu-toggle" id="mobile-menu-toggle">☰ Menu</button>
+        
+        <div class="nav-links" id="nav-links">
+            <a href="index.html" class="nav-btn">🏠 Dashboard</a>
+            <a href="ai-generate.html" class="nav-btn">🤖 AI Generate</a>
+            <a href="scheme.html" class="nav-btn">📅 Scheme</a>
+            <a href="attendance.html" class="nav-btn">📋 Attendance</a>
+            
+            <div class="nav-dropdown active">
+                <button class="nav-dropdown-btn">📁 More ▼</button>
+                <div class="nav-dropdown-content">
+                    <a href="pricing.html">💰 Pricing</a>
+                    <a href="exams.html">📝 Exams</a>
+                    <a href="virtual.html">🎥 Virtual Class</a>
+                    <a href="about.html" class="active">📖 About</a>
+                    <a href="services.html">🛠️ Services</a>
+                    <a href="contact.html">📞 Contact</a>
+                </div>
+            </div>
+            
+            <!-- Theme Toggle -->
+            <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+                <svg class="icon-moon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                </svg>
+                <svg class="icon-sun" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="about-hero">
+        <div class="about-icon">🔧</div>
+        <h1>About STEM Forge</h1>
+        <p class="about-tagline">Building the next generation of engineers, one lesson at a time</p>
+    </div>
+
+    <!-- Mission Cards -->
+    <div class="about-grid">
+        <div class="about-card">
+            <div class="about-card-icon">🎯</div>
+            <h3>Our Mission</h3>
+            <p>STEM Forge empowers educators with ready-to-deploy, experiential robotics and engineering lessons that emphasize the Engineering Design Process (EDP) and hands-on learning.</p>
+        </div>
+        
+        <div class="about-card">
+            <div class="about-card-icon">⚙️</div>
+            <h3>Engineering Design Process</h3>
+            <p>Every lesson integrates EDP: Ask → Imagine → Plan → Create → Test & Improve. Students learn to iterate, fail forward, and think like real engineers.</p>
+        </div>
+        
+        <div class="about-card">
+            <div class="about-card-icon">🛡️</div>
+            <h3>Safety First</h3>
+            <p>All robotics and lab activities include detailed safety protocols, ensuring a secure learning environment for secondary school students.</p>
+        </div>
+        
+        <div class="about-card">
+            <div class="about-card-icon">📚</div>
+            <h3>Curriculum Alignment</h3>
+            <p>Designed for grades 8-12, aligned with NGSS and CSTA standards. Each lesson includes learning objectives, timelines, and assessment prompts.</p>
+        </div>
+    </div>
+
+    <!-- What Makes Us Unique -->
+    <div class="about-features">
+        <h2>✨ What Makes STEM Forge Unique</h2>
+        <div class="features-list">
+            <div class="feature-item">
+                <span class="feature-check">✓</span>
+                <span>Experiential learning activities that mirror real-world engineering challenges</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-check">✓</span>
+                <span>Robotics-focused curriculum with Arduino, sensors, and autonomous systems</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-check">✓</span>
+                <span>Cross-disciplinary lessons (Physics, Chemistry, Computer Science)</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-check">✓</span>
+                <span>Interactive timeline and activity preview for just-in-time teaching support</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-check">✓</span>
+                <span>Engineering Design Process explicitly embedded in every lesson phase</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quote -->
+    <div class="about-credo">
+        <div class="credo-quote">"Tell me and I forget, show me and I remember, involve me and I engineer."</div>
+        <div class="credo-author">— STEM Forge Pedagogy</div>
+    </div>
+    
+    <div class="footer-note">
+        🚀 Version 2.0 | Designed for STEM educators, robotics coaches, and engineering classrooms
+    </div>
+</div>
+
+<!-- Modular JavaScript -->
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
+

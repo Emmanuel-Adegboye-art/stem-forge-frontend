@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ffffff">
+    <title>STEM Forge | Scheme of Work Generator</title>
+    
+    <!-- Prevent theme flash -->
+    <script>
+        (function() {
+            const saved = localStorage.getItem('stemforge-theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = saved || (prefersDark ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+            const meta = document.querySelector('meta[name="theme-color"]');
+            if (meta) meta.setAttribute('content', theme === 'dark' ? '#0f172a' : '#ffffff');
+        })();
+    </script>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/base/dark-background.css">
+    <link rel="stylesheet" href="css/theme-toggle.css">
+    <link rel="stylesheet" href="css/layout/container.css">
+    <link rel="stylesheet" href="css/layout/nav.css">
+    <link rel="stylesheet" href="css/layout/footer.css">
+    <link rel="stylesheet" href="css/components/cards.css">
+    <link rel="stylesheet" href="css/components/buttons.css">
+    <link rel="stylesheet" href="css/components/forms.css">
+    <link rel="stylesheet" href="css/components/tables.css">
+    <link rel="stylesheet" href="css/components/alerts.css">
+    <link rel="stylesheet" href="css/pages/scheme.css">
+</head>
+<body data-page="scheme">
+
+<div class="app-container">
+    
+    <!-- Navigation -->
+    <nav id="main-nav">
+        <div class="nav-brand">
+            <span class="brand-icon">⚡</span>
+            <span class="brand-text">STEM Forge</span>
+        </div>
+        
+        <button class="mobile-menu-toggle" id="mobile-menu-toggle">☰ Menu</button>
+        
+        <div class="nav-links" id="nav-links">
+            <a href="index.html" class="nav-btn">🏠 Dashboard</a>
+            <a href="ai-generate.html" class="nav-btn">🤖 AI Generate</a>
+            <a href="scheme.html" class="nav-btn active">📅 Scheme</a>
+            <a href="attendance.html" class="nav-btn">📋 Attendance</a>
+            
+            <div class="nav-dropdown">
+                <button class="nav-dropdown-btn">📁 More ▼</button>
+                <div class="nav-dropdown-content">
+                    <a href="pricing.html">💰 Pricing</a>
+                    <a href="exams.html">📝 Exams</a>
+                    <a href="virtual.html">🎥 Virtual Class</a>
+                    <a href="about.html">📖 About</a>
+                    <a href="services.html">🛠️ Services</a>
+                    <a href="contact.html">📞 Contact</a>
+                </div>
+            </div>
+            
+            <!-- Theme Toggle -->
+            <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+                <svg class="icon-moon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                </svg>
+                <svg class="icon-sun" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="generator-header">
+        <div class="title-section">
+            <h1>📅 Robotics Scheme of Work Generator</h1>
+            <p>For Nigerian Schools | Grade 4 (Basic) to Grade 9 (Mastery)</p>
+        </div>
+    </div>
+
+    <!-- Generator Form -->
+    <div class="generator-container">
+        <div class="generator-card">
+            <div class="generator-icon">📋</div>
+            <h2>Generate Custom Scheme of Work</h2>
+            <p class="generator-subtitle">Select components, competitions, and economic activities to create a comprehensive robotics curriculum</p>
+
+            <form id="scheme-form" class="generator-form">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="start-grade">📚 Starting Grade</label>
+                        <select id="start-grade" required>
+                            <option value="4">Grade 4 (Basic Entry)</option>
+                            <option value="5">Grade 5</option>
+                            <option value="6">Grade 6</option>
+                            <option value="7">Grade 7</option>
+                            <option value="8">Grade 8</option>
+                            <option value="9">Grade 9 (Intermediate)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="end-grade">🎯 Target Grade</label>
+                        <select id="end-grade" required>
+                            <option value="5">Grade 5</option>
+                            <option value="6">Grade 6</option>
+                            <option value="7">Grade 7</option>
+                            <option value="8">Grade 8</option>
+                            <option value="9" selected>Grade 9 (Mastery)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Checkbox groups -->
+                <div class="form-group full-width">
+                    <label>🔧 Robotics Components</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-pill"><input type="checkbox" value="Microcontrollers" checked> Microcontrollers</label>
+                        <label class="checkbox-pill"><input type="checkbox" value="Sensors" checked> Sensors</label>
+                        <label class="checkbox-pill"><input type="checkbox" value="Motors"> Motors & Actuators</label>
+                        <label class="checkbox-pill"><input type="checkbox" value="Gears"> Gears & Mechanisms</label>
+                        <label class="checkbox-pill"><input type="checkbox" value="Programming"> Programming</label>
+                        <label class="checkbox-pill"><input type="checkbox" value="Electronics"> Electronics</label>
+                        <label class="checkbox-pill"><input type="checkbox" value="Chassis"> Chassis Design</label>
+                    </div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>🏆 Robotics Competitions</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-pill"><input type="checkbox" value="Line Following"> Line Following</label>
+                        <label class="checkbox-pill"><input type="checkbox" value="Sumo"> Sumo Robotics</label>
+                        <label class="checkbox-pill"><input type="checkbox" value="Obstacle Avoidance"> Obstacle Avoidance</label>
+                        <label class="checkbox-pill"><input type="checkbox" value="Maze Solving"> Maze Solving</label>
+                        <label class="checkbox-pill"><input type="checkbox" value="Drone"> Drone Challenges</label>
+                    </div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>🏭 Economic / Industry Activities</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-pill"><input type="checkbox" value="Agriculture"> Smart Agriculture</label>
+                        <label class="checkbox-pill"><input type="checkbox" value="Manufacturing"> Manufacturing Automation</label>
+                        <label class="checkbox-pill"><input type="checkbox" value="Healthcare"> Healthcare Robotics</label>
+                        <label class="checkbox-pill"><input type="checkbox" value="Logistics"> Logistics & Delivery</label>
+                        <label class="checkbox-pill"><input type="checkbox" value="Education"> Educational Robotics</label>
+                    </div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="scheme-notes">📝 Additional Focus Areas</label>
+                    <textarea id="scheme-notes" rows="2" placeholder="e.g., Focus on local Nigerian context, include solar-powered robotics..."></textarea>
+                </div>
+
+                <button type="submit" id="generate-scheme-btn" class="primary-btn generate-btn">
+                    <span class="btn-icon">📅</span>
+                    Generate Scheme of Work
+                    <span class="btn-icon">🚀</span>
+                </button>
+                
+                <div id="scheme-status" class="generation-status"></div>
+            </form>
+        </div>
+
+        <!-- Scheme Output -->
+        <div id="scheme-output" class="scheme-output" style="display: none;">
+            <div class="preview-header">
+                <h2>📋 Generated Scheme of Work</h2>
+            </div>
+            <div id="scheme-content"></div>
+            <div class="preview-actions">
+                <button id="save-scheme" class="secondary-btn">💾 Save Scheme</button>
+                <button id="copy-scheme" class="secondary-btn">📋 Copy to Clipboard</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        🎯 Specifically designed for Nigerian robotics education | Progressive learning from basic to mastery
+    </div>
+</div>
+
+<!-- Modular JavaScript -->
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
+

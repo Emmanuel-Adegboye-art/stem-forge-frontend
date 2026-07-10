@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ffffff">
+    <title>STEM Forge | Attendance System</title>
+    
+    <!-- Prevent theme flash -->
+    <script>
+        (function() {
+            const saved = localStorage.getItem('stemforge-theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = saved || (prefersDark ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+            const meta = document.querySelector('meta[name="theme-color"]');
+            if (meta) meta.setAttribute('content', theme === 'dark' ? '#0f172a' : '#ffffff');
+        })();
+    </script>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/base/dark-background.css">
+    <link rel="stylesheet" href="css/theme-toggle.css">
+    <link rel="stylesheet" href="css/layout/container.css">
+    <link rel="stylesheet" href="css/layout/nav.css">
+    <link rel="stylesheet" href="css/layout/footer.css">
+    <link rel="stylesheet" href="css/components/cards.css">
+    <link rel="stylesheet" href="css/components/buttons.css">
+    <link rel="stylesheet" href="css/components/forms.css">
+    <link rel="stylesheet" href="css/components/alerts.css">
+    <link rel="stylesheet" href="css/pages/attendance.css">
+</head>
+<body data-page="attendance">
+
+<div class="app-container">
+    
+    <!-- Navigation -->
+    <nav id="main-nav">
+        <div class="nav-brand">
+            <span class="brand-icon">⚡</span>
+            <span class="brand-text">STEM Forge</span>
+        </div>
+        
+        <button class="mobile-menu-toggle" id="mobile-menu-toggle">☰ Menu</button>
+        
+        <div class="nav-links" id="nav-links">
+            <a href="index.html" class="nav-btn">🏠 Dashboard</a>
+            <a href="ai-generate.html" class="nav-btn">🤖 AI Generate</a>
+            <a href="scheme.html" class="nav-btn">📅 Scheme</a>
+            <a href="attendance.html" class="nav-btn active">📋 Attendance</a>
+            
+            <div class="nav-dropdown">
+                <button class="nav-dropdown-btn">📁 More ▼</button>
+                <div class="nav-dropdown-content">
+                    <a href="pricing.html">💰 Pricing</a>
+                    <a href="exams.html">📝 Exams</a>
+                    <a href="virtual.html">🎥 Virtual Class</a>
+                    <a href="about.html">📖 About</a>
+                    <a href="services.html">🛠️ Services</a>
+                    <a href="contact.html">📞 Contact</a>
+                </div>
+            </div>
+            
+            <!-- Theme Toggle -->
+            <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+                <svg class="icon-moon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                </svg>
+                <svg class="icon-sun" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="generator-header">
+        <div class="title-section">
+            <h1>📋 Class Attendance System</h1>
+            <p>Track student attendance for robotics classes</p>
+        </div>
+    </div>
+
+    <div class="generator-container">
+        <div class="generator-card">
+            <div class="generator-icon">✅</div>
+            <h2>Take Attendance</h2>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="attendance-class">📚 Select Class</label>
+                    <select id="attendance-class">
+    <option value="">Select Class</option>
+    <!-- Options will be populated by JavaScript -->
+</select>
+
+                </div>
+                <div class="form-group">
+                    <label for="attendance-date">📅 Date</label>
+                    <input type="date" id="attendance-date" class="date-picker">
+                </div>
+            </div>
+            
+            <!-- Attendance Stats -->
+            <div class="attendance-stats" id="attendance-stats" style="display: none;">
+                <div class="stat-card">
+                    <div class="stat-number" id="total-students">0</div>
+                    <div class="stat-label">Total Students</div>
+                </div>
+                <div class="stat-card stat-present">
+                    <div class="stat-number" id="present-count">0</div>
+                    <div class="stat-label">Present</div>
+                </div>
+                <div class="stat-card stat-absent">
+                    <div class="stat-number" id="absent-count">0</div>
+                    <div class="stat-label">Absent</div>
+                </div>
+                <div class="stat-card stat-rate">
+                    <div class="stat-number" id="attendance-percent">0%</div>
+                    <div class="stat-label">Attendance Rate</div>
+                </div>
+            </div>
+            
+            <!-- Student List -->
+            <div id="student-list-container" style="display: none;">
+                <h3>Student List</h3>
+                <div id="student-list" class="student-list"></div>
+                
+                <div class="preview-actions">
+                    <button id="save-attendance-btn" class="primary-btn">💾 Save Attendance</button>
+                    <button id="load-previous-btn" class="secondary-btn">📜 Load Previous</button>
+                    <button id="mark-all-present-btn" class="secondary-btn">✅ Mark All Present</button>
+                </div>
+            </div>
+            
+            <div id="attendance-status" class="generation-status"></div>
+        </div>
+        
+        <!-- Attendance History -->
+        <div id="attendance-history" class="scheme-output" style="display: none;">
+            <div class="preview-header">
+                <h2>📊 Attendance History</h2>
+            </div>
+            <div id="history-list"></div>
+        </div>
+    </div>
+    
+    <div class="footer-note">
+        📊 Track attendance by class and date | Data stored locally
+    </div>
+</div>
+
+<!-- Modular JavaScript -->
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
+

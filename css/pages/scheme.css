@@ -1,0 +1,138 @@
+body[data-page="scheme"] {
+    background: var(--bg-secondary);
+}
+
+.checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+}
+
+.checkbox-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    font-size: var(--text-sm);
+    transition: all var(--transition-fast);
+    user-select: none;
+}
+
+.checkbox-pill:hover {
+    border-color: var(--color-primary);
+    background: var(--color-primary-light);
+}
+
+.checkbox-pill input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--color-primary);
+}
+
+.checkbox-pill:has(input:checked) {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+}
+
+.scheme-output {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+    margin-top: var(--space-6);
+    box-shadow: var(--shadow-md);
+}
+/* ============================================
+   DARK MODE FIXES
+   ============================================ */
+
+[data-theme="dark"] body[data-page="ai-generate"] .glass-card {
+    background: rgba(15, 23, 42, 0.95) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #f1f5f9 !important;
+}
+
+/* All text in dark mode should be light */
+[data-theme="dark"] body[data-page="ai-generate"] .glass-card,
+[data-theme="dark"] body[data-page="ai-generate"] .glass-card * {
+    color: #f1f5f9 !important;
+}
+
+/* Form labels - bright in dark mode */
+[data-theme="dark"] body[data-page="ai-generate"] label {
+    color: #cbd5e0 !important;
+    font-weight: 500;
+}
+
+/* Headers */
+[data-theme="dark"] body[data-page="ai-generate"] h2,
+[data-theme="dark"] body[data-page="ai-generate"] h3 {
+    color: #ffffff !important;
+    font-weight: 600;
+}
+
+/* Form inputs - dark background, light text */
+[data-theme="dark"] body[data-page="ai-generate"] input,
+[data-theme="dark"] body[data-page="ai-generate"] select,
+[data-theme="dark"] body[data-page="ai-generate"] textarea {
+    background: #1e293b !important;
+    border-color: #475569 !important;
+    color: #f1f5f9 !important;
+}
+
+[data-theme="dark"] body[data-page="ai-generate"] input::placeholder,
+[data-theme="dark"] body[data-page="ai-generate"] textarea::placeholder {
+    color: #94a3b8 !important;
+}
+
+/* Select dropdown options */
+[data-theme="dark"] body[data-page="ai-generate"] select option {
+    background: #1e293b !important;
+    color: #f1f5f9 !important;
+}
+
+/* Icons in inputs */
+[data-theme="dark"] body[data-page="ai-generate"] .absolute i {
+    color: #94a3b8 !important;
+}
+
+/* Empty state */
+[data-theme="dark"] body[data-page="ai-generate"] #empty-state h3 {
+    color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] body[data-page="ai-generate"] #empty-state p {
+    color: #94a3b8 !important;
+}
+
+[data-theme="dark"] body[data-page="ai-generate"] #empty-state i {
+    color: #64748b !important;
+}
+
+/* Error message - keep red but lighter */
+[data-theme="dark"] body[data-page="ai-generate"] #error-message {
+    background: rgba(239, 68, 68, 0.15) !important;
+    border-color: rgba(239, 68, 68, 0.4) !important;
+    color: #fca5a5 !important;
+}
+
+/* Header icon box */
+[data-theme="dark"] body[data-page="ai-generate"] header .inline-flex {
+    background: #1e293b !important;
+}
+
+/* Copy button */
+[data-theme="dark"] body[data-page="ai-generate"] #copy-btn {
+    color: #818cf8 !important;
+}
+
+[data-theme="dark"] body[data-page="ai-generate"] #copy-btn:hover {
+    background: rgba(99, 102, 241, 0.15) !important;
+}

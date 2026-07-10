@@ -1,0 +1,300 @@
+body[data-page="contact"] {
+    background: var(--bg-secondary);
+}
+
+/* Hero Header */
+.contact-header {
+    text-align: center;
+    padding: var(--space-10) var(--space-6);
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+    color: white;
+    border-radius: var(--radius-xl);
+    margin-bottom: var(--space-8);
+    box-shadow: var(--shadow-lg);
+}
+
+.contact-icon {
+    font-size: 4.5rem;
+    margin-bottom: var(--space-3);
+}
+
+.contact-header h1 {
+    color: white;
+    font-size: var(--text-5xl);
+    margin-bottom: var(--space-3);
+}
+
+.contact-subtitle {
+    color: rgba(255, 255, 255, 0.95);
+    font-size: var(--text-lg);
+    margin: 0;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Contact Grid (form + info side by side) */
+.contact-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: var(--space-6);
+    margin-bottom: var(--space-8);
+}
+
+.contact-form-card,
+.contact-info-card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-sm);
+}
+
+.contact-form-card h3,
+.contact-info-card .info-section h3 {
+    color: var(--color-primary);
+    margin-bottom: var(--space-4);
+    font-size: var(--text-xl);
+}
+
+/* Form */
+.contact-form-card form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.contact-form-card .form-group {
+    margin-bottom: 0;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: var(--space-3);
+    font-size: var(--text-base);
+    margin-top: var(--space-2);
+}
+
+.form-feedback {
+    margin-top: var(--space-3);
+    text-align: center;
+    min-height: 20px;
+    display: none;
+}
+
+.form-feedback.success {
+    color: var(--color-success);
+    display: block;
+}
+
+.form-feedback.error {
+    color: var(--color-error);
+    display: block;
+}
+
+/* Info Card */
+.contact-info-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+}
+
+.info-section {
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.info-section:last-of-type {
+    border-bottom: none;
+}
+
+.info-section h3 {
+    margin-bottom: var(--space-2) !important;
+    font-size: var(--text-lg) !important;
+}
+
+.info-section p {
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin: 0;
+}
+
+.info-section strong {
+    color: var(--text-primary);
+}
+
+/* Social Links */
+.social-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--border-subtle);
+}
+
+.social-badge {
+    display: inline-block;
+    padding: var(--space-2) var(--space-3);
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    border-radius: var(--radius-full);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    transition: all var(--transition-fast);
+    cursor: pointer;
+}
+
+.social-badge:hover {
+    background: var(--color-primary);
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* FAQ Section */
+.contact-faq {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+    margin-bottom: var(--space-6);
+}
+
+.contact-faq h3 {
+    text-align: center;
+    color: var(--text-primary);
+    margin-bottom: var(--space-5);
+    font-size: var(--text-2xl);
+}
+
+.faq-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-4);
+}
+
+.faq-item {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    transition: all var(--transition-fast);
+}
+
+.faq-item:hover {
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-sm);
+}
+
+.faq-item p {
+    margin: var(--space-1) 0;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    font-size: var(--text-sm);
+}
+
+.faq-item p strong {
+    color: var(--text-primary);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .contact-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .contact-header h1 {
+        font-size: var(--text-3xl);
+    }
+    
+    .contact-icon {
+        font-size: 3.5rem;
+    }
+}
+/* ============================================
+   DARK MODE FIXES
+   ============================================ */
+
+[data-theme="dark"] body[data-page="ai-generate"] .glass-card {
+    background: rgba(15, 23, 42, 0.95) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #f1f5f9 !important;
+}
+
+/* All text in dark mode should be light */
+[data-theme="dark"] body[data-page="ai-generate"] .glass-card,
+[data-theme="dark"] body[data-page="ai-generate"] .glass-card * {
+    color: #f1f5f9 !important;
+}
+
+/* Form labels - bright in dark mode */
+[data-theme="dark"] body[data-page="ai-generate"] label {
+    color: #cbd5e0 !important;
+    font-weight: 500;
+}
+
+/* Headers */
+[data-theme="dark"] body[data-page="ai-generate"] h2,
+[data-theme="dark"] body[data-page="ai-generate"] h3 {
+    color: #ffffff !important;
+    font-weight: 600;
+}
+
+/* Form inputs - dark background, light text */
+[data-theme="dark"] body[data-page="ai-generate"] input,
+[data-theme="dark"] body[data-page="ai-generate"] select,
+[data-theme="dark"] body[data-page="ai-generate"] textarea {
+    background: #1e293b !important;
+    border-color: #475569 !important;
+    color: #f1f5f9 !important;
+}
+
+[data-theme="dark"] body[data-page="ai-generate"] input::placeholder,
+[data-theme="dark"] body[data-page="ai-generate"] textarea::placeholder {
+    color: #94a3b8 !important;
+}
+
+/* Select dropdown options */
+[data-theme="dark"] body[data-page="ai-generate"] select option {
+    background: #1e293b !important;
+    color: #f1f5f9 !important;
+}
+
+/* Icons in inputs */
+[data-theme="dark"] body[data-page="ai-generate"] .absolute i {
+    color: #94a3b8 !important;
+}
+
+/* Empty state */
+[data-theme="dark"] body[data-page="ai-generate"] #empty-state h3 {
+    color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] body[data-page="ai-generate"] #empty-state p {
+    color: #94a3b8 !important;
+}
+
+[data-theme="dark"] body[data-page="ai-generate"] #empty-state i {
+    color: #64748b !important;
+}
+
+/* Error message - keep red but lighter */
+[data-theme="dark"] body[data-page="ai-generate"] #error-message {
+    background: rgba(239, 68, 68, 0.15) !important;
+    border-color: rgba(239, 68, 68, 0.4) !important;
+    color: #fca5a5 !important;
+}
+
+/* Header icon box */
+[data-theme="dark"] body[data-page="ai-generate"] header .inline-flex {
+    background: #1e293b !important;
+}
+
+/* Copy button */
+[data-theme="dark"] body[data-page="ai-generate"] #copy-btn {
+    color: #818cf8 !important;
+}
+
+[data-theme="dark"] body[data-page="ai-generate"] #copy-btn:hover {
+    background: rgba(99, 102, 241, 0.15) !important;
+}

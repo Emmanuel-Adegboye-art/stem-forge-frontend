@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ffffff">
+    <title>STEM Forge | Contact Us</title>
+    
+    <!-- Prevent theme flash -->
+    <script>
+        (function() {
+            const saved = localStorage.getItem('stemforge-theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = saved || (prefersDark ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+            const meta = document.querySelector('meta[name="theme-color"]');
+            if (meta) meta.setAttribute('content', theme === 'dark' ? '#0f172a' : '#ffffff');
+        })();
+    </script>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/base/dark-background.css">
+    <link rel="stylesheet" href="css/theme-toggle.css">
+    <link rel="stylesheet" href="css/layout/container.css">
+    <link rel="stylesheet" href="css/layout/nav.css">
+    <link rel="stylesheet" href="css/layout/footer.css">
+    <link rel="stylesheet" href="css/components/cards.css">
+    <link rel="stylesheet" href="css/components/buttons.css">
+    <link rel="stylesheet" href="css/components/forms.css">
+    <link rel="stylesheet" href="css/pages/contact.css">
+</head>
+<body data-page="contact">
+
+<div class="app-container">
+    
+    <!-- Navigation -->
+    <nav id="main-nav">
+        <div class="nav-brand">
+            <span class="brand-icon">⚡</span>
+            <span class="brand-text">STEM Forge</span>
+        </div>
+        
+        <button class="mobile-menu-toggle" id="mobile-menu-toggle">☰ Menu</button>
+        
+        <div class="nav-links" id="nav-links">
+            <a href="index.html" class="nav-btn">🏠 Dashboard</a>
+            <a href="ai-generate.html" class="nav-btn">🤖 AI Generate</a>
+            <a href="scheme.html" class="nav-btn">📅 Scheme</a>
+            <a href="attendance.html" class="nav-btn">📋 Attendance</a>
+            
+            <div class="nav-dropdown active">
+                <button class="nav-dropdown-btn">📁 More ▼</button>
+                <div class="nav-dropdown-content">
+                    <a href="pricing.html">💰 Pricing</a>
+                    <a href="exams.html">📝 Exams</a>
+                    <a href="virtual.html">🎥 Virtual Class</a>
+                    <a href="about.html">📖 About</a>
+                    <a href="services.html">🛠️ Services</a>
+                    <a href="contact.html" class="active">📞 Contact</a>
+                </div>
+            </div>
+            
+            <!-- Theme Toggle -->
+            <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+                <svg class="icon-moon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                </svg>
+                <svg class="icon-sun" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="contact-header">
+        <div class="contact-icon">📬</div>
+        <h1>Get in Touch</h1>
+        <p class="contact-subtitle">Have questions about our robotics curriculum? We'd love to hear from you.</p>
+    </div>
+
+    <!-- Contact Grid: Form + Info -->
+    <div class="contact-grid">
+        
+        <!-- Contact Form -->
+        <div class="contact-form-card">
+            <h3>✉️ Send us a message</h3>
+            <form id="contact-form">
+                <div class="form-group">
+                    <label for="contact-name">Full Name *</label>
+                    <input type="text" id="contact-name" name="name" required placeholder="Dr. Sarah Chen">
+                </div>
+                
+                <div class="form-group">
+                    <label for="contact-email">Email Address *</label>
+                    <input type="email" id="contact-email" name="email" required placeholder="sarah.chen@school.edu">
+                </div>
+                
+                <div class="form-group">
+                    <label for="contact-subject">Subject *</label>
+                    <select id="contact-subject" name="subject" required>
+                        <option value="">Select a topic</option>
+                        <option value="curriculum">Curriculum Inquiry</option>
+                        <option value="robotics">Robotics Lesson Support</option>
+                        <option value="services">Services & PD</option>
+                        <option value="partnership">School Partnership</option>
+                        <option value="feedback">Feedback & Suggestions</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="contact-message">Message *</label>
+                    <textarea id="contact-message" name="message" rows="5" required placeholder="Tell us about your robotics program or ask a question about our EDP-based lessons..."></textarea>
+                </div>
+                
+                <button type="submit" class="primary-btn submit-btn" id="contact-submit-btn">📨 Send Message</button>
+                <div id="form-feedback" class="form-feedback"></div>
+            </form>
+        </div>
+
+        <!-- Contact Info -->
+        <div class="contact-info-card">
+            <div class="info-section">
+                <h3>📍 STEM Forge Hub</h3>
+                <p>🔧 42 Innovation Drive<br>Silicon Valley, CA 94025</p>
+            </div>
+            
+            <div class="info-section">
+                <h3>📧 Email Support</h3>
+                <p>📩 <strong>Curriculum:</strong> lessons@stemforge.edu<br>🤖 <strong>Robotics Lab:</strong> robotics@stemforge.edu</p>
+            </div>
+            
+            <div class="info-section">
+                <h3>📞 Phone (Educator Hotline)</h3>
+                <p>📱 +1 (888) 555-STEM<br>Mon-Fri, 9am-6pm PT</p>
+            </div>
+            
+            <div class="info-section">
+                <h3>⏱️ Office Hours</h3>
+                <p>🕒 Virtual consultations available for robotics educators — book via email.</p>
+            </div>
+            
+            <div class="social-links">
+                <span class="social-badge">🐦 Twitter</span>
+                <span class="social-badge">💻 GitHub</span>
+                <span class="social-badge">🔗 LinkedIn</span>
+                <span class="social-badge">📺 YouTube</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="contact-faq">
+        <h3>❓ Frequently Asked Questions</h3>
+        <div class="faq-grid">
+            <div class="faq-item">
+                <p><strong>Q:</strong> Are the robotics lessons compatible with any kit?</p>
+                <p><strong>A:</strong> Yes! Our EDP framework works with Arduino, VEX, LEGO Spike, or custom parts.</p>
+            </div>
+            <div class="faq-item">
+                <p><strong>Q:</strong> Do you offer professional development?</p>
+                <p><strong>A:</strong> Yes — see our Services page for PD workshops.</p>
+            </div>
+            <div class="faq-item">
+                <p><strong>Q:</strong> Can I contribute my own lesson plans?</p>
+                <p><strong>A:</strong> Absolutely! We welcome educator collaborations.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer-note">
+        🤝 We respond to all curriculum inquiries within 24 hours.
+    </div>
+</div>
+
+<!-- Modular JavaScript -->
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
+

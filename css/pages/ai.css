@@ -1,0 +1,238 @@
+body[data-page="ai"] {
+    background: var(--bg-secondary);
+}
+
+.generator-header {
+    margin-bottom: var(--space-8);
+}
+
+.title-section h1 {
+    font-size: var(--text-4xl);
+    margin-bottom: var(--space-2);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+}
+
+.title-section p {
+    color: var(--text-secondary);
+    font-size: var(--text-lg);
+}
+
+.ai-badge {
+    display: inline-block;
+    padding: var(--space-1) var(--space-3);
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+    color: white;
+    font-size: var(--text-xs);
+    font-weight: var(--weight-semibold);
+    border-radius: var(--radius-full);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.generator-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.generator-card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: var(--space-8);
+    box-shadow: var(--shadow-md);
+    text-align: center;
+    margin-bottom: var(--space-6);
+}
+
+.generator-icon {
+    font-size: 4rem;
+    margin-bottom: var(--space-4);
+}
+
+.generator-card h2 {
+    font-size: var(--text-2xl);
+    margin-bottom: var(--space-2);
+}
+
+.generator-subtitle {
+    color: var(--text-secondary);
+    margin-bottom: var(--space-6);
+}
+
+.generator-form {
+    text-align: left;
+}
+
+.generate-btn {
+    width: 100%;
+    padding: var(--space-4);
+    font-size: var(--text-lg);
+    margin-top: var(--space-4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+}
+
+.generation-status {
+    margin-top: var(--space-4);
+    padding: var(--space-3);
+    border-radius: var(--radius-md);
+    text-align: center;
+    display: none;
+}
+
+/* Lesson plan preview */
+.lesson-plan-preview {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+    margin-top: var(--space-6);
+    box-shadow: var(--shadow-md);
+}
+
+.preview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-6);
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.preview-header h2 {
+    font-size: var(--text-2xl);
+}
+
+.close-preview {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-full);
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+    font-size: var(--text-lg);
+    transition: all var(--transition-fast);
+}
+
+.close-preview:hover {
+    background: var(--color-error);
+    color: white;
+}
+
+.lesson-plan-content {
+    color: var(--text-primary);
+}
+
+.preview-actions {
+    display: flex;
+    gap: var(--space-3);
+    margin-top: var(--space-6);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--border-color);
+    justify-content: center;
+}
+
+/* Web search results */
+.search-results {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    margin-top: var(--space-6);
+}
+
+.search-results h3 {
+    margin-bottom: var(--space-4);
+    color: var(--text-primary);
+}
+/* ============================================
+   DARK MODE FIXES
+   ============================================ */
+
+[data-theme="dark"] body[data-page="ai-generate"] .glass-card {
+    background: rgba(15, 23, 42, 0.95) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #f1f5f9 !important;
+}
+
+/* All text in dark mode should be light */
+[data-theme="dark"] body[data-page="ai-generate"] .glass-card,
+[data-theme="dark"] body[data-page="ai-generate"] .glass-card * {
+    color: #f1f5f9 !important;
+}
+
+/* Form labels - bright in dark mode */
+[data-theme="dark"] body[data-page="ai-generate"] label {
+    color: #cbd5e0 !important;
+    font-weight: 500;
+}
+
+/* Headers */
+[data-theme="dark"] body[data-page="ai-generate"] h2,
+[data-theme="dark"] body[data-page="ai-generate"] h3 {
+    color: #ffffff !important;
+    font-weight: 600;
+}
+
+/* Form inputs - dark background, light text */
+[data-theme="dark"] body[data-page="ai-generate"] input,
+[data-theme="dark"] body[data-page="ai-generate"] select,
+[data-theme="dark"] body[data-page="ai-generate"] textarea {
+    background: #1e293b !important;
+    border-color: #475569 !important;
+    color: #f1f5f9 !important;
+}
+
+[data-theme="dark"] body[data-page="ai-generate"] input::placeholder,
+[data-theme="dark"] body[data-page="ai-generate"] textarea::placeholder {
+    color: #94a3b8 !important;
+}
+
+/* Select dropdown options */
+[data-theme="dark"] body[data-page="ai-generate"] select option {
+    background: #1e293b !important;
+    color: #f1f5f9 !important;
+}
+
+/* Icons in inputs */
+[data-theme="dark"] body[data-page="ai-generate"] .absolute i {
+    color: #94a3b8 !important;
+}
+
+/* Empty state */
+[data-theme="dark"] body[data-page="ai-generate"] #empty-state h3 {
+    color: #e2e8f0 !important;
+}
+
+[data-theme="dark"] body[data-page="ai-generate"] #empty-state p {
+    color: #94a3b8 !important;
+}
+
+[data-theme="dark"] body[data-page="ai-generate"] #empty-state i {
+    color: #64748b !important;
+}
+
+/* Error message - keep red but lighter */
+[data-theme="dark"] body[data-page="ai-generate"] #error-message {
+    background: rgba(239, 68, 68, 0.15) !important;
+    border-color: rgba(239, 68, 68, 0.4) !important;
+    color: #fca5a5 !important;
+}
+
+/* Header icon box */
+[data-theme="dark"] body[data-page="ai-generate"] header .inline-flex {
+    background: #1e293b !important;
+}
+
+/* Copy button */
+[data-theme="dark"] body[data-page="ai-generate"] #copy-btn {
+    color: #818cf8 !important;
+}
+
+[data-theme="dark"] body[data-page="ai-generate"] #copy-btn:hover {
+    background: rgba(99, 102, 241, 0.15) !important;
+}

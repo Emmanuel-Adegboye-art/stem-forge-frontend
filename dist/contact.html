@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>STEM Forge | Contact Us</title>
+  <link rel="stylesheet" href="design.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="app-container">
+  <!-- Navigation Bar -->
+<nav id="main-nav">
+    <div class="nav-brand">
+        <span class="brand-icon">⚡</span>
+        <span class="brand-text">STEM Forge</span>
+    </div>
+    
+    <button class="mobile-menu-toggle" id="mobile-menu-toggle">☰ Menu</button>
+    
+    <div class="nav-links" id="nav-links">
+        <!-- Primary Pages (Always visible on desktop) -->
+        <a href="index.html" class="nav-btn">🏠 Home</a>
+        <a href="ai-generate.html" class="nav-btn">🤖 AI Generate</a>
+        <a href="scheme.html" class="nav-btn">📅 Scheme</a>
+        <a href="attendance.html" class="nav-btn">📋 Attendance</a>
+        <a href="dashboard.html" class="nav-btn">📊 Dashboard</a>
+        
+        <!-- Secondary Pages in Dropdown -->
+        <div class="nav-dropdown">
+            <button class="nav-dropdown-btn">📁 More ▼</button>
+            <div class="nav-dropdown-content">
+                <a href="pricing.html">💰 Pricing</a>
+                <a href="exams.html">📝 Exams</a>
+                <a href="virtual.html">🎥 Virtual Class</a>
+                <a href="about.html">📖 About</a>
+                <a href="services.html">🛠️ Services</a>
+                <a href="contact.html">📞 Contact</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+  <div id="contact-page" class="page active-page">
+    <div class="contact-header">
+      <div class="contact-icon">📬</div>
+      <h1>Get in Touch</h1>
+      <p class="contact-subtitle">Have questions about our robotics curriculum? We'd love to hear from you.</p>
+    </div>
+
+    <div class="contact-grid">
+      <div class="contact-form-card">
+        <h3>✉️ Send us a message</h3>
+        <form id="contact-form">
+          <div class="form-group">
+            <label for="contact-name">Full Name *</label>
+            <input type="text" id="contact-name" name="name" required placeholder="Dr. Sarah Chen">
+          </div>
+          <div class="form-group">
+            <label for="contact-email">Email Address *</label>
+            <input type="email" id="contact-email" name="email" required placeholder="sarah.chen@school.edu">
+          </div>
+          <div class="form-group">
+            <label for="contact-subject">Subject *</label>
+            <select id="contact-subject" name="subject" required>
+              <option value="">Select a topic</option>
+              <option value="curriculum">Curriculum Inquiry</option>
+              <option value="robotics">Robotics Lesson Support</option>
+              <option value="services">Services & PD</option>
+              <option value="partnership">School Partnership</option>
+              <option value="feedback">Feedback & Suggestions</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="contact-message">Message *</label>
+            <textarea id="contact-message" name="message" rows="5" required placeholder="Tell us about your robotics program or ask a question about our EDP-based lessons..."></textarea>
+          </div>
+          <button type="submit" class="submit-btn" id="contact-submit-btn">📨 Send Message</button>
+          <div id="form-feedback" class="form-feedback"></div>
+        </form>
+      </div>
+
+      <div class="contact-info-card">
+        <div class="info-section">
+          <h3>📍 STEM Forge Hub</h3>
+          <p>🔧 42 Innovation Drive<br>Silicon Valley, CA 94025</p>
+        </div>
+        <div class="info-section">
+          <h3>📧 Email Support</h3>
+          <p>📩 <strong>Curriculum:</strong> lessons@stemforge.edu<br>🤖 <strong>Robotics Lab:</strong> robotics@stemforge.edu</p>
+        </div>
+        <div class="info-section">
+          <h3>📞 Phone (Educator Hotline)</h3>
+          <p>📱 +1 (888) 555-STEM<br>Mon-Fri, 9am-6pm PT</p>
+        </div>
+        <div class="info-section">
+          <h3>⏱️ Office Hours</h3>
+          <p>🕒 Virtual consultations available for robotics educators — book via email.</p>
+        </div>
+        <div class="social-links">
+          <span class="social-badge">🐦 Twitter</span>
+          <span class="social-badge">💻 GitHub</span>
+          <span class="social-badge">🔗 LinkedIn</span>
+          <span class="social-badge">📺 YouTube Tutorials</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="contact-faq">
+      <h3>❓ Frequently Asked Questions</h3>
+      <div class="faq-grid">
+        <div class="faq-item"><strong>Q:</strong> Are the robotics lessons compatible with any kit?<br><strong>A:</strong> Yes! Our EDP framework works with Arduino, VEX, LEGO Spike, or custom parts.</div>
+        <div class="faq-item"><strong>Q:</strong> Do you offer professional development?<br><strong>A:</strong> Yes — see our Services page for PD workshops.</div>
+        <div class="faq-item"><strong>Q:</strong> Can I contribute my own lesson plans?<br><strong>A:</strong> Absolutely! We welcome educator collaborations.</div>
+      </div>
+    </div>
+    <div class="footer-note">🤝 We respond to all curriculum inquiries within 24 hours.</div>
+  </div>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
