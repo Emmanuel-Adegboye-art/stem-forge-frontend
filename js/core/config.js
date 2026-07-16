@@ -31,7 +31,7 @@ export const CONFIG = {
         attendance: 'stemforge:attendance'
     },
     
-    TIMEOUT: 30000,
+    TIMEOUT: 120000,
     
     // Feature flags
     FEATURES: {
