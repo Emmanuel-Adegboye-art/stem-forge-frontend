@@ -9,7 +9,7 @@
 // ============================================
 
 const CONFIG = {
-    API_URL: 'https://stemforge-backend-1.onrender.com'
+    API_URL: 'https://stemforge-backend.onrender.com'
 };
 
 // ============================================
