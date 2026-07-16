@@ -4,7 +4,7 @@
 
 export const CONFIG = {
     // For local development - change this when you deploy
-    API_URL: 'https://stemforge-backend.onrender.com',
+    API_URL: 'https://stemforge-backend-1.onrender.com',
     
     ENDPOINTS: {
         generate: '/api/generate',
