@@ -4,6 +4,7 @@
 // ============================================
 
 import { escapeHtml } from '../core/utils.js';
+import { StudentsStore, AttendanceStore, ClassesStore } from '../core/store.js';
 
 let allStudents = [];
 let allAttendance = [];
@@ -21,17 +22,9 @@ export async function init() {
 }
 
 async function loadData() {
-    allStudents = loadFromStorage('stemforge:students');
-    allAttendance = loadFromStorage('stemforge:attendance');
-    allClasses = loadFromStorage('stemforge:classes');
-}
-
-function loadFromStorage(key) {
-    try {
-        return JSON.parse(localStorage.getItem(key) || '[]');
-    } catch {
-        return [];
-    }
+    allStudents   = StudentsStore.getAll();
+    allAttendance = AttendanceStore.getAll();
+    allClasses    = ClassesStore.getAll();
 }
 
 // ============================================
@@ -90,8 +83,6 @@ function populateClassFilter() {
 function handleFilterChange() {
     const className = document.getElementById('report-class')?.value;
     const armSelect = document.getElementById('report-arm');
-    
-    if (!classSelect) return;
     
     if (!className) {
         armSelect.innerHTML = '<option value="">All Arms</option>';

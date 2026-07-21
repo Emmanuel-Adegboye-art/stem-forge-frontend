@@ -1,302 +1,257 @@
 // ============================================
 // ATTENDANCE SYSTEM
-// Manages class attendance with local storage
+// Takes attendance using REAL students from the
+// shared data store (no more hardcoded names).
 // ============================================
 
+import { StudentsStore, AttendanceStore, ClassesStore } from '../core/store.js';
 import { escapeHtml, showStatus } from '../core/utils.js';
-import { CONFIG } from '../core/config.js';
-import { generateStudentId, isValidStudentId } from '../core/studentIdGenerator.js';
-
-const STUDENTS_BY_CLASS = {
-    JSS1A: [
-        { id: 'J1A001', name: 'Adebayo Tunde' },
-        { id: 'J1A002', name: 'Okafor Chiamaka' },
-        { id: 'J1A003', name: 'Eze Daniel' },
-        { id: 'J1A004', name: 'Bello Aisha' },
-        { id: 'J1A005', name: 'Okonkwo Ifeanyi' }
-    ],
-    JSS1B: [
-        { id: 'J1B001', name: 'Adamu Haliru' },
-        { id: 'J1B002', name: 'Okeke Miriam' },
-        { id: 'J1B003', name: 'Lawal Tunde' }
-    ],
-    JSS2A: [
-        { id: 'J2A001', name: 'Olayinka Femi' },
-        { id: 'J2A002', name: 'Nwachukwu Grace' },
-        { id: 'J2A003', name: 'Ibrahim Zainab' },
-        { id: 'J2A004', name: 'Adeleke David' }
-    ],
-    JSS2B: [
-        { id: 'J2B001', name: 'Akinwale Tomide' },
-        { id: 'J2B002', name: 'Eze Ngozi' }
-    ],
-    JSS3A: [
-        { id: 'J3A001', name: 'Okoro Esther' },
-        { id: 'J3A002', name: 'Mohammed Ali' },
-        { id: 'J3A003', name: 'Ogunleye Tosin' }
-    ],
-    SS1A: [
-        { id: 'S1A001', name: 'Adekunle Joshua' },
-        { id: 'S1A002', name: 'Ebere Victoria' }
-    ],
-    SS2A: [
-        { id: 'S2A001', name: 'Balogun Samuel' }
-    ]
-};
 
 let currentStudents = [];
+let currentClass = null;
+let currentArm = null;
 
 export function init() {
     const classSelect = document.getElementById('attendance-class');
+    const armSelect   = document.getElementById('attendance-arm');
     if (!classSelect) return;
-    
-    classSelect.addEventListener('change', loadStudents);
-    
-    // Set default date
+
+    // Set today's date
     const dateInput = document.getElementById('attendance-date');
     if (dateInput && !dateInput.value) {
         dateInput.value = new Date().toISOString().split('T')[0];
     }
-    
-    // Wire up action buttons
-    const saveBtn = document.getElementById('save-attendance-btn');
-    if (saveBtn) saveBtn.addEventListener('click', saveAttendance);
-    
-    const loadBtn = document.getElementById('load-previous-btn');
-    if (loadBtn) loadBtn.addEventListener('click', loadPreviousAttendance);
-    
-    const markAllBtn = document.getElementById('mark-all-present-btn');
-    if (markAllBtn) markAllBtn.addEventListener('click', markAllPresent);
-    
-    // Populate class dropdown dynamically
+
+    // Populate class dropdown from saved classes
     populateClassDropdown(classSelect);
-    
-    // Initial load
-    if (classSelect.value) {
-        loadStudents();
+
+    classSelect.addEventListener('change', () => {
+        currentClass = classSelect.value || null;
+        currentArm   = null;
+        populateArmDropdown(armSelect, currentClass);
+        renderRoster();
+        loadHistory();
+    });
+
+    if (armSelect) {
+        armSelect.addEventListener('change', () => {
+            currentArm = armSelect.value || null;
+            renderRoster();
+            loadHistory();
+        });
     }
+
+    // Wire up buttons
+    const saveBtn        = document.getElementById('save-attendance-btn');
+    const loadPrevBtn    = document.getElementById('load-previous-btn');
+    const markAllBtn     = document.getElementById('mark-all-present-btn');
+
+    if (saveBtn)     saveBtn.addEventListener('click', saveAttendance);
+    if (loadPrevBtn) loadPrevBtn.addEventListener('click', loadPreviousAttendance);
+    if (markAllBtn)  markAllBtn.addEventListener('click', markAllPresent);
+
     loadHistory();
 }
 
+// ── Class / Arm dropdowns ─────────────────────
+
 function populateClassDropdown(select) {
-    // Clear existing options except first
-    const firstOption = select.querySelector('option[value=""]');
-    select.innerHTML = '';
-    if (firstOption) select.appendChild(firstOption);
-    
-    // Add classes from data
-    Object.keys(STUDENTS_BY_CLASS).forEach(className => {
-        const option = document.createElement('option');
-        option.value = className;
-        option.textContent = formatClassName(className);
-        select.appendChild(option);
+    const classes = ClassesStore.getAll();
+    select.innerHTML = '<option value="">-- Select class --</option>';
+
+    if (classes.length === 0) {
+        select.innerHTML += '<option disabled>No classes yet — add one in Classes page</option>';
+        return;
+    }
+
+    classes.forEach(cls => {
+        const opt = document.createElement('option');
+        opt.value = cls.name;
+        opt.textContent = cls.name;
+        select.appendChild(opt);
     });
 }
 
-function formatClassName(classCode) {
-    // JSS1A -> JSS 1A Robotics
-    const match = classCode.match(/([A-Z]+)(\d)([A-C])/);
-    if (!match) return classCode;
-    
-    const [, level, num, section] = match;
-    const levelName = level === 'J' ? 'JSS' : 'SS';
-    return `${levelName} ${num}${section} Robotics`;
+function populateArmDropdown(armSelect, className) {
+    if (!armSelect) return;
+    armSelect.innerHTML = '<option value="">-- Select arm --</option>';
+
+    if (!className) return;
+
+    const cls = ClassesStore.getAll().find(c => c.name === className);
+    if (!cls) return;
+
+    (cls.arms || ['A']).forEach(arm => {
+        const opt = document.createElement('option');
+        opt.value = arm;
+        opt.textContent = `Arm ${arm}`;
+        armSelect.appendChild(opt);
+    });
 }
 
-function loadStudents() {
-    const className = document.getElementById('attendance-class')?.value;
-    if (!className) {
-        hideStudentList();
+// ── Roster ───────────────────────────────────
+
+function renderRoster() {
+    const container = document.getElementById('attendance-list');
+    const placeholder = document.getElementById('attendance-placeholder');
+    const section = document.getElementById('attendance-section');
+
+    if (!currentClass) {
+        if (placeholder) placeholder.style.display = 'flex';
+        if (section) section.style.display = 'none';
         return;
     }
-    
-    currentStudents = STUDENTS_BY_CLASS[className] || [];
-    
+
+    currentStudents = StudentsStore.getByClass(currentClass, currentArm || null);
+
+    if (placeholder) placeholder.style.display = 'none';
+    if (section) section.style.display = 'block';
+
+    if (!container) return;
+
     if (currentStudents.length === 0) {
-        showStatus('attendance-status', `No students found for ${className}`, 'warning');
-        hideStudentList();
+        container.innerHTML = `
+            <div style="text-align:center;padding:2rem;color:var(--text-muted)">
+                <p>No students in ${currentClass}${currentArm ? ' ' + currentArm : ''} yet.</p>
+                <a href="register-student.html?class=${encodeURIComponent(currentClass)}${currentArm ? '&arm=' + encodeURIComponent(currentArm) : ''}" 
+                   class="btn btn-primary" style="margin-top:1rem">
+                    ➕ Add Students
+                </a>
+            </div>`;
         return;
     }
-    
-    renderStudentList(currentStudents);
-    showStudentList();
-    updateStats();
-    loadHistory();
-}
 
-function renderStudentList(students) {
-    const list = document.getElementById('student-list');
-    if (!list) return;
-    
-    list.innerHTML = students.map(student => `
-        <div class="student-item">
+    container.innerHTML = currentStudents.map(student => `
+        <div class="attendance-row" data-id="${escapeHtml(student.id)}">
             <div class="student-info">
                 <span class="student-id">${escapeHtml(student.id)}</span>
                 <span class="student-name">${escapeHtml(student.name)}</span>
             </div>
-            <label class="attendance-toggle">
-                <span>Present</span>
-                <input type="checkbox" class="attendance-check" data-id="${student.id}" checked>
-            </label>
+            <div class="attendance-buttons">
+                <button class="att-btn present" data-status="present" onclick="setStatus(this, 'present')">✅ Present</button>
+                <button class="att-btn absent"  data-status="absent"  onclick="setStatus(this, 'absent')">❌ Absent</button>
+                <button class="att-btn late"    data-status="late"    onclick="setStatus(this, 'late')">⏰ Late</button>
+            </div>
         </div>
     `).join('');
-    
-    // Wire up change listeners
-    list.querySelectorAll('.attendance-check').forEach(cb => {
-        cb.addEventListener('change', updateStats);
+}
+
+// Make setStatus globally accessible (onclick attribute in HTML)
+window.setStatus = function(btn, status) {
+    const row = btn.closest('.attendance-row');
+    row.querySelectorAll('.att-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    row.dataset.status = status;
+};
+
+// ── Actions ───────────────────────────────────
+
+function markAllPresent() {
+    document.querySelectorAll('.attendance-row').forEach(row => {
+        row.querySelectorAll('.att-btn').forEach(b => b.classList.remove('selected'));
+        const presentBtn = row.querySelector('.att-btn.present');
+        if (presentBtn) {
+            presentBtn.classList.add('selected');
+            row.dataset.status = 'present';
+        }
     });
-}
-
-function updateStats() {
-    const checkboxes = document.querySelectorAll('.attendance-check');
-    const total = checkboxes.length;
-    const present = Array.from(checkboxes).filter(cb => cb.checked).length;
-    const absent = total - present;
-    const percent = total > 0 ? Math.round((present / total) * 100) : 0;
-    
-    document.getElementById('total-students').textContent = total;
-    document.getElementById('present-count').textContent = present;
-    document.getElementById('absent-count').textContent = absent;
-    document.getElementById('attendance-percent').textContent = `${percent}%`;
-}
-
-function showStudentList() {
-    document.getElementById('student-list-container').style.display = 'block';
-    document.getElementById('attendance-stats').style.display = 'grid';
-}
-
-function hideStudentList() {
-    document.getElementById('student-list-container').style.display = 'none';
-    document.getElementById('attendance-stats').style.display = 'none';
 }
 
 function saveAttendance() {
-    const className = document.getElementById('attendance-class')?.value;
+    if (!currentClass) {
+        showStatus('attendance-status', 'Please select a class first.', 'error');
+        return;
+    }
+
     const date = document.getElementById('attendance-date')?.value;
-    
-    if (!className || !date) {
-        showStatus('attendance-status', 'Please select class and date', 'error');
+    if (!date) {
+        showStatus('attendance-status', 'Please select a date.', 'error');
         return;
     }
-    
-    if (currentStudents.length === 0) {
-        showStatus('attendance-status', 'No students to save', 'warning');
+
+    const rows = document.querySelectorAll('.attendance-row');
+    if (rows.length === 0) {
+        showStatus('attendance-status', 'No students to mark.', 'error');
         return;
     }
-    
-    const attendance = [];
-    document.querySelectorAll('.attendance-check').forEach(cb => {
-        const student = currentStudents.find(s => s.id === cb.dataset.id);
-        if (student) {
-            attendance.push({
-                id: student.id,
-                name: student.name,
-                present: cb.checked
-            });
-        }
+
+    const entries = [];
+    let unmarked = 0;
+
+    rows.forEach(row => {
+        const id = row.dataset.id;
+        const status = row.dataset.status || '';
+        const student = currentStudents.find(s => s.id === id);
+        if (!status) { unmarked++; return; }
+        entries.push({ id, name: student?.name || id, status });
     });
-    
-    const record = {
-        class: className,
-        date: date,
-        students: attendance,
-        timestamp: new Date().toISOString(),
-        presentCount: attendance.filter(s => s.present).length,
-        absentCount: attendance.filter(s => !s.present).length
-    };
-    
-    try {
-        const all = JSON.parse(localStorage.getItem(CONFIG.STORAGE_KEYS.attendance) || '[]');
-        const existingIndex = all.findIndex(r => r.class === className && r.date === date);
-        
-        if (existingIndex >= 0) {
-            all[existingIndex] = record;
-        } else {
-            all.push(record);
-        }
-        
-        localStorage.setItem(CONFIG.STORAGE_KEYS.attendance, JSON.stringify(all));
-        showStatus('attendance-status', '✅ Attendance saved successfully!', 'success', 3000);
-        loadHistory();
-        
-    } catch (error) {
-        console.error('Save error:', error);
-        showStatus('attendance-status', 'Failed to save. Storage may be full.', 'error', 4000);
+
+    if (unmarked > 0) {
+        const go = confirm(`${unmarked} student(s) have no status marked. Save anyway (they will be skipped)?`);
+        if (!go) return;
     }
+
+    AttendanceStore.saveRecord(currentClass, currentArm || '', date, entries);
+    showStatus('attendance-status', `✅ Attendance saved for ${currentClass}${currentArm ? ' ' + currentArm : ''} — ${date}`, 'success', 4000);
+    loadHistory();
 }
 
 function loadPreviousAttendance() {
-    const className = document.getElementById('attendance-class')?.value;
+    if (!currentClass) {
+        showStatus('attendance-status', 'Select a class first.', 'error');
+        return;
+    }
+
     const date = document.getElementById('attendance-date')?.value;
-    
-    if (!className || !date) {
-        showStatus('attendance-status', 'Select class and date first', 'warning');
+    if (!date) {
+        showStatus('attendance-status', 'Select a date first.', 'error');
         return;
     }
-    
-    const all = JSON.parse(localStorage.getItem(CONFIG.STORAGE_KEYS.attendance) || '[]');
-    const record = all.find(r => r.class === className && r.date === date);
-    
+
+    const record = AttendanceStore.getRecord(currentClass, currentArm || '', date);
     if (!record) {
-        showStatus('attendance-status', `No record found for ${date}`, 'warning');
+        showStatus('attendance-status', `No saved attendance found for ${date}.`, 'info', 3000);
         return;
     }
-    
-    record.students.forEach(s => {
-        const cb = document.querySelector(`.attendance-check[data-id="${s.id}"]`);
-        if (cb) cb.checked = s.present;
+
+    // Apply saved statuses
+    record.entries.forEach(entry => {
+        const row = document.querySelector(`.attendance-row[data-id="${entry.id}"]`);
+        if (!row) return;
+        row.dataset.status = entry.status;
+        row.querySelectorAll('.att-btn').forEach(b => {
+            b.classList.toggle('selected', b.dataset.status === entry.status);
+        });
     });
-    
-    updateStats();
-    showStatus('attendance-status', `📜 Loaded attendance for ${date}`, 'success', 3000);
+
+    showStatus('attendance-status', `Loaded attendance from ${date}`, 'success', 3000);
 }
 
-function markAllPresent() {
-    document.querySelectorAll('.attendance-check').forEach(cb => cb.checked = true);
-    updateStats();
-    showStatus('attendance-status', '✅ All students marked present', 'success', 2000);
-}
+// ── History ───────────────────────────────────
 
 function loadHistory() {
-    const className = document.getElementById('attendance-class')?.value;
-    if (!className) {
-        document.getElementById('attendance-history').style.display = 'none';
+    const container = document.getElementById('history-list');
+    if (!container) return;
+
+    const records = currentClass
+        ? AttendanceStore.getByClass(currentClass, currentArm || null)
+        : AttendanceStore.getAll();
+
+    const sorted = records.sort((a, b) => b.date.localeCompare(a.date)).slice(0, 10);
+
+    if (sorted.length === 0) {
+        container.innerHTML = `<p style="color:var(--text-muted);text-align:center">No attendance records yet.</p>`;
         return;
     }
-    
-    const all = JSON.parse(localStorage.getItem(CONFIG.STORAGE_KEYS.attendance) || '[]');
-    const classRecords = all
-        .filter(r => r.class === className)
-        .sort((a, b) => new Date(b.date) - new Date(a.date));
-    
-    const historyList = document.getElementById('history-list');
-    const historyDiv = document.getElementById('attendance-history');
-    
-    if (!historyList || !historyDiv) return;
-    
-    if (classRecords.length === 0) {
-        historyDiv.style.display = 'none';
-        return;
-    }
-    
-    historyList.innerHTML = classRecords.slice(0, 10).map(record => {
-        const total = record.students?.length || 0;
-        const present = record.presentCount || record.students?.filter(s => s.present).length || 0;
-        const percent = total > 0 ? Math.round((present / total) * 100) : 0;
-        
+
+    container.innerHTML = sorted.map(r => {
+        const present = (r.entries || []).filter(e => e.status === 'present').length;
+        const total   = (r.entries || []).length;
         return `
-            <div class="student-item">
-                <div class="student-info">
-                    <span>📅 ${escapeHtml(record.date)}</span>
-                </div>
-                <div class="history-stats">
-                    <span>✅ ${present}</span>
-                    <span>❌ ${total - present}</span>
-                    <span>📊 ${percent}%</span>
-                </div>
-            </div>
-        `;
+            <div class="history-item">
+                <span class="history-date">${r.date}</span>
+                <span class="history-class">${r.class}${r.arm ? ' ' + r.arm : ''}</span>
+                <span class="history-count">${present}/${total} present</span>
+            </div>`;
     }).join('');
-    
-    historyDiv.style.display = 'block';
 }

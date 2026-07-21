@@ -4,6 +4,7 @@
 // ============================================
 
 import { escapeHtml, showStatus } from '../core/utils.js';
+import { ClassesStore, StudentsStore } from '../core/store.js';
 
 let allClasses = [];
 let allStudents = [];
@@ -42,39 +43,29 @@ async function loadData() {
 }
 
 // ============================================
-// LOCAL STORAGE
+// DATA LAYER — delegates to shared store
 // ============================================
 
 function loadClasses() {
-    try {
-        return JSON.parse(localStorage.getItem('stemforge:classes') || '[]');
-    } catch {
-        return [];
-    }
+    return ClassesStore.getAll();
 }
 
 function saveClasses() {
+    // Write the current allClasses array to the shared store key
     try {
         localStorage.setItem('stemforge:classes', JSON.stringify(allClasses));
-    } catch (error) {
-        console.error('Save failed:', error);
-    }
+    } catch (e) { console.error('saveClasses failed:', e); }
 }
 
 function loadStudents() {
-    try {
-        return JSON.parse(localStorage.getItem('stemforge:students') || '[]');
-    } catch {
-        return [];
-    }
+    return StudentsStore.getAll();
 }
 
 function saveStudents() {
+    // Write the current allStudents array to the shared store key
     try {
         localStorage.setItem('stemforge:students', JSON.stringify(allStudents));
-    } catch (error) {
-        console.error('Save failed:', error);
-    }
+    } catch (e) { console.error('saveStudents failed:', e); }
 }
 
 // ============================================

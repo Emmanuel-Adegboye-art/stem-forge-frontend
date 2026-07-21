@@ -4,6 +4,7 @@
 // ============================================
 
 import { escapeHtml, showStatus } from '../core/utils.js';
+import { StudentsStore, ClassesStore } from '../core/store.js';
 
 let isSubmitting = false;
 
@@ -201,15 +202,7 @@ async function handleSubmit(e) {
         );
         if (!confirmAdd) return;
     }
-    
-    // Generate ID
-    formData.id = generateNextStudentId(formData.class, formData.arm);
-    formData.currentClass = `${formData.class} ${formData.arm}`.trim();
-    formData.enrolledDate = new Date().toISOString();
-    formData.active = true;
-    formData.createdAt = new Date().toISOString();
-    formData.updatedAt = new Date().toISOString();
-    
+
     // Set submitting state
     isSubmitting = true;
     const submitBtn = document.getElementById('register-btn');
@@ -222,10 +215,16 @@ async function handleSubmit(e) {
     showStatus('register-status', 'Registering student...', 'info', 0);
     
     try {
-        // Save to localStorage (temporary - will sync to API later)
-        const students = getAllStudents();
-        students.push(formData);
-        saveAllStudents(students);
+        // Generate ID using the shared store
+        formData.id = StudentsStore.generateId(formData.class, formData.arm);
+        formData.currentClass = `${formData.class} ${formData.arm}`.trim();
+        formData.enrolledDate = new Date().toISOString();
+        formData.active = true;
+        formData.createdAt = new Date().toISOString();
+        formData.updatedAt = new Date().toISOString();
+
+        // Save via shared store
+        StudentsStore.save(formData);
         
         // Show success
         showSuccessCard(formData);
@@ -309,23 +308,13 @@ function resetForm() {
 }
 
 // ============================================
-// LOCAL STORAGE HELPERS
+// STORAGE — delegates to shared store
 // ============================================
 
 function getAllStudents() {
-    try {
-        const stored = localStorage.getItem('stemforge:students') || '[]';
-        return JSON.parse(stored);
-    } catch (error) {
-        console.error('Failed to load students:', error);
-        return [];
-    }
+    return StudentsStore.getAll();
 }
 
 function saveAllStudents(students) {
-    try {
-        localStorage.setItem('stemforge:students', JSON.stringify(students));
-    } catch (error) {
-        console.error('Failed to save students:', error);
-    }
+    // Handled by StudentsStore.save() during submit
 }

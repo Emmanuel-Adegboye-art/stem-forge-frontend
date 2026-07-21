@@ -3,9 +3,8 @@
 // View, edit, delete, and move students
 // ============================================
 
-import { StudentsAPI } from '../core/api.js';
 import { escapeHtml, showStatus } from '../core/utils.js';
-import { CONFIG } from '../core/config.js';
+import { StudentsStore, ClassesStore } from '../core/store.js';
 
 let allStudents = [];
 let filteredStudents = [];
@@ -27,7 +26,6 @@ export async function init() {
 }
 
 async function loadStudents() {
-    const container = document.getElementById('students-container');
     const loadingState = document.getElementById('loading-state');
     const emptyState = document.getElementById('empty-state');
     
@@ -35,11 +33,8 @@ async function loadStudents() {
         if (loadingState) loadingState.style.display = 'flex';
         if (emptyState) emptyState.style.display = 'none';
         
-        // Fetch from API (falls back to localStorage if not authenticated)
-        const response = await StudentsAPI.getAll();
-        allStudents = response.data || [];
-        
-        // Apply filters
+        // Load from shared store (localStorage)
+        allStudents = StudentsStore.getAll();
         applyFilters();
         
         if (loadingState) loadingState.style.display = 'none';
@@ -47,29 +42,17 @@ async function loadStudents() {
     } catch (error) {
         console.error('Failed to load students:', error);
         if (loadingState) loadingState.style.display = 'none';
-        
-        // Fallback to localStorage
-        allStudents = loadFromLocalStorage();
+        allStudents = [];
         applyFilters();
     }
 }
 
 function loadFromLocalStorage() {
-    try {
-        const stored = localStorage.getItem('stemforge:students') || '[]';
-        return JSON.parse(stored);
-    } catch (error) {
-        console.error('Failed to load from localStorage:', error);
-        return [];
-    }
+    return StudentsStore.getAll();
 }
 
 function saveToLocalStorage() {
-    try {
-        localStorage.setItem('stemforge:students', JSON.stringify(allStudents));
-    } catch (error) {
-        console.error('Failed to save to localStorage:', error);
-    }
+    // Students are saved via StudentsStore.save() individually
 }
 
 // ============================================
