@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ffffff">
+    <title>STEM Forge | Student Management</title>
+    
+    <!-- Prevent theme flash -->
+    <script>
+        (function() {
+            const saved = localStorage.getItem('stemforge-theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = saved || (prefersDark ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+            const meta = document.querySelector('meta[name="theme-color"]');
+            if (meta) meta.setAttribute('content', theme === 'dark' ? '#0f172a' : '#ffffff');
+        })();
+    </script>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/base/dark-background.css">
+    <link rel="stylesheet" href="css/theme-toggle.css">
+    <link rel="stylesheet" href="css/layout/container.css">
+    <link rel="stylesheet" href="css/layout/nav.css">
+    <link rel="stylesheet" href="css/layout/footer.css">
+    <link rel="stylesheet" href="css/components/cards.css">
+    <link rel="stylesheet" href="css/components/buttons.css">
+    <link rel="stylesheet" href="css/components/forms.css">
+    <link rel="stylesheet" href="css/components/alerts.css">
+    <link rel="stylesheet" href="css/components/tables.css">
+    <link rel="stylesheet" href="css/components/modals.css">
+    <link rel="stylesheet" href="css/pages/students.css">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="js/core/firebase-init.js"></script>
+</head>
+<body data-page="students">
+
+<div class="app-container">
+    
+    <!-- Navigation -->
+    <nav id="main-nav">
+        <div class="nav-brand">
+            <span class="brand-icon">⚡</span>
+            <span class="brand-text">STEM Forge</span>
+        </div>
+        
+        <button class="mobile-menu-toggle" id="mobile-menu-toggle">☰ Menu</button>
+        
+        <div class="nav-links" id="nav-links">
+            <a href="index.html" class="nav-btn">🏠 Dashboard</a>
+            <a href="ai-generate.html" class="nav-btn">🤖 AI Generate</a>
+            <a href="scheme.html" class="nav-btn">📅 Scheme</a>
+            <a href="attendance.html" class="nav-btn">📋 Attendance</a>
+            <a href="students.html" class="nav-btn active">👥 Students</a>
+            <a href="classes.html" class="nav-btn">🏫 Classes</a>
+            
+            <div class="nav-dropdown">
+                <button class="nav-dropdown-btn">📁 More ▼</button>
+                <div class="nav-dropdown-content">
+                    <a href="attendance-reports.html">📊 Reports</a>
+                    <a href="pricing.html">💰 Pricing</a>
+                    <a href="exams.html">📝 Exams</a>
+                    <a href="virtual.html">🎥 Virtual Class</a>
+                    <a href="about.html">📖 About</a>
+                    <a href="services.html">🛠️ Services</a>
+                    <a href="contact.html">📞 Contact</a>
+                </div>
+            </div>
+            
+            <!-- Theme Toggle -->
+            <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+                <svg class="icon-moon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                </svg>
+                <svg class="icon-sun" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="generator-header">
+        <div class="title-section">
+            <h1>👥 Student Management</h1>
+            <p>Register, manage, and organize students across all classes</p>
+        </div>
+    </div>
+
+    <div class="generator-container">
+        
+        <!-- Action Bar -->
+        <div class="action-bar">
+            <a href="register-student.html" class="primary-btn">
+                ➕ Register New Student
+            </a>
+            <a href="classes.html" class="secondary-btn">
+                🏫 Manage Classes
+            </a>
+            <button id="export-students-btn" class="secondary-btn">
+                📤 Export Students
+            </button>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters-bar">
+            <div class="filter-group">
+                <label for="filter-class">📚 Class:</label>
+                <select id="filter-class">
+                    <option value="">All Classes</option>
+                    <!-- Populated by JavaScript -->
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="filter-arm">🏫 Arm:</label>
+                <select id="filter-arm">
+                    <option value="">All Arms</option>
+                </select>
+            </div>
+            
+            <div class="filter-group filter-search-group">
+                <label for="filter-search">🔍 Search:</label>
+                <input type="text" id="filter-search" placeholder="Search by name or ID...">
+            </div>
+
+            <div class="filter-stats" id="filter-stats">
+                <span id="total-students-count">0 students</span>
+            </div>
+        </div>
+
+        <!-- Students by Class -->
+        <div id="students-container" class="students-container">
+            <div class="loading-state" id="loading-state">
+                <div class="loading-spinner"></div>
+                <p>Loading students...</p>
+            </div>
+            
+            <div id="empty-state" class="empty-state-large" style="display: none;">
+                <div class="empty-icon">👥</div>
+                <h3>No Students Yet</h3>
+                <p>Start by registering your first student</p>
+                <a href="register-student.html" class="primary-btn">➕ Register First Student</a>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Move Student Modal -->
+    <div id="move-student-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>➡️ Move Student to Another Arm</h2>
+                <button class="modal-close" id="close-move-modal">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="move-student-info">
+                    <p><strong>Student:</strong> <span id="move-student-name"></span></p>
+                    <p><strong>Current Class:</strong> <span id="move-current-class"></span></p>
+                </div>
+                
+                <form id="move-student-form">
+                    <div class="form-group">
+                        <label for="move-target-class">📚 Target Class</label>
+                        <select id="move-target-class" required>
+                            <option value="">Select class</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="move-target-arm">🏫 Target Arm</label>
+                        <select id="move-target-arm" required>
+                            <option value="">Select arm</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="move-reason">📝 Reason (Optional)</label>
+                        <select id="move-reason">
+                            <option value="rebalance">Class Rebalancing</option>
+                            <option value="request">Parent/Student Request</option>
+                            <option value="academic">Academic Reasons</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-info">
+                        <i class="fa-solid fa-info-circle"></i>
+                        All attendance records for this student will be transferred to the new class/arm.
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="secondary-btn" id="cancel-move-btn">Cancel</button>
+                <button type="button" class="primary-btn" id="confirm-move-btn">✅ Confirm Move</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Student Modal -->
+    <div id="edit-student-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>✏️ Edit Student</h2>
+                <button class="modal-close" id="close-edit-modal">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-student-form">
+                    <input type="hidden" id="edit-student-id">
+                    
+                    <div class="form-group">
+                        <label for="edit-name">Full Name</label>
+                        <input type="text" id="edit-name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-gender">Gender</label>
+                        <select id="edit-gender">
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-dob">Date of Birth</label>
+                        <input type="date" id="edit-dob">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-parent-name">Parent/Guardian Name</label>
+                        <input type="text" id="edit-parent-name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-parent-phone">Parent Phone</label>
+                        <input type="tel" id="edit-parent-phone" placeholder="+234...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-parent-email">Parent Email</label>
+                        <input type="email" id="edit-parent-email" placeholder="parent@email.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-address">Address (Optional)</label>
+                        <textarea id="edit-address" rows="2"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="secondary-btn" id="cancel-edit-btn">Cancel</button>
+                <button type="button" class="primary-btn" id="save-edit-btn">💾 Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        👥 Student Management System | Powered by Firebase | <a href="classes.html">Manage Classes →</a>
+    </div>
+</div>
+
+<!-- Modular JavaScript -->
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

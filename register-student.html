@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ffffff">
+    <title>Register Student | STEM Forge</title>
+    
+    <!-- Prevent theme flash -->
+    <script>
+        (function() {
+            const saved = localStorage.getItem('stemforge-theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = saved || (prefersDark ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+            const meta = document.querySelector('meta[name="theme-color"]');
+            if (meta) meta.setAttribute('content', theme === 'dark' ? '#0f172a' : '#ffffff');
+        })();
+    </script>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/base/dark-background.css">
+    <link rel="stylesheet" href="css/theme-toggle.css">
+    <link rel="stylesheet" href="css/layout/container.css">
+    <link rel="stylesheet" href="css/layout/nav.css">
+    <link rel="stylesheet" href="css/layout/footer.css">
+    <link rel="stylesheet" href="css/components/cards.css">
+    <link rel="stylesheet" href="css/components/buttons.css">
+    <link rel="stylesheet" href="css/components/forms.css">
+    <link rel="stylesheet" href="css/components/alerts.css">
+    <link rel="stylesheet" href="css/pages/students.css">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="js/core/firebase-init.js"></script>
+</head>
+<body data-page="register-student">
+
+<div class="app-container">
+    
+    <!-- Navigation -->
+    <nav id="main-nav">
+        <div class="nav-brand">
+            <span class="brand-icon">⚡</span>
+            <span class="brand-text">STEM Forge</span>
+        </div>
+        
+        <button class="mobile-menu-toggle" id="mobile-menu-toggle">☰ Menu</button>
+        
+        <div class="nav-links" id="nav-links">
+            <a href="index.html" class="nav-btn">🏠 Dashboard</a>
+            <a href="ai-generate.html" class="nav-btn">🤖 AI Generate</a>
+            <a href="scheme.html" class="nav-btn">📅 Scheme</a>
+            <a href="attendance.html" class="nav-btn">📋 Attendance</a>
+            <a href="students.html" class="nav-btn">👥 Students</a>
+            <a href="classes.html" class="nav-btn">🏫 Classes</a>
+            
+            <div class="nav-dropdown">
+                <button class="nav-dropdown-btn">📁 More ▼</button>
+                <div class="nav-dropdown-content">
+                    <a href="attendance-reports.html">📊 Reports</a>
+                    <a href="pricing.html">💰 Pricing</a>
+                    <a href="exams.html">📝 Exams</a>
+                    <a href="virtual.html">🎥 Virtual Class</a>
+                    <a href="about.html">📖 About</a>
+                    <a href="services.html">🛠️ Services</a>
+                    <a href="contact.html">📞 Contact</a>
+                </div>
+            </div>
+            
+            <!-- Theme Toggle -->
+            <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+                <svg class="icon-moon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                </svg>
+                <svg class="icon-sun" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="generator-header">
+        <div class="title-section">
+            <h1>➕ Register New Student</h1>
+            <p>Add a student to your class roster</p>
+        </div>
+    </div>
+
+    <div class="generator-container">
+        <div class="generator-card">
+            <div class="generator-icon">👤</div>
+            <h2>Student Information</h2>
+            <p class="generator-subtitle">Only the basics are required. Add more details later if needed.</p>
+
+            <form id="register-form" class="generator-form">
+                
+                <!-- REQUIRED FIELDS -->
+                <div class="form-section required-section">
+                    <h3 class="form-section-title">
+                        ⭐ Required Information
+                    </h3>
+                    
+                    <!-- Student Name -->
+                    <div class="form-group full-width">
+                        <label for="reg-name">👤 Full Name <span class="required">*</span></label>
+                        <input type="text" id="reg-name" required 
+                               placeholder="e.g. Adebayo Tunde, Okafor Chiamaka">
+                    </div>
+
+                    <!-- Class & Arm -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="reg-class">📚 Class <span class="required">*</span></label>
+                            <select id="reg-class" required>
+                                <option value="">Select class</option>
+                                <option value="JSS 1">JSS 1</option>
+                                <option value="JSS 2">JSS 2</option>
+                                <option value="JSS 3">JSS 3</option>
+                                <option value="SS 1">SS 1</option>
+                                <option value="SS 2">SS 2</option>
+                                <option value="SS 3">SS 3</option>
+                                <option value="Grade 1">Grade 1</option>
+                                <option value="Grade 2">Grade 2</option>
+                                <option value="Grade 3">Grade 3</option>
+                                <option value="Grade 4">Grade 4</option>
+                                <option value="Grade 5">Grade 5</option>
+                                <option value="Grade 6">Grade 6</option>
+                                <option value="Grade 7">Grade 7</option>
+                                <option value="Grade 8">Grade 8</option>
+                                <option value="Grade 9">Grade 9</option>
+                                <option value="Grade 10">Grade 10</option>
+                                <option value="Grade 11">Grade 11</option>
+                                <option value="Grade 12">Grade 12</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="reg-arm">🏫 Arm <span class="required">*</span></label>
+                            <select id="reg-arm" required>
+                                <option value="">Select arm</option>
+                                <option value="A">Arm A</option>
+                                <option value="B">Arm B</option>
+                                <option value="C">Arm C</option>
+                                <option value="D">Arm D</option>
+                                <option value="Gold">Gold</option>
+                                <option value="Silver">Silver</option>
+                                <option value="Diamond">Diamond</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Gender -->
+                    <div class="form-group">
+                        <label for="reg-gender">⚧ Gender <span class="required">*</span></label>
+                        <select id="reg-gender" required>
+                            <option value="">Select gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <!-- Student ID Preview -->
+                    <div class="id-preview" id="id-preview">
+                        <div class="id-preview-label">🆔 Student ID (Auto-generated)</div>
+                        <div class="id-preview-value" id="id-preview-value">Select class & arm first</div>
+                    </div>
+                </div>
+
+                <!-- OPTIONAL FIELDS (Collapsed by default) -->
+                <div class="form-section optional-section">
+                    <details class="optional-details">
+                        <summary>
+                            <span class="optional-toggle">
+                                <i class="fa-solid fa-chevron-right"></i>
+                                📋 Additional Details (Optional)
+                            </span>
+                            <span class="optional-hint">Add more info later from the Students page</span>
+                        </summary>
+                        
+                        <div class="optional-content">
+                            <!-- Date of Birth -->
+                            <div class="form-group">
+                                <label for="reg-dob">🎂 Date of Birth</label>
+                                <input type="date" id="reg-dob">
+                            </div>
+
+                            <!-- Parent/Guardian Information -->
+                            <h4 class="form-subsection-title">👨‍👩‍👧 Parent/Guardian (Optional)</h4>
+                            
+                            <div class="form-group full-width">
+                                <label for="reg-parent-name">👤 Parent/Guardian Name</label>
+                                <input type="text" id="reg-parent-name" 
+                                       placeholder="e.g. Mr. Adebayo, Mrs. Okafor">
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="reg-parent-phone">📞 Phone Number</label>
+                                    <input type="tel" id="reg-parent-phone" 
+                                           placeholder="+234 800 000 0000">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="reg-parent-email">📧 Email Address</label>
+                                    <input type="email" id="reg-parent-email" 
+                                           placeholder="parent@email.com">
+                                </div>
+                            </div>
+
+                            <!-- Address -->
+                            <div class="form-group full-width">
+                                <label for="reg-address">🏠 Home Address</label>
+                                <textarea id="reg-address" rows="2" 
+                                          placeholder="Student's home address"></textarea>
+                            </div>
+
+                            <!-- Notes -->
+                            <div class="form-group full-width">
+                                <label for="reg-notes">📝 Additional Notes</label>
+                                <textarea id="reg-notes" rows="2" 
+                                          placeholder="e.g. Allergies, special needs, achievements..."></textarea>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="form-actions">
+                    <button type="button" id="cancel-btn" class="secondary-btn">
+                        ❌ Cancel
+                    </button>
+                    <button type="button" id="register-another-btn" class="secondary-btn" style="display: none;">
+                        ➕ Register Another
+                    </button>
+                    <button type="submit" id="register-btn" class="primary-btn">
+                        💾 Register Student
+                    </button>
+                </div>
+
+                <!-- Status Message -->
+                <div id="register-status" class="generation-status"></div>
+            </form>
+        </div>
+
+        <!-- Success Card (Hidden by default) -->
+        <div id="success-card" class="success-card" style="display: none;">
+            <div class="success-icon">✅</div>
+            <h2>Student Registered Successfully!</h2>
+            <div class="success-details">
+                <p><strong>Name:</strong> <span id="success-name"></span></p>
+                <p><strong>Student ID:</strong> <span id="success-id"></span></p>
+                <p><strong>Class:</strong> <span id="success-class"></span></p>
+            </div>
+            <div class="success-actions">
+                <a href="students.html" class="primary-btn">👥 View All Students</a>
+                <button id="success-register-another" class="secondary-btn">➕ Register Another</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        👤 Student Registration | Student IDs are automatically generated | <a href="students.html">← Back to Students</a>
+    </div>
+</div>
+
+<!-- Modular JavaScript -->
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
