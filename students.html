@@ -44,7 +44,6 @@
 
 <div class="app-container">
     
-    <!-- Navigation -->
     <!-- Navigation Bar -->
     <nav id="main-nav">
         <div class="nav-brand">
@@ -141,7 +140,8 @@
 
         <!-- Students by Class -->
         <div id="students-container" class="students-container">
-            <div class="loading-state" id="loading-state">
+            <!-- loading-state is hidden; JS will show empty-state or student cards -->
+            <div class="loading-state" id="loading-state" style="display:none;">
                 <div class="loading-spinner"></div>
                 <p>Loading students...</p>
             </div>
@@ -195,7 +195,6 @@
                     </div>
                     
                     <div class="form-info">
-                        <i class="fa-solid fa-info-circle"></i>
                         All attendance records for this student will be transferred to the new class/arm.
                     </div>
                 </form>
@@ -266,7 +265,7 @@
     </div>
 
     <div class="footer-note">
-        👥 Student Management System | Powered by Firebase | <a href="classes.html">Manage Classes →</a>
+        👥 Student Management System | <a href="classes.html">Manage Classes →</a>
     </div>
 </div>
 
