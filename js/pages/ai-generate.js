@@ -1,42 +1,168 @@
 // ============================================
-// AI GENERATE PAGE LOGIC
-// Handles both Lesson Plan and Lesson Note modes
+// AI GENERATE PAGE LOGIC (UPDATED)
+// Handles tabs, additional details, and beautiful output
 // ============================================
 
 import { generateWithAI, APIError } from '../core/api.js';
-import { generateLocalLessonPlan, generateLocalLessonNote } from '../core/localGenerator.js';
-import { escapeHtml, showStatus } from '../core/utils.js';
+import { escapeHtml } from '../core/utils.js';
 
 let isGenerating = false;
 
+// ============================================
+// TAB MANAGEMENT
+// ============================================
+
+function initTabs() {
+    const tabBtns = document.querySelectorAll('.form-tab');
+    const tabPanels = document.querySelectorAll('.tab-panel');
+    
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const targetTab = btn.dataset.tab;
+            
+            // Update buttons
+            tabBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            // Update panels
+            tabPanels.forEach(panel => {
+                if (panel.dataset.panel === targetTab) {
+                    panel.style.display = 'block';
+                    panel.classList.add('active');
+                } else {
+                    panel.style.display = 'none';
+                    panel.classList.remove('active');
+                }
+            });
+        });
+    });
+    
+    // Next/Prev buttons
+    document.getElementById('next-tab-btn')?.addEventListener('click', () => {
+        document.querySelector('[data-tab="additional"]')?.click();
+    });
+    
+    document.getElementById('prev-tab-btn')?.addEventListener('click', () => {
+        document.querySelector('[data-tab="basic"]')?.click();
+    });
+}
+
+// ============================================
+// FORM COLLECTION
+// ============================================
+
+function collectFormData() {
+    // Basic details
+    const data = {
+        grade: document.getElementById('grade-class')?.value,
+        term: document.getElementById('term')?.value,
+        week: document.getElementById('week')?.value.trim() || null,
+        subject: document.getElementById('subject')?.value.trim(),
+        topic: document.getElementById('topic')?.value.trim(),
+        duration: parseInt(document.getElementById('duration')?.value) || 40,
+        mode: document.getElementById('generation-mode')?.value || 'lesson-plan'
+    };
+    
+    // Additional details (only for lesson-plan mode)
+    if (data.mode === 'lesson-plan') {
+        data.additionalDetails = {
+            setInduction: {
+                enabled: document.getElementById('opt-setInduction')?.checked,
+                custom: document.getElementById('custom-setInduction')?.value.trim() || null
+            },
+            priorKnowledge: {
+                enabled: document.getElementById('opt-priorKnowledge')?.checked,
+                custom: document.getElementById('custom-priorKnowledge')?.value.trim() || null
+            },
+            learningObjectives: {
+                enabled: document.getElementById('opt-objectives')?.checked
+            },
+            learningOutcomes: {
+                enabled: document.getElementById('opt-outcomes')?.checked
+            },
+            teachingActivities: {
+                enabled: document.getElementById('opt-activities')?.checked
+            },
+            formativeAssessment: {
+                enabled: document.getElementById('opt-assessment')?.checked
+            },
+            closure: {
+                enabled: document.getElementById('opt-closure')?.checked
+            },
+            differentiation: {
+                enabled: document.getElementById('opt-differentiation')?.checked
+            },
+            instructionalMaterials: {
+                enabled: document.getElementById('opt-materials')?.checked,
+                custom: document.getElementById('custom-materials')?.value.trim() || null
+            },
+            vocabulary: {
+                enabled: document.getElementById('opt-vocabulary')?.checked,
+                custom: document.getElementById('custom-vocabulary')?.value.trim() || null
+            },
+            homework: {
+                enabled: document.getElementById('opt-homework')?.checked
+            },
+            realWorldApplication: {
+                enabled: document.getElementById('opt-realWorld')?.checked
+            },
+            crossCurricular: {
+                enabled: document.getElementById('opt-crossCurricular')?.checked
+            },
+            discussionQuestions: {
+                enabled: document.getElementById('opt-discussion')?.checked
+            },
+            safetyProtocols: {
+                enabled: document.getElementById('opt-safety')?.checked
+            },
+            engineeringDesignProcess: {
+                enabled: document.getElementById('opt-edp')?.checked
+            }
+        };
+        
+        // Advanced JSON (merge into additionalDetails)
+        const customJson = document.getElementById('custom-json')?.value.trim();
+        if (customJson) {
+            try {
+                data.additionalDetails.customFields = JSON.parse(customJson);
+            } catch (e) {
+                console.warn('Invalid custom JSON, ignoring:', e);
+            }
+        }
+    }
+    
+    return data;
+}
+
+// ============================================
+// INIT
+// ============================================
+
 export function init() {
+    initTabs();
+    
     const form = document.getElementById('lesson-form');
     if (!form) return;
     
     form.addEventListener('submit', handleGenerate);
     
     const copyBtn = document.getElementById('copy-btn');
-    if (copyBtn) {
-        copyBtn.addEventListener('click', handleCopy);
-    }
+    if (copyBtn) copyBtn.addEventListener('click', handleCopy);
+    
+    const printBtn = document.getElementById('print-btn');
+    if (printBtn) printBtn.addEventListener('click', handlePrint);
 }
+
+// ============================================
+// GENERATE HANDLER
+// ============================================
 
 async function handleGenerate(e) {
     e.preventDefault();
     
-    if (isGenerating) {
-        console.warn('Generation already in progress');
-        return;
-    }
+    if (isGenerating) return;
     
-    // Get form data
-    const formData = {
-        grade: document.getElementById('grade-class')?.value,
-        term: document.getElementById('term')?.value,
-        subject: document.getElementById('subject')?.value.trim(),
-        topic: document.getElementById('topic')?.value.trim(),
-        mode: document.getElementById('generation-mode')?.value || 'lesson-plan'
-    };
+    const formData = collectFormData();
     
     // Validate
     if (!formData.grade || !formData.term || !formData.subject || !formData.topic) {
@@ -44,7 +170,6 @@ async function handleGenerate(e) {
         return;
     }
     
-    // Start generation
     isGenerating = true;
     setLoadingState(true);
     hideError();
@@ -52,174 +177,322 @@ async function handleGenerate(e) {
     hideCopyButton();
     
     try {
-        // Try backend first
         const result = await generateWithAI(formData);
-        renderOutput(result.data, formData.mode, result.source);
+        renderBeautifulOutput(result.data, formData);
         showCopyButton();
+        showPrintButton();
         console.log(`✅ Generated via ${result.source}`);
-        
     } catch (error) {
-        console.warn('Backend failed, using local generator:', error.message);
-        
+        console.error('Generation failed:', error);
         if (error instanceof APIError) {
-            // Show warning but continue with local fallback
-            showError(`${error.message} Using offline template.`);
-        }
-        
-        // Use local generator
-        try {
-            const localData = formData.mode === 'lesson-note' 
-                ? generateLocalLessonNote(formData)
-                : generateLocalLessonPlan(formData);
-            
-            renderOutput(localData, formData.mode, 'local-template');
-            showCopyButton();
-            
-        } catch (fallbackError) {
+            showError(`${error.message}`);
+        } else {
             showError('Failed to generate content. Please try again.');
-            showOutput('empty');
-            console.error('Fallback failed:', fallbackError);
         }
-        
+        showOutput('empty');
     } finally {
         isGenerating = false;
         setLoadingState(false);
     }
 }
 
-function renderOutput(data, mode, source) {
+// ============================================
+// ⭐ BEAUTIFUL OUTPUT RENDERER
+// ============================================
+
+function renderBeautifulOutput(data, formData) {
     const outputContent = document.getElementById('output-content');
     if (!outputContent) return;
     
-    let html = '';
-    
-    if (mode === 'lesson-note') {
-        html = renderLessonNote(data);
+    if (formData.mode === 'lesson-note') {
+        outputContent.innerHTML = renderLessonNote(data);
     } else {
-        html = renderLessonPlan(data);
+        outputContent.innerHTML = renderLessonPlan(data);
     }
     
-    // Add source badge
-    const sourceBadge = source === 'ai' 
-        ? '<div class="source-badge ai">✨ AI Generated</div>'
-        : '<div class="source-badge local">📋 Template Generated (Offline Mode)</div>';
-    
-    outputContent.innerHTML = sourceBadge + html;
     showOutput('content');
 }
 
 function renderLessonPlan(data) {
+    const meta = data.metadata || {};
+    
     return `
-# ${escapeHtml(data.metadata?.title || 'Lesson Plan')}
-
-**Grade:** ${escapeHtml(data.metadata?.classLevel || 'N/A')} | 
-**Term:** ${escapeHtml(data.metadata?.term || 'N/A')} | 
-**Duration:** ${escapeHtml(data.metadata?.duration || 'N/A')}
-
-## 🎯 Learning Objectives
-${(data.learningObjectives || []).map(obj => `- ${escapeHtml(obj)}`).join('\n')}
-
-## 🧠 Engineering Design Process
-${(data.edpSteps || []).map(step => `1. ${escapeHtml(step)}`).join('\n')}
-
-## ⚠️ Safety Protocols
-${(data.safetyProtocols || []).map(s => `- ${escapeHtml(s)}`).join('\n')}
-
-## ⏱️ Lesson Timeline
-${(data.timeline || []).map(t => `**${escapeHtml(t.phase)}** (${escapeHtml(t.duration)})
-${escapeHtml(t.description)}`).join('\n\n')}
-
-## 🧪 Experiential Activity
-${escapeHtml(data.experientialActivity || 'N/A')}
-
-## 📦 Materials & Equipment
-${(data.materials || []).map(m => `- ${escapeHtml(m)}`).join('\n')}
-
-## 📝 Assessment Methods
-${(data.assessment || []).map(a => `- ${escapeHtml(a)}`).join('\n')}
-
-${data.additionalNotes ? `\n## 📌 Additional Notes\n${escapeHtml(data.additionalNotes)}` : ''}
-`;
+        <div class="lesson-document">
+            <!-- Header -->
+            <div class="lesson-header">
+                <div class="lesson-icon">📚</div>
+                <h1 class="lesson-title">${escapeHtml(meta.title || 'Lesson Plan')}</h1>
+                <div class="lesson-meta">
+                    <div class="meta-item">
+                        <i class="fa-solid fa-book"></i>
+                        <span><strong>Subject:</strong> ${escapeHtml(meta.subject || 'N/A')}</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                        <span><strong>Grade:</strong> ${escapeHtml(meta.classLevel || 'N/A')}</span>
+                    </div>
+                    ${meta.term ? `
+                    <div class="meta-item">
+                        <i class="fa-solid fa-calendar"></i>
+                        <span><strong>Term:</strong> ${escapeHtml(meta.term)}</span>
+                    </div>` : ''}
+                    ${meta.week ? `
+                    <div class="meta-item">
+                        <i class="fa-solid fa-calendar-week"></i>
+                        <span><strong>Week:</strong> ${escapeHtml(meta.week)}</span>
+                    </div>` : ''}
+                    <div class="meta-item">
+                        <i class="fa-solid fa-clock"></i>
+                        <span><strong>Duration:</strong> ${escapeHtml(meta.duration || 'N/A')}</span>
+                    </div>
+                </div>
+            </div>
+            
+            ${renderSection('🎯 Learning Objectives', data.learningObjectives, 'list')}
+            ${renderSection('📚 Learning Outcomes', data.learningOutcomes, 'list')}
+            ${renderSection('📖 Prior Knowledge', data.priorKnowledge, 'list')}
+            ${renderSection('🛠️ Instructional Materials', data.instructionalMaterials, 'list')}
+            ${renderSetInduction(data.setInduction)}
+            ${renderActivities(data.teachingActivities)}
+            ${renderSection('✅ Formative Assessment / Checkpoints', data.formativeAssessment, 'list')}
+            ${renderClosure(data.closure)}
+            ${renderDifferentiation(data.differentiation)}
+            ${renderSection('⚠️ Safety Protocols', data.safetyProtocols, 'list')}
+            ${renderEDP(data.engineeringDesignProcess)}
+            ${renderSection('📝 Homework / Assignment', data.homework, 'list')}
+            ${renderSection('🌍 Real-World Applications', data.realWorldApplication, 'list')}
+            ${renderSection('🔗 Cross-Curricular Links', data.crossCurricular, 'list')}
+            ${renderVocabulary(data.vocabulary)}
+            ${renderSection('💬 Discussion Questions', data.discussionQuestions, 'list')}
+            ${renderCustomFields(data.customFields)}
+        </div>
+    `;
 }
 
 function renderLessonNote(data) {
+    // Keep your existing lesson note renderer for now
     return `
-# ${escapeHtml(data.metadata?.title || 'Lesson Note')}
-
-**Grade:** ${escapeHtml(data.metadata?.classLevel || 'N/A')} | 
-**Term:** ${escapeHtml(data.metadata?.term || 'N/A')}
-
-## 📖 Introduction
-${escapeHtml(data.introduction?.text || 'N/A')}
-*Duration: ${escapeHtml(data.introduction?.duration || 'N/A')}*
-
-## 📚 Key Definitions
-
-${(data.definitions || []).map(def => `
-### ${escapeHtml(def.term)}
-${escapeHtml(def.definition)}
-
-> 💡 **Image Suggestion:** ${escapeHtml(def.suggestedImagePrompt)}
-`).join('\n')}
-
-## 🎯 Key Concepts
-${(data.keyConcepts || []).map(c => `- ${escapeHtml(c)}`).join('\n')}
-
-## 🎥 Video Resources
-
-${(data.videoSuggestions || []).map(vid => `
-### ${escapeHtml(vid.topic)}
-**Search Query:** \`${escapeHtml(vid.searchQuery)}\`
-**Duration:** ${escapeHtml(vid.duration)}
-
-**Suggested Sources:**
-${vid.suggestedSources.map(s => `- ${escapeHtml(s)}`).join('\n')}
-`).join('\n')}
-
-## 🖼️ Image Suggestions
-
-${(data.imageSuggestions || []).map(img => `
-### For: ${escapeHtml(img.location)}
-**Description:** ${escapeHtml(img.description)}
-**Specs:** ${escapeHtml(img.spec)}
-
-**Free Sources:**
-${img.sources.map(s => `- ${escapeHtml(s)}`).join('\n')}
-`).join('\n')}
-
-## 📋 Materials List
-
-${(data.materialsList || []).map(m => `
-- **${escapeHtml(m.item)}** (${escapeHtml(m.quantity)})
-  - Source: ${escapeHtml(m.source)}
-  - Alternative: ${escapeHtml(m.alternatives)}
-`).join('\n')}
-
-## 🎬 Activities
-
-${(data.activities || []).map(act => `
-### ${escapeHtml(act.name)} (${escapeHtml(act.duration)})
-${escapeHtml(act.description)}
-**Materials:** ${escapeHtml(act.materials)}
-`).join('\n')}
-
-${data.additionalNotes ? `\n## 📌 Additional Notes\n${escapeHtml(data.additionalNotes)}` : ''}
-`;
+        <div class="lesson-document">
+            <div class="lesson-header">
+                <div class="lesson-icon">📝</div>
+                <h1 class="lesson-title">${escapeHtml(data.metadata?.title || 'Lesson Note')}</h1>
+            </div>
+            <pre class="lesson-note-raw">${escapeHtml(JSON.stringify(data, null, 2))}</pre>
+        </div>
+    `;
 }
+
+// ============================================
+// SECTION RENDERERS
+// ============================================
+
+function renderSection(title, content, type = 'list') {
+    if (!content || (Array.isArray(content) && content.length === 0)) return '';
+    
+    let body = '';
+    if (type === 'list' && Array.isArray(content)) {
+        body = '<ul class="lesson-list">' + 
+               content.map(item => `<li>${escapeHtml(item)}</li>`).join('') + 
+               '</ul>';
+    } else if (typeof content === 'string') {
+        body = `<p class="lesson-text">${escapeHtml(content)}</p>`;
+    }
+    
+    return `
+        <section class="lesson-section">
+            <h2 class="section-title">${title}</h2>
+            <div class="section-content">${body}</div>
+        </section>
+    `;
+}
+
+function renderSetInduction(data) {
+    if (!data) return '';
+    
+    let content = '';
+    if (typeof data === 'string') {
+        content = `<p class="lesson-text">${escapeHtml(data)}</p>`;
+    } else if (data.analogy || data.hook || data.recall) {
+        content = `
+            ${data.analogy ? `<p class="lesson-text"><strong>💡 Analogy:</strong> ${escapeHtml(data.analogy)}</p>` : ''}
+            ${data.recall ? `<p class="lesson-text"><strong>🔄 Recall:</strong> ${escapeHtml(data.recall)}</p>` : ''}
+            ${data.hook ? `<p class="lesson-text"><strong>🎯 Hook:</strong> ${escapeHtml(data.hook)}</p>` : ''}
+            ${data.duration ? `<p class="lesson-duration"><i class="fa-solid fa-clock"></i> Duration: ${escapeHtml(data.duration)} minutes</p>` : ''}
+        `;
+    }
+    
+    return `
+        <section class="lesson-section highlight">
+            <h2 class="section-title">🎬 Set Induction</h2>
+            <div class="section-content">${content}</div>
+        </section>
+    `;
+}
+
+function renderActivities(activities) {
+    if (!activities || !Array.isArray(activities) || activities.length === 0) return '';
+    
+    return `
+        <section class="lesson-section">
+            <h2 class="section-title">📖 Teaching and Learning Activities</h2>
+            <div class="section-content">
+                ${activities.map((act, idx) => `
+                    <div class="activity-card">
+                        <div class="activity-header">
+                            <span class="activity-number">${idx + 1}</span>
+                            <h3 class="activity-name">${escapeHtml(act.name || act.phase || `Activity ${idx + 1}`)}</h3>
+                            <span class="activity-duration">${escapeHtml(act.duration || '')}</span>
+                        </div>
+                        ${act.teacherActivity ? `
+                            <div class="activity-row">
+                                <div class="role-badge teacher">Teacher</div>
+                                <p>${escapeHtml(act.teacherActivity)}</p>
+                            </div>
+                        ` : ''}
+                        ${act.studentActivity ? `
+                            <div class="activity-row">
+                                <div class="role-badge student">Students</div>
+                                <p>${escapeHtml(act.studentActivity)}</p>
+                            </div>
+                        ` : act.description ? `
+                            <p>${escapeHtml(act.description)}</p>
+                        ` : ''}
+                        ${act.materials ? `<p class="activity-materials"><strong>Materials:</strong> ${escapeHtml(act.materials)}</p>` : ''}
+                    </div>
+                `).join('')}
+            </div>
+        </section>
+    `;
+}
+
+function renderClosure(data) {
+    if (!data) return '';
+    
+    let content = '';
+    if (typeof data === 'string') {
+        content = `<p class="lesson-text">${escapeHtml(data)}</p>`;
+    } else {
+        content = `
+            ${data.recap ? `<p class="lesson-text"><strong>📝 Recap:</strong> ${escapeHtml(data.recap)}</p>` : ''}
+            ${data.exitTicket ? `<p class="lesson-text"><strong>🎫 Exit Ticket:</strong> ${escapeHtml(data.exitTicket)}</p>` : ''}
+            ${data.preview ? `<p class="lesson-text"><strong>👀 Preview:</strong> ${escapeHtml(data.preview)}</p>` : ''}
+            ${data.duration ? `<p class="lesson-duration"><i class="fa-solid fa-clock"></i> Duration: ${escapeHtml(data.duration)} minutes</p>` : ''}
+        `;
+    }
+    
+    return `
+        <section class="lesson-section highlight">
+            <h2 class="section-title">🎯 Closure</h2>
+            <div class="section-content">${content}</div>
+        </section>
+    `;
+}
+
+function renderDifferentiation(data) {
+    if (!data) return '';
+    
+    let content = '';
+    if (typeof data === 'string') {
+        content = `<p class="lesson-text">${escapeHtml(data)}</p>`;
+    } else {
+        content = `
+            ${data.advanced ? `
+                <div class="diff-card advanced">
+                    <h4>🌟 For Advanced Students</h4>
+                    <p>${escapeHtml(data.advanced)}</p>
+                </div>
+            ` : ''}
+            ${data.struggling ? `
+                <div class="diff-card struggling">
+                    <h4>🤝 For Struggling Students</h4>
+                    <p>${escapeHtml(data.struggling)}</p>
+                </div>
+            ` : ''}
+            ${data.extension ? `
+                <div class="diff-card extension">
+                    <h4>🚀 Extension Activity</h4>
+                    <p>${escapeHtml(data.extension)}</p>
+                </div>
+            ` : ''}
+        `;
+    }
+    
+    return `
+        <section class="lesson-section">
+            <h2 class="section-title">⭐ Differentiation</h2>
+            <div class="section-content">${content}</div>
+        </section>
+    `;
+}
+
+function renderEDP(steps) {
+    if (!steps || !Array.isArray(steps) || steps.length === 0) return '';
+    
+    return `
+        <section class="lesson-section">
+            <h2 class="section-title">🔧 Engineering Design Process</h2>
+            <div class="section-content">
+                <div class="edp-flow">
+                    ${steps.map((step, idx) => `
+                        <div class="edp-step">
+                            <div class="edp-number">${idx + 1}</div>
+                            <div class="edp-text">${escapeHtml(step)}</div>
+                        </div>
+                    `).join('<div class="edp-arrow">→</div>')}
+                </div>
+            </div>
+        </section>
+    `;
+}
+
+function renderVocabulary(vocab) {
+    if (!vocab) return '';
+    
+    let content = '';
+    if (Array.isArray(vocab)) {
+        content = '<div class="vocab-grid">' + 
+                  vocab.map(v => `
+                    <div class="vocab-item">
+                        <strong>${escapeHtml(v.term || v)}</strong>
+                        ${v.definition ? `<p>${escapeHtml(v.definition)}</p>` : ''}
+                    </div>
+                  `).join('') + '</div>';
+    } else if (typeof vocab === 'string') {
+        content = `<p class="lesson-text">${escapeHtml(vocab)}</p>`;
+    }
+    
+    return `
+        <section class="lesson-section">
+            <h2 class="section-title">📖 Vocabulary / Key Terms</h2>
+            <div class="section-content">${content}</div>
+        </section>
+    `;
+}
+
+function renderCustomFields(fields) {
+    if (!fields || typeof fields !== 'object') return '';
+    
+    return Object.entries(fields).map(([key, value]) => `
+        <section class="lesson-section">
+            <h2 class="section-title">${escapeHtml(key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1'))}</h2>
+            <div class="section-content">
+                ${typeof value === 'string' ? `<p>${escapeHtml(value)}</p>` : `<pre>${escapeHtml(JSON.stringify(value, null, 2))}</pre>`}
+            </div>
+        </section>
+    `).join('');
+}
+
+// ============================================
+// UI HELPERS
+// ============================================
 
 function setLoadingState(loading) {
     const btn = document.getElementById('generate-btn');
-    const btnText = document.getElementById('btn-text');
-    
     if (!btn) return;
-    
     btn.disabled = loading;
-    
-    if (loading) {
-        btn.innerHTML = '<span class="loading-spinner"></span> <span>Generating...</span>';
-    } else {
-        btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> <span id="btn-text">Generate Document</span>';
-    }
+    btn.innerHTML = loading 
+        ? '<span class="loading-spinner"></span> <span>Generating...</span>'
+        : '<i class="fa-solid fa-wand-magic-sparkles"></i> <span>Generate Document</span>';
 }
 
 function showOutput(state) {
@@ -245,7 +518,6 @@ function showOutput(state) {
 function showError(message) {
     const errorDiv = document.getElementById('error-message');
     const errorText = document.getElementById('error-text');
-    
     if (errorDiv && errorText) {
         errorText.textContent = message;
         errorDiv.classList.remove('hidden');
@@ -256,23 +528,35 @@ function hideError() {
     document.getElementById('error-message')?.classList.add('hidden');
 }
 
-function showCopyButton() {
-    document.getElementById('copy-btn')?.classList.remove('hidden');
-}
-
-function hideCopyButton() {
-    document.getElementById('copy-btn')?.classList.add('hidden');
-}
+function showCopyButton() { document.getElementById('copy-btn')?.classList.remove('hidden'); }
+function hideCopyButton() { document.getElementById('copy-btn')?.classList.add('hidden'); }
+function showPrintButton() { document.getElementById('print-btn')?.classList.remove('hidden'); }
 
 async function handleCopy() {
     const content = document.getElementById('output-content')?.innerText;
     if (!content) return;
-    
     try {
         await navigator.clipboard.writeText(content);
         alert('📋 Copied to clipboard!');
     } catch (error) {
-        console.error('Copy failed:', error);
-        alert('Failed to copy. Please try selecting and copying manually.');
+        alert('Failed to copy.');
     }
+}
+
+function handlePrint() {
+    const content = document.getElementById('output-content');
+    if (!content) return;
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+        <html>
+        <head>
+            <title>Lesson Plan</title>
+            <link rel="stylesheet" href="css/pages/ai-generate.css">
+            <style>body { padding: 2rem; }</style>
+        </head>
+        <body>${content.innerHTML}</body>
+        </html>
+    `);
+    printWindow.document.close();
+    printWindow.print();
 }
