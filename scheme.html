@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#ffffff">
-    <title>STEM Forge | Scheme of Work Generator</title>
+    <title>STEM Forge | Multi-Branch Scheme Generator</title>
     
     <!-- Prevent theme flash -->
     <script>
@@ -33,10 +33,11 @@
     <link rel="stylesheet" href="css/components/tables.css">
     <link rel="stylesheet" href="css/components/alerts.css">
     <link rel="stylesheet" href="css/pages/scheme.css">
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-<script src="js/core/firebase-init.js"></script>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="js/core/firebase-init.js"></script>
 </head>
 <body data-page="scheme">
 
@@ -86,8 +87,8 @@
     <!-- Page Header -->
     <div class="generator-header">
         <div class="title-section">
-            <h1>📅 Robotics Scheme of Work Generator</h1>
-            <p>For Nigerian Schools | Grade 4 (Basic) to Grade 9 (Mastery)</p>
+            <h1>📅 Multi-Branch STEM Scheme Generator</h1>
+            <p>For Schools | Grade 1 (Beginner) to Grade 12 (Advanced) | Robotics • Web Dev • App Dev • Custom</p>
         </div>
     </div>
 
@@ -95,75 +96,163 @@
     <div class="generator-container">
         <div class="generator-card">
             <div class="generator-icon">📋</div>
-            <h2>Generate Custom Scheme of Work</h2>
-            <p class="generator-subtitle">Select components, competitions, and economic activities to create a comprehensive robotics curriculum</p>
+            <h2>Generate Your Custom Scheme of Work</h2>
+            <p class="generator-subtitle">Choose a STEM branch, select subjects, and create a comprehensive curriculum</p>
 
             <form id="scheme-form" class="generator-form">
                 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="start-grade">📚 Starting Grade</label>
-                        <select id="start-grade" required>
-                            <option value="4">Grade 4 (Basic Entry)</option>
-                            <option value="5">Grade 5</option>
-                            <option value="6">Grade 6</option>
-                            <option value="7">Grade 7</option>
-                            <option value="8">Grade 8</option>
-                            <option value="9">Grade 9 (Intermediate)</option>
-                        </select>
+                <!-- STEP 1: Choose Branch -->
+                <div class="form-section">
+                    <h3 class="step-title">🎯 Step 1: Choose Your STEM Branch</h3>
+                    <div class="branch-selector">
+                        <label class="branch-card" data-branch="robotics">
+                            <input type="radio" name="branch" value="robotics" checked>
+                            <div class="branch-icon">🤖</div>
+                            <div class="branch-name">Robotics</div>
+                            <div class="branch-desc">Hardware, Electronics, Programming</div>
+                        </label>
+                        
+                        <label class="branch-card" data-branch="webdev">
+                            <input type="radio" name="branch" value="webdev">
+                            <div class="branch-icon">💻</div>
+                            <div class="branch-name">Web Development</div>
+                            <div class="branch-desc">HTML, CSS, JavaScript, Frameworks</div>
+                        </label>
+                        
+                        <label class="branch-card" data-branch="appdev">
+                            <input type="radio" name="branch" value="appdev">
+                            <div class="branch-icon">🎮</div>
+                            <div class="branch-name">App Development</div>
+                            <div class="branch-desc">Scratch, Block Coding, Games</div>
+                        </label>
+                        
+                        <label class="branch-card" data-branch="custom">
+                            <input type="radio" name="branch" value="custom">
+                            <div class="branch-icon">➕</div>
+                            <div class="branch-name">Custom Branch</div>
+                            <div class="branch-desc">Define your own</div>
+                        </label>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="end-grade">🎯 Target Grade</label>
-                        <select id="end-grade" required>
-                            <option value="5">Grade 5</option>
-                            <option value="6">Grade 6</option>
-                            <option value="7">Grade 7</option>
-                            <option value="8">Grade 8</option>
-                            <option value="9" selected>Grade 9 (Mastery)</option>
-                        </select>
+                    <!-- Custom Branch Input (hidden by default) -->
+                    <div id="custom-branch-input" class="custom-branch-input" style="display: none;">
+                        <div class="form-group">
+                            <label for="custom-branch-name">📝 Custom Branch Name</label>
+                            <input type="text" id="custom-branch-name" placeholder="e.g., Data Science, AI/Machine Learning, Cybersecurity, Game Development with Unity">
+                        </div>
                     </div>
                 </div>
 
-                <!-- Checkbox groups -->
-                <div class="form-group full-width">
-                    <label>🔧 Robotics Components</label>
-                    <div class="checkbox-group">
-                        <label class="checkbox-pill"><input type="checkbox" value="Microcontrollers" checked> Microcontrollers</label>
-                        <label class="checkbox-pill"><input type="checkbox" value="Sensors" checked> Sensors</label>
-                        <label class="checkbox-pill"><input type="checkbox" value="Motors"> Motors & Actuators</label>
-                        <label class="checkbox-pill"><input type="checkbox" value="Gears"> Gears & Mechanisms</label>
-                        <label class="checkbox-pill"><input type="checkbox" value="Programming"> Programming</label>
-                        <label class="checkbox-pill"><input type="checkbox" value="Electronics"> Electronics</label>
-                        <label class="checkbox-pill"><input type="checkbox" value="Chassis"> Chassis Design</label>
+                <!-- STEP 2: Grade Range -->
+                <div class="form-section">
+                    <h3 class="step-title">📚 Step 2: Select Grade Range</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="start-grade">🎓 Starting Grade</label>
+                            <select id="start-grade" required>
+                                <option value="1">Grade 1 (Beginner)</option>
+                                <option value="2">Grade 2</option>
+                                <option value="3">Grade 3</option>
+                                <option value="4" selected>Grade 4 (Basic Entry)</option>
+                                <option value="5">Grade 5</option>
+                                <option value="6">Grade 6</option>
+                                <option value="7">Grade 7</option>
+                                <option value="8">Grade 8</option>
+                                <option value="9">Grade 9 (Intermediate)</option>
+                                <option value="10">Grade 10 (Advanced)</option>
+                                <option value="11">Grade 11</option>
+                                <option value="12">Grade 12 (Mastery)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="end-grade">🎯 Target Grade</label>
+                            <select id="end-grade" required>
+                                <option value="1">Grade 1</option>
+                                <option value="2">Grade 2</option>
+                                <option value="3">Grade 3</option>
+                                <option value="4">Grade 4</option>
+                                <option value="5">Grade 5</option>
+                                <option value="6">Grade 6</option>
+                                <option value="7">Grade 7</option>
+                                <option value="8">Grade 8</option>
+                                <option value="9" selected>Grade 9 (Mastery)</option>
+                                <option value="10">Grade 10</option>
+                                <option value="11">Grade 11</option>
+                                <option value="12">Grade 12 (Advanced)</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
-                <div class="form-group full-width">
-                    <label>🏆 Robotics Competitions</label>
-                    <div class="checkbox-group">
-                        <label class="checkbox-pill"><input type="checkbox" value="Line Following"> Line Following</label>
-                        <label class="checkbox-pill"><input type="checkbox" value="Sumo"> Sumo Robotics</label>
-                        <label class="checkbox-pill"><input type="checkbox" value="Obstacle Avoidance"> Obstacle Avoidance</label>
-                        <label class="checkbox-pill"><input type="checkbox" value="Maze Solving"> Maze Solving</label>
-                        <label class="checkbox-pill"><input type="checkbox" value="Drone"> Drone Challenges</label>
+                <!-- STEP 3: Subject Areas (Dynamic based on branch) -->
+                <div class="form-section">
+                    <h3 class="step-title">🔧 Step 3: Select Subject Areas</h3>
+                    <div id="subject-areas-container" class="checkbox-group">
+                        <!-- Dynamically populated by JavaScript based on branch -->
+                    </div>
+                    
+                    <!-- Add Custom Subject -->
+                    <div class="add-custom-subject">
+                        <input type="text" id="custom-subject-input" placeholder="Add custom subject area...">
+                        <button type="button" id="add-custom-subject-btn" class="secondary-btn">➕ Add</button>
                     </div>
                 </div>
 
-                <div class="form-group full-width">
-                    <label>🏭 Economic / Industry Activities</label>
-                    <div class="checkbox-group">
-                        <label class="checkbox-pill"><input type="checkbox" value="Agriculture"> Smart Agriculture</label>
-                        <label class="checkbox-pill"><input type="checkbox" value="Manufacturing"> Manufacturing Automation</label>
-                        <label class="checkbox-pill"><input type="checkbox" value="Healthcare"> Healthcare Robotics</label>
-                        <label class="checkbox-pill"><input type="checkbox" value="Logistics"> Logistics & Delivery</label>
-                        <label class="checkbox-pill"><input type="checkbox" value="Education"> Educational Robotics</label>
+                <!-- STEP 4: Competitions (Dynamic based on branch) -->
+                <div class="form-section">
+                    <h3 class="step-title">🏆 Step 4: Competitions & Challenges</h3>
+                    <div id="competitions-container" class="checkbox-group">
+                        <!-- Dynamically populated -->
+                    </div>
+                    
+                    <div class="add-custom-subject">
+                        <input type="text" id="custom-competition-input" placeholder="Add custom competition...">
+                        <button type="button" id="add-custom-competition-btn" class="secondary-btn">➕ Add</button>
                     </div>
                 </div>
 
-                <div class="form-group full-width">
-                    <label for="scheme-notes">📝 Additional Focus Areas</label>
-                    <textarea id="scheme-notes" rows="2" placeholder="e.g., Focus on local Nigerian context, include solar-powered robotics..."></textarea>
+                <!-- STEP 5: Industry Applications (Dynamic) -->
+                <div class="form-section">
+                    <h3 class="step-title">🏭 Step 5: Industry Applications</h3>
+                    <div id="industry-container" class="checkbox-group">
+                        <!-- Dynamically populated -->
+                    </div>
+                    
+                    <div class="add-custom-subject">
+                        <input type="text" id="custom-industry-input" placeholder="Add custom industry application...">
+                        <button type="button" id="add-custom-industry-btn" class="secondary-btn">➕ Add</button>
+                    </div>
+                </div>
+
+                <!-- STEP 6: Additional Details -->
+                <div class="form-section">
+                    <h3 class="step-title">📝 Step 6: Additional Focus Areas</h3>
+                    <div class="form-group full-width">
+                        <label for="scheme-notes">Custom Notes (Optional)</label>
+                        <textarea id="scheme-notes" rows="3" placeholder="e.g., Focus on local Nigerian context, include solar-powered projects, emphasize hands-on learning..."></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="weeks-per-term">📅 Weeks per Term</label>
+                            <select id="weeks-per-term">
+                                <option value="10">10 weeks</option>
+                                <option value="12" selected>12 weeks</option>
+                                <option value="14">14 weeks</option>
+                                <option value="16">16 weeks</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="periods-per-week">⏰ Periods per Week</label>
+                            <select id="periods-per-week">
+                                <option value="1">1 period (40 min)</option>
+                                <option value="2" selected>2 periods (80 min)</option>
+                                <option value="3">3 periods (120 min)</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
 
                 <button type="submit" id="generate-scheme-btn" class="primary-btn generate-btn">
@@ -185,12 +274,13 @@
             <div class="preview-actions">
                 <button id="save-scheme" class="secondary-btn">💾 Save Scheme</button>
                 <button id="copy-scheme" class="secondary-btn">📋 Copy to Clipboard</button>
+                <button id="print-scheme" class="secondary-btn">🖨️ Print</button>
             </div>
         </div>
     </div>
 
     <div class="footer-note">
-        🎯 Specifically designed for Nigerian robotics education | Progressive learning from basic to mastery
+        🎯 Multi-branch STEM curriculum generator | Supports Robotics, Web Dev, App Dev, and Custom branches
     </div>
 </div>
 
@@ -198,4 +288,3 @@
 <script type="module" src="js/main.js"></script>
 </body>
 </html>
-
