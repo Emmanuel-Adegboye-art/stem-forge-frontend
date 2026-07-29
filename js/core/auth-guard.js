@@ -3,7 +3,7 @@
 // Enforces page access rules based on authentication & email verification
 // ============================================
 
-const PUBLIC_PAGES = ['login.html', 'register-teacher.html', 'verify-email.html'];
+const PUBLIC_PAGES = ['login.html', 'register-teacher.html', 'register-student.html', 'verify-email.html'];
 const ADMIN_PAGES = ['admin-promo.html'];
 
 export function initAuthGuard() {
