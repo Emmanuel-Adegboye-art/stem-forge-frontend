@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#ffffff">
-    <title>Register Student | STEM Forge</title>
+    <title>Registration | STEM Forge</title>
     
     <!-- Prevent theme flash -->
     <script>
@@ -42,7 +42,6 @@
 
 <div class="app-container">
     
-    <!-- Navigation -->
     <!-- Navigation Bar -->
     <nav id="main-nav">
         <div class="nav-brand">
@@ -90,37 +89,70 @@
     <!-- Page Header -->
     <div class="generator-header">
         <div class="title-section">
-            <h1>➕ Register New Student</h1>
-            <p>Add a student to your class roster</p>
+            <h1 id="page-title">➕ Registration</h1>
+            <p id="page-subtitle">Select account type to register a student or teacher/org account</p>
         </div>
     </div>
 
     <div class="generator-container">
         <div class="generator-card">
-            <div class="generator-icon">👤</div>
-            <h2>Student Information</h2>
-            <p class="generator-subtitle">Only the basics are required. Add more details later if needed.</p>
+            <div class="generator-icon" id="form-icon">📝</div>
+            <h2 id="form-heading">Create an Account / Roster Entry</h2>
 
             <form id="register-form" class="generator-form">
                 
-                <!-- REQUIRED FIELDS -->
-                <div class="form-section required-section">
-                    <h3 class="form-section-title">
-                        ⭐ Required Information
-                    </h3>
-                    
-                    <!-- Student Name -->
+                <!-- ROLE SELECTOR -->
+                <div class="form-group full-width" style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 1.5rem;">
+                    <label for="reg-role" style="font-weight: 700; color: var(--color-primary);">📋 I want to register as / add:</label>
+                    <select id="reg-role" style="font-size: 1rem; font-weight: 600; padding: 0.75rem;">
+                        <option value="student" selected>👤 Student (Add to Class Roster)</option>
+                        <option value="teacher">👩‍🏫 Teacher / Organization Account (User Sign-up)</option>
+                    </select>
+                </div>
+
+                <!-- FULL NAME (Common to both) -->
+                <div class="form-group full-width">
+                    <label for="reg-name">👤 Full Name <span class="required">*</span></label>
+                    <input type="text" id="reg-name" required placeholder="e.g. Adebayo Tunde">
+                </div>
+
+                <!-- TEACHER / USER SPECIFIC FIELDS (Hidden when student selected) -->
+                <div id="teacher-fields" style="display: none;">
                     <div class="form-group full-width">
-                        <label for="reg-name">👤 Full Name <span class="required">*</span></label>
-                        <input type="text" id="reg-name" required 
-                               placeholder="e.g. Adebayo Tunde, Okafor Chiamaka">
+                        <label for="reg-email">📧 Email Address <span class="required">*</span></label>
+                        <input type="email" id="reg-email" placeholder="you@example.com">
                     </div>
 
+                    <div class="form-group full-width">
+                        <label for="reg-password">🔒 Password <span class="required">*</span></label>
+                        <input type="password" id="reg-password" placeholder="••••••••">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="reg-employee-id">🆔 Employee / Staff ID (Optional)</label>
+                            <input type="text" id="reg-employee-id" placeholder="e.g. EMP-00123">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="reg-department">🏢 Department (Optional)</label>
+                            <input type="text" id="reg-department" placeholder="e.g. Mathematics, Science">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reg-hire-date">📅 Hire Date (Optional)</label>
+                        <input type="date" id="reg-hire-date">
+                    </div>
+                </div>
+
+                <!-- STUDENT SPECIFIC REQUIRED FIELDS (Hidden when teacher selected) -->
+                <div id="student-required-fields">
                     <!-- Class & Arm -->
                     <div class="form-row">
                         <div class="form-group">
                             <label for="reg-class">📚 Class <span class="required">*</span></label>
-                            <select id="reg-class" required>
+                            <select id="reg-class">
                                 <option value="">Select class</option>
                                 <option value="JSS 1">JSS 1</option>
                                 <option value="JSS 2">JSS 2</option>
@@ -134,18 +166,12 @@
                                 <option value="Grade 4">Grade 4</option>
                                 <option value="Grade 5">Grade 5</option>
                                 <option value="Grade 6">Grade 6</option>
-                                <option value="Grade 7">Grade 7</option>
-                                <option value="Grade 8">Grade 8</option>
-                                <option value="Grade 9">Grade 9</option>
-                                <option value="Grade 10">Grade 10</option>
-                                <option value="Grade 11">Grade 11</option>
-                                <option value="Grade 12">Grade 12</option>
                             </select>
                         </div>
                         
                         <div class="form-group">
                             <label for="reg-arm">🏫 Arm <span class="required">*</span></label>
-                            <select id="reg-arm" required>
+                            <select id="reg-arm">
                                 <option value="">Select arm</option>
                                 <option value="A">Arm A</option>
                                 <option value="B">Arm B</option>
@@ -153,7 +179,6 @@
                                 <option value="D">Arm D</option>
                                 <option value="Gold">Gold</option>
                                 <option value="Silver">Silver</option>
-                                <option value="Diamond">Diamond</option>
                             </select>
                         </div>
                     </div>
@@ -161,7 +186,7 @@
                     <!-- Gender -->
                     <div class="form-group">
                         <label for="reg-gender">⚧ Gender <span class="required">*</span></label>
-                        <select id="reg-gender" required>
+                        <select id="reg-gender">
                             <option value="">Select gender</option>
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>
@@ -176,59 +201,49 @@
                     </div>
                 </div>
 
-                <!-- OPTIONAL FIELDS (Collapsed by default) -->
-                <div class="form-section optional-section">
+                <!-- STUDENT OPTIONAL FIELDS -->
+                <div class="form-section optional-section" id="student-optional-fields">
                     <details class="optional-details">
                         <summary>
                             <span class="optional-toggle">
                                 <i class="fa-solid fa-chevron-right"></i>
-                                📋 Additional Details (Optional)
+                                📋 Additional Student Details (Optional)
                             </span>
-                            <span class="optional-hint">Add more info later from the Students page</span>
                         </summary>
                         
                         <div class="optional-content">
-                            <!-- Date of Birth -->
                             <div class="form-group">
                                 <label for="reg-dob">🎂 Date of Birth</label>
                                 <input type="date" id="reg-dob">
                             </div>
 
-                            <!-- Parent/Guardian Information -->
                             <h4 class="form-subsection-title">👨‍👩‍👧 Parent/Guardian (Optional)</h4>
                             
                             <div class="form-group full-width">
                                 <label for="reg-parent-name">👤 Parent/Guardian Name</label>
-                                <input type="text" id="reg-parent-name" 
-                                       placeholder="e.g. Mr. Adebayo, Mrs. Okafor">
+                                <input type="text" id="reg-parent-name" placeholder="e.g. Mr. Adebayo">
                             </div>
                             
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="reg-parent-phone">📞 Phone Number</label>
-                                    <input type="tel" id="reg-parent-phone" 
-                                           placeholder="+234 800 000 0000">
+                                    <input type="tel" id="reg-parent-phone" placeholder="+234 800 000 0000">
                                 </div>
                                 
                                 <div class="form-group">
                                     <label for="reg-parent-email">📧 Email Address</label>
-                                    <input type="email" id="reg-parent-email" 
-                                           placeholder="parent@email.com">
+                                    <input type="email" id="reg-parent-email" placeholder="parent@email.com">
                                 </div>
                             </div>
 
-                            <!-- Address -->
                             <div class="form-group full-width">
                                 <label for="reg-address">🏠 Home Address</label>
-                                <textarea id="reg-address" rows="2" 
-                                          placeholder="Student's home address"></textarea>
+                                <textarea id="reg-address" rows="2" placeholder="Student address"></textarea>
                             </div>
 
-                            <!-- Notes -->
                             <div class="form-group full-width">
                                 <label for="reg-notes">📝 Additional Notes</label>
-                                <textarea id="reg-notes" rows="2" 
-                                          placeholder="e.g. Allergies, special needs, achievements..."></textarea>
+                                <textarea id="reg-notes" rows="2" placeholder="Allergies, notes..."></textarea>
                             </div>
                         </div>
                     </details>
@@ -236,40 +251,37 @@
 
                 <!-- Action Buttons -->
                 <div class="form-actions">
-                    <button type="button" id="cancel-btn" class="secondary-btn">
-                        ❌ Cancel
-                    </button>
-                    <button type="button" id="register-another-btn" class="secondary-btn" style="display: none;">
-                        ➕ Register Another
-                    </button>
-                    <button type="submit" id="register-btn" class="primary-btn">
-                        💾 Register Student
-                    </button>
+                    <button type="button" id="cancel-btn" class="secondary-btn">❌ Cancel</button>
+                    <button type="submit" id="register-btn" class="primary-btn">💾 Register Student</button>
                 </div>
 
                 <!-- Status Message -->
                 <div id="register-status" class="generation-status"></div>
+
+                <div class="form-group" style="margin-top: 1rem; text-align: center;">
+                    <p>Already have an account? <a href="login.html" class="link">Log in →</a></p>
+                </div>
             </form>
         </div>
 
         <!-- Success Card (Hidden by default) -->
         <div id="success-card" class="success-card" style="display: none;">
             <div class="success-icon">✅</div>
-            <h2>Student Registered Successfully!</h2>
+            <h2 id="success-title">Registered Successfully!</h2>
             <div class="success-details">
                 <p><strong>Name:</strong> <span id="success-name"></span></p>
-                <p><strong>Student ID:</strong> <span id="success-id"></span></p>
-                <p><strong>Class:</strong> <span id="success-class"></span></p>
+                <p><strong>Identifier/ID:</strong> <span id="success-id"></span></p>
+                <p><strong>Role/Class:</strong> <span id="success-class"></span></p>
             </div>
             <div class="success-actions">
-                <a href="students.html" class="primary-btn">👥 View All Students</a>
+                <a href="students.html" id="success-link" class="primary-btn">👥 View All Students</a>
                 <button id="success-register-another" class="secondary-btn">➕ Register Another</button>
             </div>
         </div>
     </div>
 
     <div class="footer-note">
-        👤 Student Registration | Student IDs are automatically generated | <a href="students.html">← Back to Students</a>
+        👤 Unified Registration | STEM Forge v2.0
     </div>
 </div>
 

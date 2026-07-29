@@ -1,8 +1,9 @@
 // ============================================
-// REGISTER STUDENT PAGE
-// Add new students with auto-generated IDs
+// UNIFIED REGISTRATION PAGE (OPTION B)
+// Handles both Student registration & Teacher/Org user account creation
 // ============================================
 
+import { AuthAPI } from '../core/api.js';
 import { escapeHtml, showStatus } from '../core/utils.js';
 import { StudentsStore, ClassesStore } from '../core/store.js';
 
@@ -13,9 +14,50 @@ let isSubmitting = false;
 // ============================================
 
 export function init() {
+    setupRoleToggle();
     setupForm();
     setupLivePreview();
     checkUrlParams();
+}
+
+function setupRoleToggle() {
+    const roleSelect = document.getElementById('reg-role');
+    if (!roleSelect) return;
+
+    roleSelect.addEventListener('change', updateRoleUI);
+    // Initial sync
+    updateRoleUI();
+}
+
+function updateRoleUI() {
+    const role = document.getElementById('reg-role')?.value || 'student';
+    const studentReq = document.getElementById('student-required-fields');
+    const studentOpt = document.getElementById('student-optional-fields');
+    const teacherFields = document.getElementById('teacher-fields');
+    const submitBtn = document.getElementById('register-btn');
+    const pageTitle = document.getElementById('page-title');
+    const pageSubtitle = document.getElementById('page-subtitle');
+    const formHeading = document.getElementById('form-heading');
+
+    if (role === 'teacher') {
+        if (studentReq) studentReq.style.display = 'none';
+        if (studentOpt) studentOpt.style.display = 'none';
+        if (teacherFields) teacherFields.style.display = 'block';
+
+        if (pageTitle) pageTitle.textContent = '👩‍🏫 Register Teacher / Organization';
+        if (pageSubtitle) pageSubtitle.textContent = 'Create a new teacher or organization account to log in';
+        if (formHeading) formHeading.textContent = 'Teacher / Organization Registration';
+        if (submitBtn) submitBtn.innerHTML = '💾 Create Account';
+    } else {
+        if (studentReq) studentReq.style.display = 'block';
+        if (studentOpt) studentOpt.style.display = 'block';
+        if (teacherFields) teacherFields.style.display = 'none';
+
+        if (pageTitle) pageTitle.textContent = '➕ Register New Student';
+        if (pageSubtitle) pageSubtitle.textContent = 'Add a student to your class roster';
+        if (formHeading) formHeading.textContent = 'Student Information';
+        if (submitBtn) submitBtn.innerHTML = '💾 Register Student';
+    }
 }
 
 function setupForm() {
@@ -28,11 +70,11 @@ function setupForm() {
     const cancelBtn = document.getElementById('cancel-btn');
     if (cancelBtn) {
         cancelBtn.addEventListener('click', () => {
-            window.location.href = 'verify-email.html';
+            window.location.href = 'login.html';
         });
     }
     
-    // Register another button (in success card)
+    // Register another button
     const registerAnotherBtn = document.getElementById('register-another-btn');
     if (registerAnotherBtn) {
         registerAnotherBtn.addEventListener('click', resetForm);
@@ -45,14 +87,23 @@ function setupForm() {
 }
 
 // ============================================
-// URL PARAMS (for "Add Student to JSS 1A" buttons)
+// URL PARAMS
 // ============================================
 
 function checkUrlParams() {
     const urlParams = new URLSearchParams(window.location.search);
+    const roleParam = urlParams.get('role');
     const classParam = urlParams.get('class');
     const armParam = urlParams.get('arm');
     
+    if (roleParam) {
+        const roleSelect = document.getElementById('reg-role');
+        if (roleSelect) {
+            roleSelect.value = roleParam;
+            updateRoleUI();
+        }
+    }
+
     if (classParam) {
         const classSelect = document.getElementById('reg-class');
         if (classSelect) {
@@ -71,20 +122,15 @@ function checkUrlParams() {
 }
 
 // ============================================
-// LIVE ID PREVIEW
+// LIVE ID PREVIEW (FOR STUDENTS)
 // ============================================
 
 function setupLivePreview() {
     const classSelect = document.getElementById('reg-class');
     const armSelect = document.getElementById('reg-arm');
     
-    if (classSelect) {
-        classSelect.addEventListener('change', updateIdPreview);
-    }
-    
-    if (armSelect) {
-        armSelect.addEventListener('change', updateIdPreview);
-    }
+    if (classSelect) classSelect.addEventListener('change', updateIdPreview);
+    if (armSelect) armSelect.addEventListener('change', updateIdPreview);
 }
 
 function updateIdPreview() {
@@ -100,74 +146,30 @@ function updateIdPreview() {
         return;
     }
     
-    const nextId = generateNextStudentId(className, arm);
+    const nextId = StudentsStore.generateId(className, arm);
     previewValue.textContent = nextId;
     previewValue.classList.add('ready');
 }
 
-function generateNextStudentId(className, arm) {
-    // Get existing students
-    const students = getAllStudents();
-    
-    // Filter students in same class & arm
-    const classStudents = students.filter(s => 
-        s.class === className && s.arm === arm
-    );
-    
-    // Get class code (J1, J2, S1, G1, G10, etc.)
-    const classCode = getClassCode(className);
-    
-    // Get arm code (first letter or first 2 chars for special arms)
-    const armCode = getArmCode(arm);
-    
-    // Find next number
-    const prefix = `${classCode}${armCode}`;
-    const existingIds = classStudents
-        .map(s => s.id || '')
-        .filter(id => id.startsWith(prefix))
-        .map(id => {
-            const numPart = id.substring(prefix.length);
-            return parseInt(numPart, 10) || 0;
-        });
-    
-    const nextNum = existingIds.length > 0 ? Math.max(...existingIds) + 1 : 1;
-    
-    return `${prefix}${String(nextNum).padStart(3, '0')}`;
-}
-
-function getClassCode(className) {
-    // JSS 1 -> J1, JSS 2 -> J2, SS 1 -> S1
-    if (className.startsWith('JSS')) {
-        const num = className.replace('JSS', '').trim();
-        return `J${num}`;
-    }
-    if (className.startsWith('SS')) {
-        const num = className.replace('SS', '').trim();
-        return `S${num}`;
-    }
-    if (className.startsWith('Grade')) {
-        const num = className.replace('Grade', '').trim();
-        return `G${num}`;
-    }
-    return 'X'; // Fallback
-}
-
-function getArmCode(arm) {
-    // A -> A, B -> B, Gold -> G, Silver -> S, Diamond -> D
-    if (arm.length === 1) return arm;
-    return arm.charAt(0).toUpperCase();
-}
-
 // ============================================
-// FORM SUBMISSION
+// FORM SUBMISSION BRANCHING
 // ============================================
 
 async function handleSubmit(e) {
     e.preventDefault();
-    
     if (isSubmitting) return;
-    
-    // Get form data
+
+    const role = document.getElementById('reg-role')?.value || 'student';
+
+    if (role === 'teacher') {
+        await handleTeacherSubmit();
+    } else {
+        await handleStudentSubmit();
+    }
+}
+
+// ----- STUDENT SUBMIT -----
+async function handleStudentSubmit() {
     const formData = {
         name: document.getElementById('reg-name')?.value.trim(),
         class: document.getElementById('reg-class')?.value,
@@ -180,42 +182,23 @@ async function handleSubmit(e) {
         address: document.getElementById('reg-address')?.value.trim() || null,
         notes: document.getElementById('reg-notes')?.value.trim() || null
     };
-    
-    // Validation
+
     if (!formData.name || !formData.class || !formData.arm || !formData.gender) {
-        showStatus('register-status', 'Please fill in all required fields (Name, Class, Arm, Gender)', 'error');
+        showStatus('register-status', 'Please fill in required fields (Name, Class, Arm, Gender)', 'error');
         return;
     }
-    
-    // Check for duplicate names in same class
-    const existing = getAllStudents();
-    const duplicate = existing.find(s => 
-        s.name.toLowerCase() === formData.name.toLowerCase() &&
-        s.class === formData.class &&
-        s.arm === formData.arm &&
-        s.active !== false
-    );
-    
-    if (duplicate) {
-        const confirmAdd = confirm(
-            `A student named "${formData.name}" already exists in ${formData.class} ${formData.arm} (ID: ${duplicate.id}).\n\nDo you want to add another student with the same name?`
-        );
-        if (!confirmAdd) return;
+
+    isSubmitting = true;
+    const btn = document.getElementById('register-btn');
+    const originalText = btn ? btn.innerHTML : 'Register Student';
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="loading-spinner"></span> <span>Registering...</span>';
     }
 
-    // Set submitting state
-    isSubmitting = true;
-    const submitBtn = document.getElementById('register-btn');
-    const originalBtnText = submitBtn ? submitBtn.innerHTML : '';
-    if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<span class="loading-spinner"></span> <span>Registering...</span>';
-    }
-    
     showStatus('register-status', 'Registering student...', 'info', 0);
-    
+
     try {
-        // Generate ID using the shared store
         formData.id = StudentsStore.generateId(formData.class, formData.arm);
         formData.currentClass = `${formData.class} ${formData.arm}`.trim();
         formData.enrolledDate = new Date().toISOString();
@@ -223,98 +206,115 @@ async function handleSubmit(e) {
         formData.createdAt = new Date().toISOString();
         formData.updatedAt = new Date().toISOString();
 
-        // Save via shared store
         StudentsStore.save(formData);
-        
-        // Show success
-        showSuccessCard(formData);
-        
+        showStudentSuccessCard(formData);
     } catch (error) {
-        console.error('Registration failed:', error);
-        showStatus('register-status', 'Failed to register student. Please try again.', 'error', 4000);
+        console.error('Student registration error:', error);
+        showStatus('register-status', 'Failed to register student.', 'error', 4000);
     } finally {
         isSubmitting = false;
-        if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = originalBtnText;
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        }
+    }
+}
+
+// ----- TEACHER / USER SUBMIT -----
+async function handleTeacherSubmit() {
+    const formData = {
+        name: document.getElementById('reg-name')?.value.trim(),
+        email: document.getElementById('reg-email')?.value.trim(),
+        password: document.getElementById('reg-password')?.value,
+        employeeId: document.getElementById('reg-employee-id')?.value.trim() || null,
+        department: document.getElementById('reg-department')?.value.trim() || null,
+        hireDate: document.getElementById('reg-hire-date')?.value || null,
+        role: 'teacher'
+    };
+
+    if (!formData.name || !formData.email || !formData.password) {
+        showStatus('register-status', 'Please fill in Name, Email, and Password', 'error');
+        return;
+    }
+
+    isSubmitting = true;
+    const btn = document.getElementById('register-btn');
+    const originalText = btn ? btn.innerHTML : 'Create Account';
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="loading-spinner"></span> <span>Creating Account...</span>';
+    }
+
+    showStatus('register-status', 'Creating your account...', 'info', 0);
+
+    try {
+        const result = await AuthAPI.register(formData);
+
+        if (typeof firebase !== 'undefined' && firebase.auth) {
+            try {
+                const cred = await firebase.auth().signInWithEmailAndPassword(formData.email, formData.password);
+                if (cred.user && !cred.user.emailVerified) {
+                    await cred.user.sendEmailVerification();
+                }
+            } catch (fbErr) {
+                console.warn('Firebase client sign-in after registration:', fbErr.message);
+            }
+        }
+
+        showStatus('register-status', 'Account created! Redirecting to email verification…', 'success', 2000);
+        setTimeout(() => {
+            window.location.href = 'verify-email.html';
+        }, 1500);
+
+    } catch (error) {
+        console.error('Teacher registration error:', error);
+        let msg = 'Unable to create account';
+        if (error.response?.data?.error?.message) {
+            msg = error.response.data.error.message;
+        } else if (error.message) {
+            msg = error.message;
+        }
+        showStatus('register-status', msg, 'error', 4000);
+    } finally {
+        isSubmitting = false;
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
         }
     }
 }
 
 // ============================================
-// SUCCESS CARD
+// SUCCESS CARDS & RESET
 // ============================================
 
-function showSuccessCard(student) {
-    // Hide form
+function showStudentSuccessCard(student) {
     const formCard = document.querySelector('.generator-card');
     if (formCard) formCard.style.display = 'none';
-    
-    // Populate success card
+
+    const successTitle = document.getElementById('success-title');
+    if (successTitle) successTitle.textContent = 'Student Registered Successfully!';
+
     document.getElementById('success-name').textContent = student.name;
     document.getElementById('success-id').textContent = student.id;
     document.getElementById('success-class').textContent = `${student.class} ${student.arm}`.trim();
-    
-    // Show success card
+
     const successCard = document.getElementById('success-card');
     if (successCard) {
         successCard.style.display = 'block';
         successCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
-    
-    // Show "Register Another" button in form actions
-    const registerAnotherBtn = document.getElementById('register-another-btn');
-    if (registerAnotherBtn) {
-        registerAnotherBtn.style.display = 'inline-block';
-    }
 }
 
 function resetForm() {
-    // Reset form
     const form = document.getElementById('register-form');
     if (form) form.reset();
     
-    // Hide success card
     const successCard = document.getElementById('success-card');
     if (successCard) successCard.style.display = 'none';
     
-    // Show form card
     const formCard = document.querySelector('.generator-card');
-    if (formCard) {
-        formCard.style.display = 'block';
-        formCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-    
-    // Hide "Register Another" button
-    const registerAnotherBtn = document.getElementById('register-another-btn');
-    if (registerAnotherBtn) {
-        registerAnotherBtn.style.display = 'none';
-    }
-    
-    // Reset ID preview
-    updateIdPreview();
-    
-    // Clear status
-    const status = document.getElementById('register-status');
-    if (status) {
-        status.classList.add('hidden');
-        status.textContent = '';
-    }
-    
-    // Focus on name field
-    setTimeout(() => {
-        document.getElementById('reg-name')?.focus();
-    }, 300);
-}
+    if (formCard) formCard.style.display = 'block';
 
-// ============================================
-// STORAGE — delegates to shared store
-// ============================================
-
-function getAllStudents() {
-    return StudentsStore.getAll();
-}
-
-function saveAllStudents(students) {
-    // Handled by StudentsStore.save() during submit
+    updateRoleUI();
 }
