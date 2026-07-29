@@ -291,6 +291,12 @@ async function handleTeacherSubmit() {
         return;
     }
 
+    // Make sure Firebase Client SDK is available
+    if (typeof firebase === 'undefined' || !firebase.auth) {
+        showStatus('register-status', '❌ Authentication service unavailable. Please refresh and try again.', 'error');
+        return;
+    }
+
     isSubmitting = true;
     const btn = document.getElementById('register-btn');
     const originalText = btn ? btn.innerHTML : 'Create Account';
@@ -299,36 +305,60 @@ async function handleTeacherSubmit() {
         btn.innerHTML = '<span class="loading-spinner"></span> <span>Creating Account...</span>';
     }
 
-    showStatus('register-status', 'Creating your account...', 'info', 0);
+    showStatus('register-status', 'Creating your account…', 'info', 0);
 
     try {
-        const result = await AuthAPI.register(formData);
+        // 1️⃣  Create the Firebase user directly via client SDK (no Admin SDK needed)
+        const cred = await firebase.auth().createUserWithEmailAndPassword(formData.email, formData.password);
+        const user = cred.user;
 
-        if (typeof firebase !== 'undefined' && firebase.auth) {
-            try {
-                const cred = await firebase.auth().signInWithEmailAndPassword(formData.email, formData.password);
-                if (cred.user && !cred.user.emailVerified) {
-                    await cred.user.sendEmailVerification();
-                }
-            } catch (fbErr) {
-                console.warn('Firebase client sign-in after registration:', fbErr.message);
-            }
+        // 2️⃣  Set display name
+        await user.updateProfile({ displayName: formData.name });
+
+        // 3️⃣  Send email verification
+        await user.sendEmailVerification();
+
+        // 4️⃣  (Optional) Persist extra profile info to backend — fail silently so
+        //      a broken Render deploy never blocks account creation
+        try {
+            const idToken = await user.getIdToken();
+            await fetch('https://stemforge-backend-1.onrender.com/api/auth/profile', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${idToken}`
+                },
+                body: JSON.stringify({
+                    name: formData.name,
+                    role: formData.role,
+                    employeeId: formData.employeeId,
+                    department: formData.department,
+                    hireDate: formData.hireDate
+                })
+            });
+        } catch (profileErr) {
+            console.warn('Profile save to backend failed (non-fatal):', profileErr.message);
         }
 
-        showStatus('register-status', 'Account created! Redirecting to email verification…', 'success', 2000);
+        // 5️⃣  Sign out immediately so the user goes through the verify-email flow
+        await firebase.auth().signOut();
+
+        showStatus('register-status', '✅ Account created! Check your email to verify, then log in.', 'success', 0);
         setTimeout(() => {
             window.location.href = 'verify-email.html';
-        }, 1500);
+        }, 1800);
 
     } catch (error) {
         console.error('Teacher registration error:', error);
-        let msg = 'Unable to create account';
-        if (error.response?.data?.error?.message) {
-            msg = error.response.data.error.message;
-        } else if (error.message) {
-            msg = error.message;
-        }
-        showStatus('register-status', msg, 'error', 4000);
+        // Surface friendly Firebase error messages
+        const firebaseMessages = {
+            'auth/email-already-in-use': '⚠️ This email is already registered. Try logging in instead.',
+            'auth/invalid-email': '⚠️ Please enter a valid email address.',
+            'auth/weak-password': '⚠️ Password is too weak. Use at least 8 characters.',
+            'auth/network-request-failed': '⚠️ Network error — please check your connection and try again.',
+        };
+        const msg = firebaseMessages[error.code] || error.message || 'Unable to create account';
+        showStatus('register-status', msg, 'error', 6000);
     } finally {
         isSubmitting = false;
         if (btn) {
