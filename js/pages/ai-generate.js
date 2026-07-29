@@ -270,16 +270,179 @@ function renderLessonPlan(data) {
 }
 
 function renderLessonNote(data) {
-    // Keep your existing lesson note renderer for now
+    const meta = data.metadata || {};
+
     return `
         <div class="lesson-document">
+            <!-- Header -->
             <div class="lesson-header">
                 <div class="lesson-icon">📝</div>
-                <h1 class="lesson-title">${escapeHtml(data.metadata?.title || 'Lesson Note')}</h1>
+                <h1 class="lesson-title">${escapeHtml(meta.title || 'Lesson Note')}</h1>
+                <div class="lesson-meta">
+                    ${meta.subject ? `<div class="meta-item"><span><strong>Subject:</strong> ${escapeHtml(meta.subject)}</span></div>` : ''}
+                    ${meta.classLevel ? `<div class="meta-item"><span><strong>Grade:</strong> ${escapeHtml(meta.classLevel)}</span></div>` : ''}
+                    ${meta.duration ? `<div class="meta-item"><span><strong>Duration:</strong> ${escapeHtml(meta.duration)}</span></div>` : ''}
+                </div>
             </div>
-            <pre class="lesson-note-raw">${escapeHtml(JSON.stringify(data, null, 2))}</pre>
+
+            ${renderLNIntroduction(data.introduction)}
+            ${renderLNKeyConcepts(data.keyConcepts)}
+            ${renderLNDefinitions(data.definitions)}
+            ${renderLNActivities(data.activities)}
+            ${renderLNMaterials(data.materialsList)}
+            ${renderLNVideoSuggestions(data.videoSuggestions)}
+            ${renderLNImageSuggestions(data.imageSuggestions)}
         </div>
     `;
+}
+
+function renderLNIntroduction(intro) {
+    if (!intro) return '';
+    const text = typeof intro === 'string' ? intro : intro.text;
+    const dur  = typeof intro === 'object' ? intro.duration : null;
+    if (!text) return '';
+    return `
+        <section class="lesson-section highlight">
+            <h2 class="section-title">📖 Introduction</h2>
+            <div class="section-content">
+                <p class="lesson-text">${escapeHtml(text)}</p>
+                ${dur ? `<p class="lesson-duration"><strong>Duration:</strong> ${escapeHtml(String(dur))}</p>` : ''}
+            </div>
+        </section>`;
+}
+
+function renderLNKeyConcepts(concepts) {
+    if (!concepts || !Array.isArray(concepts) || concepts.length === 0) return '';
+    return `
+        <section class="lesson-section">
+            <h2 class="section-title">💡 Key Concepts</h2>
+            <div class="section-content">
+                <ul class="lesson-list">
+                    ${concepts.map(c => `<li>${escapeHtml(c)}</li>`).join('')}
+                </ul>
+            </div>
+        </section>`;
+}
+
+function renderLNDefinitions(defs) {
+    if (!defs || !Array.isArray(defs) || defs.length === 0) return '';
+    return `
+        <section class="lesson-section">
+            <h2 class="section-title">📚 Definitions & Key Terms</h2>
+            <div class="section-content">
+                ${defs.map(d => `
+                    <div class="activity-card" style="margin-bottom:1rem;">
+                        <div class="activity-header">
+                            <h3 class="activity-name" style="font-size:1rem;">${escapeHtml(d.term || '')}</h3>
+                        </div>
+                        ${d.definition ? `<p class="lesson-text">${escapeHtml(d.definition)}</p>` : ''}
+                        ${d.example ? `<p class="lesson-text"><strong>Example:</strong> ${escapeHtml(d.example)}</p>` : ''}
+                        ${d.suggestedImagePrompt ? `
+                            <p class="lesson-text" style="color:var(--color-primary);font-style:italic;">
+                                🖼️ Suggested image: ${escapeHtml(d.suggestedImagePrompt)}
+                            </p>` : ''}
+                    </div>`).join('')}
+            </div>
+        </section>`;
+}
+
+function renderLNActivities(activities) {
+    if (!activities || !Array.isArray(activities) || activities.length === 0) return '';
+    return `
+        <section class="lesson-section">
+            <h2 class="section-title">🔬 Activities</h2>
+            <div class="section-content">
+                ${activities.map((act, idx) => `
+                    <div class="activity-card">
+                        <div class="activity-header">
+                            <span class="activity-number">${idx + 1}</span>
+                            <h3 class="activity-name">${escapeHtml(act.name || `Activity ${idx + 1}`)}</h3>
+                            ${act.duration ? `<span class="activity-duration">${escapeHtml(act.duration)}</span>` : ''}
+                        </div>
+                        ${act.description ? `<p class="lesson-text">${escapeHtml(act.description)}</p>` : ''}
+                        ${act.materials && Array.isArray(act.materials) ? `
+                            <p class="lesson-text"><strong>Materials:</strong> ${act.materials.map(escapeHtml).join(', ')}</p>` : ''}
+                        ${act.steps && Array.isArray(act.steps) ? `
+                            <ol class="lesson-list">
+                                ${act.steps.map(s => `<li>${escapeHtml(s)}</li>`).join('')}
+                            </ol>` : ''}
+                    </div>`).join('')}
+            </div>
+        </section>`;
+}
+
+function renderLNMaterials(list) {
+    if (!list || !Array.isArray(list) || list.length === 0) return '';
+    return `
+        <section class="lesson-section">
+            <h2 class="section-title">🛠️ Materials & Resources</h2>
+            <div class="section-content">
+                <ul class="lesson-list">
+                    ${list.map(m => {
+                        if (typeof m === 'string') return `<li>${escapeHtml(m)}</li>`;
+                        const qty = m.quantity ? ` (×${m.quantity})` : '';
+                        const src = m.source ? ` — <em>${escapeHtml(m.source)}</em>` : '';
+                        return `<li>${escapeHtml(m.item || '')}${escapeHtml(qty)}${src}</li>`;
+                    }).join('')}
+                </ul>
+            </div>
+        </section>`;
+}
+
+function renderLNVideoSuggestions(videos) {
+    if (!videos || !Array.isArray(videos) || videos.length === 0) return '';
+    return `
+        <section class="lesson-section">
+            <h2 class="section-title">🎬 Video Suggestions</h2>
+            <div class="section-content">
+                ${videos.map(v => `
+                    <div class="activity-card" style="margin-bottom:0.75rem;">
+                        <div class="activity-header">
+                            <h3 class="activity-name" style="font-size:1rem;">🎥 ${escapeHtml(v.topic || v.title || 'Video')}</h3>
+                        </div>
+                        ${v.searchQuery ? `
+                            <p class="lesson-text">
+                                <strong>🔍 Search:</strong> "${escapeHtml(v.searchQuery)}"
+                            </p>` : ''}
+                        ${v.description ? `<p class="lesson-text">${escapeHtml(v.description)}</p>` : ''}
+                        ${v.suggestedSources && Array.isArray(v.suggestedSources) && v.suggestedSources.length > 0 ? `
+                            <p class="lesson-text"><strong>📺 Recommended sources:</strong>
+                                ${v.suggestedSources.map(s => {
+                                    if (typeof s === 'string' && (s.startsWith('http') || s.includes('youtube') || s.includes('www'))) {
+                                        return `<a href="${escapeHtml(s)}" target="_blank" rel="noopener noreferrer">${escapeHtml(s)}</a>`;
+                                    }
+                                    return escapeHtml(s);
+                                }).join(' &nbsp;|&nbsp; ')}
+                            </p>` : ''}
+                    </div>`).join('')}
+            </div>
+        </section>`;
+}
+
+function renderLNImageSuggestions(images) {
+    if (!images || !Array.isArray(images) || images.length === 0) return '';
+    return `
+        <section class="lesson-section">
+            <h2 class="section-title">🖼️ Image Suggestions</h2>
+            <div class="section-content">
+                ${images.map(img => `
+                    <div class="activity-card" style="margin-bottom:0.75rem;">
+                        <div class="activity-header">
+                            <h3 class="activity-name" style="font-size:1rem;">📷 ${escapeHtml(img.location || img.title || 'Image')}</h3>
+                        </div>
+                        ${img.description ? `<p class="lesson-text">${escapeHtml(img.description)}</p>` : ''}
+                        ${img.sources && Array.isArray(img.sources) && img.sources.length > 0 ? `
+                            <p class="lesson-text"><strong>🔗 Sources:</strong>
+                                ${img.sources.map(s => {
+                                    if (typeof s === 'string' && (s.startsWith('http') || s.includes('www'))) {
+                                        return `<a href="${escapeHtml(s)}" target="_blank" rel="noopener noreferrer">${escapeHtml(s)}</a>`;
+                                    }
+                                    return escapeHtml(s);
+                                }).join(' &nbsp;|&nbsp; ')}
+                            </p>` : ''}
+                    </div>`).join('')}
+            </div>
+        </section>`;
 }
 
 // ============================================
