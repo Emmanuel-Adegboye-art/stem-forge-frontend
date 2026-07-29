@@ -6,25 +6,16 @@
 (function() {
     'use strict';
     
-    // ⚠️ REPLACE WITH YOUR REAL CONFIG FROM FIREBASE CONSOLE
-    // Import the functions you need from the SDKs you need
-    // (Removed invalid import statements)
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyA8tR_IUf0NRLJ2aXWD80AC9xF4Vf-Xa1Q",
-  authDomain: "stem-forge.firebaseapp.com",
-  projectId: "stem-forge",
-  storageBucket: "stem-forge.firebasestorage.app",
-  messagingSenderId: "326321735871",
-  appId: "1:326321735871:web:3d40fc6bd19bcb27585e0a",
-  measurementId: "G-Q0CHQHZ1E4"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyA8tR_IUf0NRLJ2aXWD80AC9xF4Vf-Xa1Q",
+      authDomain: "stem-forge.firebaseapp.com",
+      projectId: "stem-forge",
+      storageBucket: "stem-forge.firebasestorage.app",
+      messagingSenderId: "326321735871",
+      appId: "1:326321735871:web:3d40fc6bd19bcb27585e0a",
+      measurementId: "G-Q0CHQHZ1E4"
+    };
 
     // Check if Firebase SDK loaded
     if (typeof firebase === 'undefined') {
@@ -32,16 +23,8 @@ const analytics = getAnalytics(app);
         return;
     }
 
-    // Check if config is still placeholder
-    if (firebaseConfig.apiKey === "YOUR_API_KEY_HERE") {
-        console.warn('⚠️ Firebase config not set yet. Update firebase-init.js with your real config.');
-        // Don't initialize - just return so nothing breaks
-        window.firebaseAuth = null;
-        return;
-    }
-
     try {
-        // Initialize Firebase
+        // Initialize Firebase compat
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
             console.log('🔥 Firebase initialized');
