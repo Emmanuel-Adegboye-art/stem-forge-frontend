@@ -18,6 +18,44 @@ export function init() {
     setupForm();
     setupLivePreview();
     checkUrlParams();
+    setupPasswordToggles();
+}
+
+// ============================================
+// PASSWORD TOGGLES & CONFIRM MATCH
+// ============================================
+
+function setupPasswordToggles() {
+    // Wire every toggle button on the page
+    document.querySelectorAll('.toggle-password-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const targetId = btn.dataset.target;
+            const input = document.getElementById(targetId);
+            if (!input) return;
+            const isHidden = input.type === 'password';
+            input.type = isHidden ? 'text' : 'password';
+            btn.textContent = isHidden ? '🙈' : '👁️';
+        });
+    });
+
+    // Live password-match feedback
+    const pwField = document.getElementById('reg-password');
+    const pwConfirm = document.getElementById('reg-password-confirm');
+    const hint = document.getElementById('password-match-hint');
+
+    function checkMatch() {
+        if (!hint || !pwConfirm?.value) { if (hint) hint.textContent = ''; return; }
+        if (pwField?.value === pwConfirm.value) {
+            hint.textContent = '✅ Passwords match';
+            hint.className = 'password-match-hint matched';
+        } else {
+            hint.textContent = '❌ Passwords do not match';
+            hint.className = 'password-match-hint mismatched';
+        }
+    }
+
+    if (pwField) pwField.addEventListener('input', checkMatch);
+    if (pwConfirm) pwConfirm.addEventListener('input', checkMatch);
 }
 
 function setupRoleToggle() {
@@ -222,10 +260,26 @@ async function handleStudentSubmit() {
 
 // ----- TEACHER / USER SUBMIT -----
 async function handleTeacherSubmit() {
+    const password = document.getElementById('reg-password')?.value;
+    const passwordConfirm = document.getElementById('reg-password-confirm')?.value;
+
+    // Validate password length
+    if (password && password.length < 8) {
+        showStatus('register-status', 'Password must be at least 8 characters', 'error');
+        return;
+    }
+
+    // Validate password match
+    if (password !== passwordConfirm) {
+        showStatus('register-status', '❌ Passwords do not match — please re-enter', 'error');
+        document.getElementById('reg-password-confirm')?.focus();
+        return;
+    }
+
     const formData = {
         name: document.getElementById('reg-name')?.value.trim(),
         email: document.getElementById('reg-email')?.value.trim(),
-        password: document.getElementById('reg-password')?.value,
+        password,
         employeeId: document.getElementById('reg-employee-id')?.value.trim() || null,
         department: document.getElementById('reg-department')?.value.trim() || null,
         hireDate: document.getElementById('reg-hire-date')?.value || null,

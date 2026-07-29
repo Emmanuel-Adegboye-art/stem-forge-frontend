@@ -51,6 +51,50 @@
     font-family: var(--font-primary);
 }
 
+/* Password Toggle Wrapper */
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.password-wrapper input[type="password"],
+.password-wrapper input[type="text"] {
+    width: 100%;
+    padding-right: 2.75rem;
+}
+
+.toggle-password-btn {
+    position: absolute;
+    right: 0.75rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 0.25rem;
+    color: var(--text-muted);
+    transition: transform 0.15s ease, opacity 0.15s ease;
+    user-select: none;
+}
+
+.toggle-password-btn:hover {
+    opacity: 0.8;
+    transform: scale(1.1);
+}
+
+.password-match-hint {
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    font-weight: 500;
+}
+.password-match-hint.matched {
+    color: #10b981;
+}
+.password-match-hint.mismatched {
+    color: #ef4444;
+}
+
 .checkbox-label {
     display: flex !important;
     flex-direction: row !important;
