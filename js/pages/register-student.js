@@ -28,7 +28,7 @@ function setupForm() {
     const cancelBtn = document.getElementById('cancel-btn');
     if (cancelBtn) {
         cancelBtn.addEventListener('click', () => {
-            window.location.href = 'students.html';
+            window.location.href = 'verify-email.html';
         });
     }
     

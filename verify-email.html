@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify your e‑mail | STEM Forge</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/theme-toggle.css">
+  <link rel="stylesheet" href="css/layout/container.css">
+  <link rel="stylesheet" href="css/layout/nav.css">
+  <link rel="stylesheet" href="css/layout/footer.css">
+  <link rel="stylesheet" href="css/components/cards.css">
+  <link rel="stylesheet" href="css/components/buttons.css">
+  <link rel="stylesheet" href="css/components/forms.css">
+  <link rel="stylesheet" href="css/components/alerts.css">
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="js/core/firebase-init.js"></script>
+</head>
+<body data-page="verify-email">
+<div class="app-container">
+  <nav id="main-nav">
+    <div class="nav-brand"><span class="brand-icon">⚡</span><span class="brand-text">STEM Forge</span></div>
+    <button class="mobile-menu-toggle" id="mobile-menu-toggle">☰ Menu</button>
+    <div class="nav-links" id="nav-links">
+      <a href="index.html" class="nav-btn">🏠 Dashboard</a>
+      <a href="ai-generate.html" class="nav-btn">🤖 AI Generate</a>
+      <a href="scheme.html" class="nav-btn">📅 Scheme</a>
+      <a href="attendance.html" class="nav-btn">📋 Attendance</a>
+      <a href="students.html" class="nav-btn">👥 Students</a>
+      <a href="classes.html" class="nav-btn">🏫 Classes</a>
+      <a href="attendance-reports.html" class="nav-btn">📊 Reports</a>
+      <div class="nav-dropdown"><button class="nav-dropdown-btn">📁 More ▼</button>
+        <div class="nav-dropdown-content">
+          <a href="pricing.html">💰 Pricing</a>
+          <a href="exams.html">📝 Exams</a>
+          <a href="virtual.html">🎥 Virtual Class</a>
+          <a href="about.html">📖 About</a>
+          <a href="services.html">🛠️ Services</a>
+          <a href="contact.html">📞 Contact</a>
+        </div></div>
+      <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+        <svg class="icon-moon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+        <svg class="icon-sun" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+      </button>
+    </div>
+  </nav>
+
+  <div class="generator-header">
+    <div class="title-section">
+      <h1>📧 Verify your e‑mail</h1>
+      <p>We’ve sent a verification link to the address you provided. Please click the link in the e‑mail, then return here.</p>
+    </div>
+  </div>
+
+  <div class="generator-container">
+    <div class="generator-card">
+      <h2>✅ Verify your e‑mail</h2>
+      <p id="verify-msg">If you haven’t received the e‑mail, check your spam folder or click “Resend link”.</p>
+      <button id="resend-btn" class="primary-btn">🔁 Resend verification e‑mail</button>
+      <button id="check-btn" class="secondary-btn">✅ I’ve verified my e‑mail – take me to the dashboard</button>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    🔐 Your e‑mail address is never shared with third parties.
+  </div>
+</div>
+
+<script type="module">
+  // ----- Verification logic -----
+  const auth = firebase.auth();
+
+  // Resend verification e‑mail
+  document.getElementById('resend-btn').addEventListener('click', async () => {
+    const user = auth.currentUser;
+    if (user) {
+      await user.sendEmailVerification();
+      showStatus('verify-status', 'Verification e‑mail resent!', 'success', 2000);
+    }
+  });
+
+  // Check if e‑mail is now verified
+  document.getElementById('check-btn').addEventListener('click', async () => {
+    await auth.currentUser.reload(); // refresh user object
+    if (auth.currentUser.emailVerified) {
+      // Store minimal info for the dashboard (optional)
+      localStorage.setItem('stemforge:user', JSON.stringify({
+        uid: auth.currentUser.uid,
+        email: auth.currentUser.email,
+        name: auth.currentUser.displayName,
+        emailVerified: true
+      }));
+      window.location.href = 'index.html';
+    } else {
+      showStatus('verify-status', 'E‑mail not verified yet. Please check your inbox (including spam).', 'error', 0);
+    }
+  });
+
+  // Show a status line under the buttons
+  function showStatus(msg, type = 'info', timeout = 0) {
+    const el = document.createElement('div');
+    el.className = `generation-status ${type}`;
+    el.textContent = msg;
+    const container = document.querySelector('.generator-card');
+    container.appendChild(el);
+    if (timeout) setTimeout(() => el.remove(), timeout);
+  }
+</script>
+</html>

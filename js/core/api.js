@@ -143,14 +143,15 @@ export async function generateWithAI(data) {
 }
 
 // ============================================
-// AUTH API
+// AUTH API - UPDATED FOR TEACHER REGISTRATION + PROMO
 // ============================================
 
 export const AuthAPI = {
-    async register(email, password, name) {
-        return apiFetch(CONFIG.ENDPOINTS.auth.register, {
+    async register(userData) {
+        // POST to /api/auth/register with full payload (email, password, name, role, employeeId, department, hireDate)
+        return await apiFetch(CONFIG.ENDPOINTS.auth.register, {
             method: 'POST',
-            body: JSON.stringify({ email, password, name })
+            body: JSON.stringify(userData)
         });
     },
     
@@ -169,6 +170,13 @@ export const AuthAPI = {
         return apiFetch(CONFIG.ENDPOINTS.auth.profile, {
             method: 'PUT',
             body: JSON.stringify(updates)
+        });
+    },
+
+    async redeemPromo({ code }) {
+        return await apiFetch(CONFIG.ENDPOINTS.auth.promoRedeem, {
+            method: 'POST',
+            body: JSON.stringify({ code })
         });
     }
 };
@@ -213,28 +221,23 @@ export const LessonsAPI = {
 // ============================================
 
 export const StudentsAPI = {
-    // Get all students (with optional filters)
     async getAll(filters = {}) {
         const params = new URLSearchParams(filters).toString();
         return apiFetch(`${CONFIG.ENDPOINTS.students}${params ? '?' + params : ''}`);
     },
     
-    // Get a single student by ID
     async getById(id) {
         return apiFetch(`${CONFIG.ENDPOINTS.students}/${id}`);
     },
     
-    // Get students by class
     async getByClass(className) {
         return apiFetch(`${CONFIG.ENDPOINTS.students}/class/${encodeURIComponent(className)}`);
     },
     
-    // Get students by class and arm
     async getByClassAndArm(className, arm) {
         return apiFetch(`${CONFIG.ENDPOINTS.students}/class/${encodeURIComponent(className)}/arm/${encodeURIComponent(arm)}`);
     },
     
-    // Add a new student
     async add(student) {
         return apiFetch(CONFIG.ENDPOINTS.students, {
             method: 'POST',
@@ -242,7 +245,6 @@ export const StudentsAPI = {
         });
     },
     
-    // Update a student
     async update(id, updates) {
         return apiFetch(`${CONFIG.ENDPOINTS.students}/${id}`, {
             method: 'PUT',
@@ -250,14 +252,12 @@ export const StudentsAPI = {
         });
     },
     
-    // Delete (soft delete) a student
     async delete(id) {
         return apiFetch(`${CONFIG.ENDPOINTS.students}/${id}`, {
             method: 'DELETE'
         });
     },
     
-    // Move a student to a new class/arm
     async move(id, moveData) {
         return apiFetch(`${CONFIG.ENDPOINTS.students}/${id}/move`, {
             method: 'PATCH',
@@ -265,7 +265,6 @@ export const StudentsAPI = {
         });
     },
     
-    // Bulk import students
     async bulkImport(students) {
         return apiFetch(`${CONFIG.ENDPOINTS.students}/bulk`, {
             method: 'POST',
@@ -273,7 +272,6 @@ export const StudentsAPI = {
         });
     },
     
-    // Export students (CSV/PDF)
     async exportData(filters = {}) {
         const params = new URLSearchParams(filters).toString();
         return apiFetch(`${CONFIG.ENDPOINTS.students}/export${params ? '?' + params : ''}`);
@@ -285,22 +283,18 @@ export const StudentsAPI = {
 // ============================================
 
 export const ClassesAPI = {
-    // Get all classes
     async getAll() {
         return apiFetch(CONFIG.ENDPOINTS.classes);
     },
     
-    // Get a single class by ID
     async getById(id) {
         return apiFetch(`${CONFIG.ENDPOINTS.classes}/${id}`);
     },
     
-    // Get students in a specific class
     async getStudents(classId) {
         return apiFetch(`${CONFIG.ENDPOINTS.classes}/${classId}/students`);
     },
     
-    // Create a new class
     async create(classData) {
         return apiFetch(CONFIG.ENDPOINTS.classes, {
             method: 'POST',
@@ -308,7 +302,6 @@ export const ClassesAPI = {
         });
     },
     
-    // Update a class
     async update(id, updates) {
         return apiFetch(`${CONFIG.ENDPOINTS.classes}/${id}`, {
             method: 'PUT',
@@ -316,21 +309,18 @@ export const ClassesAPI = {
         });
     },
     
-    // Delete a class
     async delete(id) {
         return apiFetch(`${CONFIG.ENDPOINTS.classes}/${id}`, {
             method: 'DELETE'
         });
     },
     
-    // Archive a class (soft delete)
     async archive(id) {
         return apiFetch(`${CONFIG.ENDPOINTS.classes}/${id}/archive`, {
             method: 'PATCH'
         });
     },
     
-    // Upgrade a class (move all students to next level)
     async upgrade(id, targetClass, keepArms = true) {
         return apiFetch(`${CONFIG.ENDPOINTS.classes}/${id}/upgrade`, {
             method: 'POST',
@@ -338,12 +328,10 @@ export const ClassesAPI = {
         });
     },
     
-    // Get class statistics
     async getStats(id) {
         return apiFetch(`${CONFIG.ENDPOINTS.classes}/${id}/stats`);
     },
     
-    // Add an arm to a class
     async addArm(classId, armName) {
         return apiFetch(`${CONFIG.ENDPOINTS.classes}/${classId}/arms`, {
             method: 'POST',
@@ -351,7 +339,6 @@ export const ClassesAPI = {
         });
     },
     
-    // Remove an arm from a class
     async removeArm(classId, armName) {
         return apiFetch(`${CONFIG.ENDPOINTS.classes}/${classId}/arms/${encodeURIComponent(armName)}`, {
             method: 'DELETE'

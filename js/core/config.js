@@ -14,13 +14,15 @@ export const CONFIG = {
             login: '/api/auth/login',
             me: '/api/auth/me',
             logout: '/api/auth/logout',
-            profile: '/api/auth/profile'
+            profile: '/api/auth/profile',
+            promoRedeem: '/api/auth/promo/redeem'
         },
         lessons: '/api/lessons',
         students: '/api/students',
         schemes: '/api/schemes',
         attendance: '/api/attendance',
-        subjects: '/api/subjects'
+        subjects: '/api/subjects',
+        classes: '/api/classes'
     },
     
     STORAGE_KEYS: {

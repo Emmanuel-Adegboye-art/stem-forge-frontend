@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin – Create Promo Code | STEM Forge</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/theme-toggle.css">
+  <link rel="stylesheet" href="css/layout/container.css">
+  <link rel="stylesheet" href="css/layout/nav.css">
+  <link rel="stylesheet" href="css/layout/footer.css">
+  <link rel="stylesheet" href="css/components/cards.css">
+  <link rel="stylesheet" href="css/components/buttons.css">
+  <link rel="stylesheet" href="css/components/forms.css">
+  <link rel="stylesheet" href="css/components/alerts.css">
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="js/core/firebase-init.js"></script>
+</head>
+<body data-page="admin-promo">
+<div class="app-container">
+  <nav id="main-nav">
+    <div class="nav-brand"><span class="brand-icon">⚡</span><span class="brand-text">STEM Forge</span></div>
+    <button class="mobile-menu-toggle" id="mobile-menu-toggle">☰ Menu</button>
+    <div class="nav-links" id="nav-links">
+      <a href="index.html" class="nav-btn">🏠 Dashboard</a>
+      <a href="ai-generate.html" class="nav-btn">🤖 AI Generate</a>
+      <a href="scheme.html" class="nav-btn">📅 Scheme</a>
+      <a href="attendance.html" class="nav-btn">📋 Attendance</a>
+      <a href="students.html" class="nav-btn">👥 Students</a>
+      <a href="classes.html" class="nav-btn">🏫 Classes</a>
+      <a href="attendance-reports.html" class="nav-btn">📊 Reports</a>
+      <div class="nav-dropdown"><button class="nav-dropdown-btn">📁 More ▼</button>
+        <div class="nav-dropdown-content">
+          <a href="pricing.html">💰 Pricing</a>
+          <a href="exams.html">📝 Exams</a>
+          <a href="virtual.html">🎥 Virtual Class</a>
+          <a href="about.html">📖 About</a>
+          <a href="services.html">🛠️ Services</a>
+          <a href="contact.html">📞 Contact</a>
+        </div></div>
+      </div>
+      <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+        <svg class="icon-moon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+        <svg class="icon-sun" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+      </button>
+    </div>
+  </nav>
+
+  <div class="generator-header">
+    <div class="title-section">
+      <h1>🎟️ Create a Promo Code</h1>
+      <p>Generate a single‑use code that gives the holder 3 days of full‑access to all features.</p>
+    </div>
+  </div>
+
+  <div class="generator-container">
+    <div class="generator-card">
+      <form id="promo-form" class="generator-form">
+        <div class="form-group">
+          <label for="promo-description">Description (optional)</label>
+          <input type="text" id="promo-description" placeholder="e.g. Free 3‑day trial for new teachers">
+        </div>
+        <div class="form-group">
+          <label for="promo-uses">Max uses</label>
+          <input type="number" id="promo-uses" value="1" min="1">
+        </div>
+        <div class="form-group">
+          <label for="promo-days">Days of full access</label>
+          <input type="number" id="promo-days" value="3" min="1" max="30">
+        </div>
+        <div class="form-group">
+          <label for="promo-expires">Expires on (optional)</label>
+          <input type="date" id="promo-expires">
+        </div>
+        <button type="submit" id="generate-btn" class="primary-btn">🎟️ Generate Code</form>
+        <div id="promo-status" class="generation-status"></div>
+        <div id="promo-result" class="mt-3" style="display:none;">
+          <h3>Your promo code:</h3>
+          <div class="code-box" id="promo-code-display"></div>
+          <button id="copy-code-btn" class="secondary-btn">📋 Copy to clipboard</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    🔐 Only users with the “org_admin” role can access this page.
+  </div>
+</div>
+
+<script type="module">
+  import { apiFetch } from '../core/api.js';
+  import { escapeHtml, showStatus } from '../core/utils.js';
+
+  const form = document.getElementById('promo-form');
+  const statusEl = document.getElementById('promo-status');
+  const resultDiv = document.getElementById('promo-result');
+  const codeDisplay = document.getElementById('promo-code-display');
+  const copyBtn = document.getElementById('copy-code-btn');
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const description = document.getElementById('promo-description')?.value.trim() || '';
+    const uses = parseInt(document.getElementById('promo-uses')?.value) || 1;
+    const days = parseInt(document.getElementById('promo-days')?.value) || 3;
+    const expiresInput = document.getElementById('promo-expires')?.value;
+    const expiresAt = expiresInput ? new Date(expiresInput).toISOString() : null;
+
+    const payload = { description, uses: Number(uses), days: Number(days), expiresAt };
+
+    try {
+      const resp = await apiFetch('/api/admin/promo', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+      const { code } = resp.data; // backend returns { code: "ABC123" }
+      codeDisplay.textContent = code;
+      resultDiv.style.display = 'block';
+      showStatus('promo-status', 'Promo code generated!', 'success', 3000);
+      copyBtn.disabled = false;
+    } catch (err) {
+      console.error(err);
+      showStatus('promo-status', 'Failed to generate promo code', 'error', 0);
+    }
+  });
+
+  copyBtn.addEventListener('click', async () => {
+    const text = codeDisplay.textContent;
+    await navigator.clipboard.writeText(text);
+    copyBtn.textContent = 'Copied!';
+    setTimeout(() => copyBtn.textContent = '📋 Copy to clipboard', 1500);
+  });
+</script>
+</html>
