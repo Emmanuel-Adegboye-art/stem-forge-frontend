@@ -6,6 +6,10 @@ on:
     tags:
       - 'v*.*.*'
 
+# Grant the token permission to create releases
+permissions:
+  contents: write
+
 jobs:
   build-apk:
     name: Build Android APK
@@ -27,7 +31,7 @@ jobs:
       - name: Set up Node.js 20
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
 
       # ── 4. Install Node dependencies ────────────────────────────────────────
       - name: Install npm dependencies
