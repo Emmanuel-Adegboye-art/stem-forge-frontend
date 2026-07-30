@@ -1,60 +1,111 @@
-name: Build Android APK
+name: 📦 Build & Release Android APK
 
+# Triggers ONLY when you push a version tag like v1.0.0, v1.2.3, etc.
 on:
   push:
-    branches: [ main ]
+    tags:
+      - 'v*.*.*'
 
 jobs:
-  build:
-    name: Build APK
+  build-apk:
+    name: Build Android APK
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout Source
+      # ── 1. Checkout ────────────────────────────────────────────────────────
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Java
+      # ── 2. Java (required by Gradle / Android build tools) ─────────────────
+      - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17'
 
-      - name: Setup NodeJS
+      # ── 3. Node (required to install Capacitor CLI) ────────────────────────
+      - name: Set up Node.js 20
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
 
-      - name: Install Dependencies
+      # ── 4. Install Node dependencies ────────────────────────────────────────
+      - name: Install npm dependencies
         run: npm install
 
-      - name: Build Web Assets
-        run: npm run build
+      # ── 5. Sync Capacitor config into the Android project ──────────────────
+      # In live-URL mode this copies capacitor.config.json into the native project.
+      # No web build step needed — the APK will load the Vercel URL at runtime.
+      - name: Sync Capacitor config to Android
+        run: npx cap sync android --no-build
 
-      - name: Sync Capacitor
-        run: npx cap sync android
+      # ── 6. Stamp the version from the git tag ──────────────────────────────
+      - name: Set version from tag
+        id: version
+        run: |
+          TAG=${GITHUB_REF#refs/tags/v}
+          echo "name=$TAG" >> $GITHUB_OUTPUT
+          # Convert semver to integer versionCode: e.g. 1.2.3 → 10203
+          CODE=$(echo "$TAG" | awk -F. '{ printf "%d%02d%02d", $1, $2, $3 }')
+          echo "code=$CODE" >> $GITHUB_OUTPUT
 
-      - name: Build Android APK
+      # ── 7. Patch versionName and versionCode in build.gradle ───────────────
+      - name: Patch Android version
+        run: |
+          sed -i "s/versionCode [0-9]*/versionCode ${{ steps.version.outputs.code }}/" android/app/build.gradle
+          sed -i "s/versionName \"[^\"]*\"/versionName \"${{ steps.version.outputs.name }}\"/" android/app/build.gradle
+
+      # ── 8. Build the debug APK ─────────────────────────────────────────────
+      # (debug APK is fully functional and installable — no keystore required)
+      - name: Build debug APK
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug
+          ./gradlew assembleDebug --no-daemon --stacktrace
 
-      - name: Get APK Path
-        id: apk-path
-        run: echo "path=$(find android/app/build/outputs/apk/debug -name "*.apk" | head -n 1)" >> $GITHUB_OUTPUT
+      # ── 9. Locate the APK ──────────────────────────────────────────────────
+      - name: Find APK path
+        id: apk
+        run: |
+          APK_PATH=$(find android/app/build/outputs/apk/debug -name "*.apk" | head -n 1)
+          echo "path=$APK_PATH" >> $GITHUB_OUTPUT
+          # Rename to a nice filename
+          cp "$APK_PATH" "StemForge-v${{ steps.version.outputs.name }}.apk"
 
-      - name: Upload Artifact
+      # ── 10. Upload as workflow artifact (also accessible from Actions tab) ──
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug
-          path: ${{ steps.apk-path.outputs.path }}
+          name: StemForge-v${{ steps.version.outputs.name }}
+          path: StemForge-v${{ steps.version.outputs.name }}.apk
+          retention-days: 30
 
+      # ── 11. Create GitHub Release and attach APK ───────────────────────────
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ github.run_number }}
-          name: Release v${{ github.run_number }}
+          tag_name: ${{ github.ref_name }}
+          name: "🚀 STEM Forge ${{ github.ref_name }}"
+          body: |
+            ## STEM Forge Android App — ${{ github.ref_name }}
+
+            ### 📥 How to install
+            1. Download `StemForge-v${{ steps.version.outputs.name }}.apk` below
+            2. On your Android phone, go to **Settings → Install unknown apps** and allow your browser/file manager
+            3. Open the downloaded APK and tap **Install**
+            4. Launch **STEM Forge** from your home screen
+
+            ### ✨ What's included
+            - AI Lesson Plan & Notes generator
+            - Student, Class & Attendance management
+            - Scheme of Work planner
+            - Teacher registration & login
+
+            > **Note:** This app requires an internet connection to load.
+            > All data and AI features are powered by the live STEM Forge platform.
           draft: false
           prerelease: false
-          files: ${{ steps.apk-path.outputs.path }}
+          files: StemForge-v${{ steps.version.outputs.name }}.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
