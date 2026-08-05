@@ -31,7 +31,7 @@ async function getAuthToken() {
 /**
  * Generic fetch wrapper with Firebase Auth + retry logic
  */
-async function apiFetch(endpoint, options = {}, retryCount = 0) {
+export async function apiFetch(endpoint, options = {}, retryCount = 0) {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), CONFIG.TIMEOUT || 30000);
 

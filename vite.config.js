@@ -1,5 +1,12 @@
 import { defineConfig } from 'vite';
-import { resolve } from 'path';
+import { resolve, basename } from 'path';
+import { readdirSync } from 'fs';
+
+const pages = Object.fromEntries(
+  readdirSync(__dirname)
+    .filter(file => file.endsWith('.html'))
+    .map(file => [basename(file, '.html'), resolve(__dirname, file)])
+);
 
 export default defineConfig({
   root: '.',
@@ -8,16 +15,7 @@ export default defineConfig({
     outDir: 'dist',
     emptyOutDir: true,
     rollupOptions: {
-      input: {
-        main: resolve(__dirname, 'index.html'),
-        ai: resolve(__dirname, 'ai-generate.html'),
-        scheme: resolve(__dirname, 'scheme.html'),
-        attendance: resolve(__dirname, 'attendance.html'),
-        about: resolve(__dirname, 'about.html'),
-        services: resolve(__dirname, 'services.html'),
-        contact: resolve(__dirname, 'contact.html'),
-        comingSoon: resolve(__dirname, 'coming-soon.html')
-      }
+      input: pages
     }
   },
   server: {

@@ -7,7 +7,10 @@ const PUBLIC_PAGES = ['login.html', 'register-teacher.html', 'register-student.h
 const ADMIN_PAGES = ['admin-promo.html'];
 
 export function initAuthGuard() {
-    if (typeof firebase === 'undefined' || !firebase.auth) return;
+    if (typeof firebase === 'undefined' || !firebase.auth || !firebase.apps?.length) {
+        console.warn('Auth guard skipped: Firebase app not initialized');
+        return;
+    }
 
     const currentPath = window.location.pathname.split('/').pop() || 'index.html';
 
