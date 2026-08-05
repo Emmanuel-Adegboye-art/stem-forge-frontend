@@ -3,11 +3,14 @@ import { navigation } from './components/nav.js';
 import { initAuthGuard } from './core/auth-guard.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-    themeManager.init();
-    navigation.init();
-    
-    // Enforce Auth Guard across all pages
-    initAuthGuard();
+    // Chrome/UI init must never block page-specific logic
+    try {
+        themeManager.init();
+        navigation.init();
+        initAuthGuard();
+    } catch (error) {
+        console.error('Shell init failed:', error);
+    }
     
     // Page-specific loading
     const page = document.body.dataset.page;
