@@ -69,7 +69,7 @@ function updateUserUI(user) {
     localStorage.setItem('stemforge:userName', displayName);
 
     // Update Welcome Banner on Dashboard if element exists
-    const welcomeHeader = document.querySelector('.welcome-banner h2');
+    const welcomeHeader = document.getElementById('welcome-name') || document.querySelector('.welcome-banner h2');
     if (welcomeHeader) {
         welcomeHeader.textContent = `👋 Welcome back, ${displayName}!`;
     }

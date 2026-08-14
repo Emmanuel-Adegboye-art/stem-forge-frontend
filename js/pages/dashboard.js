@@ -15,7 +15,7 @@ function updateWelcomeBanner() {
     const firebaseUser = window.firebaseAuth?.currentUser;
     const name = firebaseUser?.displayName || storedUser.name || firebaseUser?.email?.split('@')[0] || 'Educator';
 
-    const bannerTitle = document.querySelector('.welcome-banner h2');
+    const bannerTitle = document.getElementById('welcome-name') || document.querySelector('.welcome-banner h2');
     if (bannerTitle) {
         bannerTitle.textContent = `👋 Welcome back, ${name}!`;
     }
