@@ -34,8 +34,8 @@ export function initAuthGuard() {
             }
 
             // User is verified and signed in
-            if (isPublicPage && currentPath !== 'verify-email.html') {
-                // If on login or registration page, redirect to index.html
+            if (currentPath === 'login.html') {
+                // If on login page, redirect to index.html
                 window.location.href = 'index.html';
                 return;
             }
