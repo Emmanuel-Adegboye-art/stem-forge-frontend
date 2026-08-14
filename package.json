@@ -1,0 +1,21 @@
+{
+  "name": "stem-forge-frontend",
+  "version": "1.0.0",
+  "description": "STEM Forge — AI-powered lesson planning platform",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "cap:sync": "npx cap sync android",
+    "cap:open": "npx cap open android"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0",
+    "@capacitor/cli": "^6.0.0"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/core": "^6.0.0"
+  }
+}

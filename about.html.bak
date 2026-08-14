@@ -1,0 +1,460 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ffffff">
+    <title>STEM Forge | About</title>
+
+    <!-- Prevent theme flash -->
+    <script>
+        (function() {
+            const saved = localStorage.getItem('stemforge-theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = saved || (prefersDark ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+            const meta = document.querySelector('meta[name="theme-color"]');
+            if (meta) meta.setAttribute('content', theme === 'dark' ? '#0f172a' : '#ffffff');
+        })();
+    </script>
+
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&family=Inter:wght@400;500&family=Material+Symbols+Outlined&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CDN (same config as the dashboard) -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'on-primary': '#ffffff',
+                        'background': '#fff8f4',
+                        'secondary-fixed': '#dae2fd',
+                        'error-container': '#ffdad6',
+                        'on-surface': '#221a12',
+                        'secondary': '#565e74',
+                        'outline-variant': '#d8c3ad',
+                        'surface-container-low': '#fff1e5',
+                        'deep-navy': '#0F172A',
+                        'on-error': '#ffffff',
+                        'surface-tint': '#855300',
+                        'on-error-container': '#93000a',
+                        'surface-container-highest': '#f0e0d1',
+                        'surface-bright': '#fff8f4',
+                        'secondary-fixed-dim': '#bec6e0',
+                        'error': '#ba1a1a',
+                        'tertiary': '#00658b',
+                        'on-tertiary': '#ffffff',
+                        'action-blue': '#2563EB',
+                        'primary': '#855300',
+                        'on-secondary-fixed': '#131b2e',
+                        'surface': '#fff8f4',
+                        'tertiary-fixed-dim': '#7fd0ff',
+                        'inverse-surface': '#382f25',
+                        'tertiary-fixed': '#c5e7ff',
+                        'primary-container': '#f59e0b',
+                        'surface-container-high': '#f5e6d7',
+                        'surface-dim': '#e7d7c9',
+                        'inverse-on-surface': '#feeedf',
+                        'forge-orange': '#F59E0B',
+                        'surface-container': '#fbebdd',
+                        'secondary-container': '#dae2fd',
+                        'surface-gray': '#F8FAFC',
+                        'inverse-primary': '#ffb95f',
+                        'tertiary-container': '#1abdff',
+                        'on-primary-fixed-variant': '#653e00',
+                        'on-tertiary-container': '#004966',
+                        'on-tertiary-fixed': '#001e2d',
+                        'on-tertiary-fixed-variant': '#004c6a',
+                        'on-secondary-fixed-variant': '#3f465c',
+                        'on-primary-fixed': '#2a1700',
+                        'primary-fixed': '#ffddb8',
+                        'surface-container-lowest': '#ffffff',
+                        'surface-variant': '#f0e0d1',
+                        'outline': '#867461',
+                        'on-surface-variant': '#534434',
+                        'on-secondary-container': '#5c647a',
+                        'on-primary-container': '#613b00',
+                        'on-background': '#221a12',
+                        'primary-fixed-dim': '#ffb95f',
+                        'on-secondary': '#ffffff',
+                        'border-subtle': '#E2E8F0'
+                    },
+                    borderRadius: { DEFAULT: '0.25rem', lg: '0.5rem', xl: '0.75rem', full: '9999px' },
+                    spacing: {
+                        'card-padding': '24px',
+                        'base': '8px',
+                        'container-max': '1280px',
+                        'gutter': '24px',
+                        'margin-mobile': '16px',
+                        'margin-desktop': '32px'
+                    },
+                    fontFamily: {
+                        'headline-md': ['Hanken Grotesk', 'sans-serif'],
+                        'label-md':   ['Hanken Grotesk', 'sans-serif'],
+                        'headline-lg':['Hanken Grotesk', 'sans-serif'],
+                        'body-md':    ['Inter', 'sans-serif'],
+                        'display-lg': ['Hanken Grotesk', 'sans-serif'],
+                        'body-lg':    ['Inter', 'sans-serif'],
+                        'caption':    ['Inter', 'sans-serif'],
+                        'headline-lg-mobile': ['Hanken Grotesk', 'sans-serif']
+                    },
+                    fontSize: {
+                        'headline-md': ['24px', { lineHeight: '1.3', fontWeight: '600' }],
+                        'label-md':   ['14px', { lineHeight: '1.2', letterSpacing: '0.05em', fontWeight: '600' }],
+                        'headline-lg':['32px', { lineHeight: '1.2', letterSpacing: '-0.01em', fontWeight: '700' }],
+                        'body-md':    ['16px', { lineHeight: '1.5', fontWeight: '400' }],
+                        'display-lg': ['48px', { lineHeight: '1.1', letterSpacing: '-0.02em', fontWeight: '800' }],
+                        'body-lg':    ['18px', { lineHeight: '1.6', fontWeight: '400' }],
+                        'caption':    ['12px', { lineHeight: '1.4', fontWeight: '500' }],
+                        'headline-lg-mobile': ['24px', { lineHeight: '1.2', fontWeight: '700' }]
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Keep your existing CSS so the rest of the site stays consistent -->
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/base/dark-background.css">
+    <link rel="stylesheet" href="css/theme-toggle.css">
+    <link rel="stylesheet" href="css/layout/container.css">
+    <link rel="stylesheet" href="css/layout/nav.css">
+    <link rel="stylesheet" href="css/layout/footer.css">
+    <link rel="stylesheet" href="css/components/cards.css">
+    <link rel="stylesheet" href="css/components/buttons.css">
+    <link rel="stylesheet" href="css/components/alerts.css">
+    <link rel="stylesheet" href="css/pages/about.css">
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="js/core/firebase-init.js"></script>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .icon-fill { font-variation-settings: 'FILL' 1; }
+    </style>
+</head>
+<body data-page="about" class="text-deep-navy font-body-md antialiased">
+
+<div class="app-container">
+
+    <!-- ============== TOP NAV (kept ID: main-nav, theme-toggle, mobile-menu-toggle) ============== -->
+    <nav id="main-nav">
+    <div class="nav-brand">
+        <span class="brand-icon">⚡</span>
+        <span class="brand-text">STEM Forge</span>
+    </div>
+    
+    <button class="mobile-menu-toggle" id="mobile-menu-toggle">☰ Menu</button>
+    
+    <div class="nav-links" id="nav-links">
+        <a href="index.html" class="nav-btn hidden lg:block border border-border-subtle text-deep-navy font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-surface-container-highest transition-colors">Dashboard</a>
+        <a href="ai-generate.html" class="nav-btn hidden lg:block border border-border-subtle text-deep-navy font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-surface-container-highest transition-colors">AI Generate</a>
+        <a href="scheme.html" class="nav-btn hidden lg:block border border-border-subtle text-deep-navy font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-surface-container-highest transition-colors">Scheme</a>
+        <a href="attendance.html" class="nav-btn hidden lg:block border border-border-subtle text-deep-navy font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-surface-container-highest transition-colors">Attendance</a>
+        <a href="students.html" class="nav-btn hidden lg:block border border-border-subtle text-deep-navy font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-surface-container-highest transition-colors">Students</a>
+        <a href="classes.html" class="nav-btn hidden lg:block border border-border-subtle text-deep-navy font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-surface-container-highest transition-colors">Classes</a>
+        <a href="attendance-reports.html" class="nav-btn hidden lg:block border border-border-subtle text-deep-navy font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-surface-container-highest transition-colors">Reports</a>
+        
+        <div class="nav-dropdown hidden lg:block">
+            <button class="nav-dropdown-btn border border-border-subtle text-deep-navy font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-surface-container-highest transition-colors">More ▼</button>
+            <div class="nav-dropdown-content">
+                <a href="pricing.html" class="block px-4 py-2 hover:bg-surface-container-highest transition-colors">Pricing</a>
+                <a href="exams.html" class="block px-4 py-2 hover:bg-surface-container-highest transition-colors">Exams</a>
+                <a href="virtual.html" class="block px-4 py-2 hover:bg-surface-container-highest transition-colors">Virtual Class</a>
+                <a href="about.html" class="block px-4 py-2 hover:bg-surface-container-highest transition-colors">About</a>
+                <a href="services.html" class="block px-4 py-2 hover:bg-surface-container-highest transition-colors">Services</a>
+                <a href="contact.html" class="block px-4 py-2 hover:bg-surface-container-highest transition-colors">Contact</a>
+            </div>
+        </div>
+        
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+            <svg class="icon-moon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+            </svg>
+            <svg class="icon-sun" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+            </svg>
+        </button>
+    </div>
+</nav>
+
+    <!-- ============== SIDEBAR (mobile drawer + desktop fixed) ============== -->
+    <!-- Backdrop for mobile -->
+    <div id="sidebar-backdrop" class="fixed inset-0 bg-black/40 z-40 hidden md:hidden"></div>
+
+    <aside id="sidebar" class="fixed left-0 top-0 h-full w-64 p-4 bg-deep-navy dark:bg-surface-container-lowest text-on-primary z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-in-out flex flex-col">
+        <div class="flex items-center justify-between px-2 py-4 mb-4 border-b border-white/10">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 flex items-center justify-center bg-forge-orange rounded-lg shadow-sm">
+                    <span class="material-symbols-outlined text-on-primary icon-fill">bolt</span>
+                </div>
+                <div>
+                    <h1 class="font-headline-md text-headline-md tracking-tight leading-none mb-1">STEM Forge</h1>
+                    <p class="font-caption text-caption opacity-60">Educator Portal</p>
+                </div>
+            </div>
+            <button id="sidebar-close" class="md:hidden text-white/80 hover:text-white" aria-label="Close menu">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+
+        <nav class="flex-1 space-y-1 overflow-y-auto">
+            <a href="index.html" class="nav-btn active flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
+                <span class="material-symbols-outlined">dashboard</span> Dashboard
+            </a>
+            <a href="ai-generate.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
+                <span class="material-symbols-outlined">psychology</span> AI Generation
+            </a>
+            <a href="scheme.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
+                <span class="material-symbols-outlined">inventory_2</span> Schemes
+            </a>
+            <a href="attendance.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
+                <span class="material-symbols-outlined">event_available</span> Attendance
+            </a>
+            <a href="students.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
+                <span class="material-symbols-outlined">group</span> Students
+            </a>
+            <a href="classes.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
+                <span class="material-symbols-outlined">school</span> Classes
+            </a>
+            <a href="attendance-reports.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
+                <span class="material-symbols-outlined">analytics</span> Reports
+            </a>
+            <a href="pricing.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
+                <span class="material-symbols-outlined">payments</span> Pricing
+            </a>
+            <a href="exams.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
+                <span class="material-symbols-outlined">quiz</span> Exams
+            </a>
+            <a href="virtual.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
+                <span class="material-symbols-outlined">video_call</span> Virtual Class
+            </a>
+            <a href="about.html" class="nav-btn active flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
+                <span class="material-symbols-outlined">info</span> About
+            </a>
+            <a href="services.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
+                <span class="material-symbols-outlined">handyman</span> Services
+            </a>
+            <a href="contact.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
+                <span class="material-symbols-outlined">mail</span> Contact
+            </a>
+        </nav>
+
+        <div class="mt-auto pt-4 border-t border-white/10 space-y-1">
+            <a href="login.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/10 transition-all font-label-md text-caption">
+                <span class="material-symbols-outlined text-[18px]">logout</span> Log Out
+            </a>
+        </div>
+    </aside>
+
+    <!-- ============== MAIN CONTENT ============== -->
+    <main class="md:ml-64 pt-20 md:pt-24 min-h-screen flex flex-col bg-surface-gray">
+        <div class="max-w-[1280px] w-full mx-auto p-6 md:p-gutter flex-1 space-y-8">
+
+            <!-- Welcome Header -->
+            <header class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                    <p class="font-body-md text-body-md text-secondary mb-1" id="welcome-date"></p>
+                    <h2 class="font-display-lg text-headline-lg-mobile md:text-display-lg text-deep-navy tracking-tight" id="welcome-name">
+                        👋 Welcome back, Educator!
+                    </h2>
+                    <p class="font-body-lg text-body-lg text-secondary mt-2 max-w-2xl">Here's your STEM Forge dashboard overview. Ready to build the future?</p>
+                </div>
+            </header>
+
+            <!-- Key Metrics Grid -->
+            <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="dashboard-card bg-surface-container-lowest border border-border-subtle rounded-xl p-card-padding shadow-sm hover:shadow-md transition-shadow group flex flex-col justify-between h-40">
+                    <div class="flex justify-between items-start">
+                        <div class="p-2 bg-surface-container-high rounded-lg group-hover:bg-forge-orange/10 transition-colors">
+                            <span class="material-symbols-outlined text-secondary group-hover:text-forge-orange transition-colors">psychology</span>
+                        </div>
+                        <span class="font-headline-lg text-headline-lg text-deep-navy" id="saved-lessons-count">0</span>
+                    </div>
+                    <div>
+                        <h3 class="font-label-md text-label-md text-deep-navy mb-1">Saved Lessons</h3>
+                        <a href="ai-generate.html" class="font-caption text-caption text-action-blue hover:underline flex items-center gap-1">
+                            Generate one now! <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="dashboard-card bg-surface-container-lowest border border-border-subtle rounded-xl p-card-padding shadow-sm hover:shadow-md transition-shadow group flex flex-col justify-between h-40">
+                    <div class="flex justify-between items-start">
+                        <div class="p-2 bg-surface-container-high rounded-lg group-hover:bg-forge-orange/10 transition-colors">
+                            <span class="material-symbols-outlined text-secondary group-hover:text-forge-orange transition-colors">inventory_2</span>
+                        </div>
+                        <span class="font-headline-lg text-headline-lg text-deep-navy" id="saved-schemes-count">0</span>
+                    </div>
+                    <div>
+                        <h3 class="font-label-md text-label-md text-deep-navy mb-1">Saved Schemes</h3>
+                        <a href="scheme.html" class="font-caption text-caption text-action-blue hover:underline flex items-center gap-1">
+                            Create one now! <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="dashboard-card bg-surface-container-lowest border border-border-subtle rounded-xl p-card-padding shadow-sm hover:shadow-md transition-shadow group flex flex-col justify-between h-40">
+                    <div class="flex justify-between items-start">
+                        <div class="p-2 bg-surface-container-high rounded-lg group-hover:bg-forge-orange/10 transition-colors">
+                            <span class="material-symbols-outlined text-secondary group-hover:text-forge-orange transition-colors">event_available</span>
+                        </div>
+                        <span class="font-headline-lg text-headline-lg text-deep-navy" id="attendance-count">0</span>
+                    </div>
+                    <div>
+                        <h3 class="font-label-md text-label-md text-deep-navy mb-1">Recent Attendance</h3>
+                        <a href="attendance.html" class="font-caption text-caption text-action-blue hover:underline flex items-center gap-1">
+                            Take attendance! <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Actions + Standards -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Quick Actions -->
+                <div class="lg:col-span-2 space-y-4">
+                    <h3 class="font-headline-md text-headline-md text-deep-navy flex items-center gap-2">
+                        <span class="material-symbols-outlined text-forge-orange icon-fill">bolt</span> Quick Actions
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <a href="ai-generate.html" class="bg-surface-container-lowest border border-border-subtle rounded-xl p-4 flex items-center gap-4 hover:border-forge-orange hover:shadow-md transition-all text-left group">
+                            <div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center group-hover:bg-forge-orange group-hover:text-on-primary transition-colors text-secondary">
+                                <span class="material-symbols-outlined">psychology</span>
+                            </div>
+                            <div>
+                                <h4 class="font-label-md text-label-md text-deep-navy">Generate New Lesson</h4>
+                                <p class="font-caption text-caption text-secondary">AI-powered curriculum</p>
+                            </div>
+                        </a>
+
+                        <a href="scheme.html" class="bg-surface-container-lowest border border-border-subtle rounded-xl p-4 flex items-center gap-4 hover:border-forge-orange hover:shadow-md transition-all text-left group">
+                            <div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center group-hover:bg-forge-orange group-hover:text-on-primary transition-colors text-secondary">
+                                <span class="material-symbols-outlined">inventory_2</span>
+                            </div>
+                            <div>
+                                <h4 class="font-label-md text-label-md text-deep-navy">Create Scheme</h4>
+                                <p class="font-caption text-caption text-secondary">Plan your term</p>
+                            </div>
+                        </a>
+
+                        <a href="attendance.html" class="bg-surface-container-lowest border border-border-subtle rounded-xl p-4 flex items-center gap-4 hover:border-forge-orange hover:shadow-md transition-all text-left group">
+                            <div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center group-hover:bg-forge-orange group-hover:text-on-primary transition-colors text-secondary">
+                                <span class="material-symbols-outlined">event_available</span>
+                            </div>
+                            <div>
+                                <h4 class="font-label-md text-label-md text-deep-navy">Take Attendance</h4>
+                                <p class="font-caption text-caption text-secondary">Record daily presence</p>
+                            </div>
+                        </a>
+
+                        <a href="attendance-reports.html" class="bg-surface-container-lowest border border-border-subtle rounded-xl p-4 flex items-center gap-4 hover:border-forge-orange hover:shadow-md transition-all text-left group">
+                            <div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center group-hover:bg-forge-orange group-hover:text-on-primary transition-colors text-secondary">
+                                <span class="material-symbols-outlined">analytics</span>
+                            </div>
+                            <div>
+                                <h4 class="font-label-md text-label-md text-deep-navy">View Reports</h4>
+                                <p class="font-caption text-caption text-secondary">Analyze student data</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Standards & Protocols -->
+                <div class="space-y-4">
+                    <h3 class="font-headline-md text-headline-md text-deep-navy">Standards &amp; Protocols</h3>
+                    <div class="bg-deep-navy rounded-xl p-5 text-on-primary relative overflow-hidden shadow-md">
+                        <div class="absolute -right-8 -bottom-8 w-32 h-32 bg-forge-orange/10 rounded-full blur-2xl"></div>
+                        <div class="relative z-10 space-y-6">
+                            <div>
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="material-symbols-outlined text-forge-orange">settings</span>
+                                    <h4 class="font-label-md text-label-md">Engineering Design Process</h4>
+                                </div>
+                                <div class="flex flex-wrap gap-2 font-caption text-caption opacity-80 bg-white/5 p-3 rounded-lg border border-white/10">
+                                    <span>Ask</span>
+                                    <span class="text-forge-orange">→</span>
+                                    <span>Imagine</span>
+                                    <span class="text-forge-orange">→</span>
+                                    <span>Plan</span>
+                                    <span class="text-forge-orange">→</span>
+                                    <span>Create</span>
+                                    <span class="text-forge-orange">→</span>
+                                    <span>Test &amp; Improve</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="material-symbols-outlined text-forge-orange">shield</span>
+                                    <h4 class="font-label-md text-label-md">Safety First</h4>
+                                </div>
+                                <p class="font-caption text-caption opacity-70 pl-7">Every lesson includes embedded safety protocols.</p>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="material-symbols-outlined text-forge-orange">verified</span>
+                                    <h4 class="font-label-md text-label-md">Standards Aligned</h4>
+                                </div>
+                                <div class="flex gap-2 pl-7">
+                                    <span class="px-2 py-1 bg-white/10 rounded text-[10px] font-bold tracking-wider">NGSS</span>
+                                    <span class="px-2 py-1 bg-white/10 rounded text-[10px] font-bold tracking-wider">CSTA</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <footer class="mt-auto border-t border-border-subtle bg-surface-container-lowest px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-4 text-center sm:text-left">
+                <p class="font-caption text-caption text-secondary flex items-center gap-2 justify-center sm:justify-start">
+                    <span class="material-symbols-outlined text-[16px]">database</span>
+                    Dashboard shows your saved content from local storage
+                </p>
+                <div class="flex items-center gap-4">
+                    <span class="px-2 py-1 bg-surface-container-highest rounded text-[10px] font-bold tracking-wider text-secondary">v2.0</span>
+                    <p class="font-caption text-caption font-semibold text-deep-navy flex items-center gap-1">
+                        <span class="text-forge-orange">⚡</span> STEM Forge
+                    </p>
+                </div>
+            </footer>
+        </div>
+    </main>
+</div>
+
+<!-- Modular JavaScript -->
+<script type="module" src="js/main.js"></script>
+
+<!-- Sidebar mobile toggle -->
+<script>
+    const mobileBtn = document.getElementById('mobile-menu-toggle');
+    const sidebar   = document.getElementById('sidebar');
+    const backdrop  = document.getElementById('sidebar-backdrop');
+    const closeBtn  = document.getElementById('sidebar-close');
+
+    function openSidebar() {
+        sidebar.classList.remove('-translate-x-full');
+        backdrop.classList.remove('hidden');
+    }
+    function closeSidebar() {
+        sidebar.classList.add('-translate-x-full');
+        backdrop.classList.add('hidden');
+    }
+
+    mobileBtn?.addEventListener('click', openSidebar);
+    closeBtn?.addEventListener('click', closeSidebar);
+    backdrop?.addEventListener('click', closeSidebar);
+</script>
+
+</body>
+</html>

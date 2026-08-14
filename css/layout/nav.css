@@ -1,0 +1,155 @@
+/* ============================================
+   CASE STUDY NAV - FIXED TOP BAR
+   This fixes the push-down bug
+   ============================================ */
+#main-nav {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 0 32px !important;
+    background: #fff8f4 !important;
+    border: none !important;
+    border-bottom: 1px solid #d8c3ad !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
+    width: 100% !important;
+    height: 64px !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 50 !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
+}
+
+[data-theme="dark"] #main-nav {
+    background: #e7d7c9 !important;
+    border-bottom-color: #867461 !important;
+}
+
+/* Sidebar offset on desktop - case study behavior */
+@media (min-width: 768px) {
+    #main-nav {
+        padding-left: 288px !important; /* 256px sidebar + 32px gutter */
+    }
+}
+
+/* ============================================
+   OLD NAV SYSTEM - KEEP FOR BACKWARD COMPAT
+   ============================================ */
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-heading);
+    font-size: var(--text-xl);
+    font-weight: var(--weight-bold);
+    color: var(--text-primary);
+}
+
+.brand-icon {
+    font-size: var(--text-2xl);
+    color: var(--color-primary);
+}
+
+.brand-text {
+    font-family: 'Hanken Grotesk', sans-serif;
+    font-weight: 700;
+    color: #0F172A;
+    background: none;
+    -webkit-text-fill-color: initial;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+}
+
+.nav-btn {
+    padding: 0.625rem 0.75rem;
+    color: #565e74;
+    font-weight: 500;
+    border-radius: 0.5rem;
+    transition: all 0.2s;
+    font-family: 'Hanken Grotesk', sans-serif;
+    font-size: 14px;
+}
+
+.nav-btn:hover {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+}
+
+.nav-btn.active {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+}
+
+/* Top bar specific nav-btn */
+#main-nav .nav-btn {
+    color: #565e74;
+}
+#main-nav .nav-btn:hover {
+    background: #fff1e5;
+    color: #0F172A;
+}
+#main-nav .nav-btn.active {
+    background: #F59E0B;
+    color: #fff;
+}
+
+.nav-dropdown { position: relative; }
+.nav-dropdown-btn {
+    padding: var(--space-2) var(--space-4);
+    color: var(--text-secondary);
+    font-weight: var(--weight-medium);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+}
+.nav-dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: var(--space-2);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    min-width: 200px;
+    padding: var(--space-2);
+    z-index: var(--z-dropdown);
+}
+@media (min-width: 769px) {
+    .nav-dropdown:hover .nav-dropdown-content { display: block; }
+}
+.nav-dropdown.active .nav-dropdown-content { display: block; }
+.nav-dropdown-content a {
+    display: block;
+    padding: var(--space-2) var(--space-3);
+    color: var(--text-secondary);
+    border-radius: var(--radius-sm);
+}
+.mobile-menu-toggle { display: none; }
+
+@media (max-width: 768px) {
+    #main-nav { padding-left: 16px !important; padding-right: 16px !important; }
+    .mobile-menu-toggle { display: block; }
+    .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        background: var(--bg-elevated);
+        border-bottom: 1px solid var(--border-color);
+        padding: var(--space-4);
+        box-shadow: var(--shadow-md);
+        align-items: stretch;
+    }
+    .nav-links.show { display: flex; }
+}

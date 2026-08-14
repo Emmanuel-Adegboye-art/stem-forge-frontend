@@ -1,0 +1,22 @@
+{
+  "appId": "com.stemforge.app",
+  "appName": "STEM Forge",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "server": {
+    "url": "https://stem-forge-frontend.vercel.app",
+    "cleartext": false,
+    "allowNavigation": [
+      "stem-forge-frontend.vercel.app",
+      "stemforge-backend-1.onrender.com",
+      "*.firebaseapp.com",
+      "*.firebase.com",
+      "*.googleapis.com"
+    ]
+  },
+  "android": {
+    "allowMixedContent": false,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": false
+  }
+}

@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ffffff">
+    <title>STEM Forge | Multi-Branch Scheme Generator</title>
+
+    <!-- Prevent theme flash -->
+    <script>
+        (function() {
+            const saved = localStorage.getItem('stemforge-theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = saved || (prefersDark? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+            const meta = document.querySelector('meta[name="theme-color"]');
+            if (meta) meta.setAttribute('content', theme === 'dark'? '#0f172a' : '#ffffff');
+        })();
+    </script>
+
+    <!-- Fonts & Icons - SAME AS CASE STUDY -->
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&family=Inter:wght@400;500&family=Material+Symbols+Outlined&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CDN - SAME CONFIG -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'on-primary': '#ffffff',
+                        'background': '#fff8f4',
+                        'secondary-fixed': '#dae2fd',
+                        'error-container': '#ffdad6',
+                        'on-surface': '#221a12',
+                        'secondary': '#565e74',
+                        'outline-variant': '#d8c3ad',
+                        'surface-container-low': '#fff1e5',
+                        'deep-navy': '#0F172A',
+                        'on-error': '#ffffff',
+                        'surface-tint': '#855300',
+                        'on-error-container': '#93000a',
+                        'surface-container-highest': '#f0e0d1',
+                        'surface-bright': '#fff8f4',
+                        'secondary-fixed-dim': '#bec6e0',
+                        'error': '#ba1a1a',
+                        'tertiary': '#00658b',
+                        'on-tertiary': '#ffffff',
+                        'action-blue': '#2563EB',
+                        'primary': '#855300',
+                        'on-secondary-fixed': '#131b2e',
+                        'surface': '#fff8f4',
+                        'tertiary-fixed-dim': '#7fd0ff',
+                        'inverse-surface': '#382f25',
+                        'tertiary-fixed': '#c5e7ff',
+                        'primary-container': '#f59e0b',
+                        'surface-container-high': '#f5e6d7',
+                        'surface-dim': '#e7d7c9',
+                        'inverse-on-surface': '#feeedf',
+                        'forge-orange': '#F59E0B',
+                        'surface-container': '#fbebdd',
+                        'secondary-container': '#dae2fd',
+                        'surface-gray': '#F8FAFC',
+                        'inverse-primary': '#ffb95f',
+                        'tertiary-container': '#1abdff',
+                        'on-primary-fixed-variant': '#653e00',
+                        'on-tertiary-container': '#004966',
+                        'on-tertiary-fixed': '#001e2d',
+                        'on-tertiary-fixed-variant': '#004c6a',
+                        'on-secondary-fixed-variant': '#3f465c',
+                        'on-primary-fixed': '#2a1700',
+                        'primary-fixed': '#ffddb8',
+                        'surface-container-lowest': '#ffffff',
+                        'surface-variant': '#f0e0d1',
+                        'outline': '#867461',
+                        'on-surface-variant': '#534434',
+                        'on-secondary-container': '#5c647a',
+                        'on-primary-container': '#613b00',
+                        'on-background': '#221a12',
+                        'primary-fixed-dim': '#ffb95f',
+                        'on-secondary': '#ffffff',
+                        'border-subtle': '#E2E8F0'
+                    },
+                    borderRadius: { DEFAULT: '0.25rem', lg: '0.5rem', xl: '0.75rem', full: '9999px' },
+                    spacing: { 'card-padding': '24px', 'base': '8px', 'container-max': '1280px', 'gutter': '24px', 'margin-mobile': '16px', 'margin-desktop': '32px' },
+                    fontFamily: { 'headline-md': ['Hanken Grotesk', 'sans-serif'], 'label-md': ['Hanken Grotesk', 'sans-serif'], 'headline-lg': ['Hanken Grotesk', 'sans-serif'], 'body-md': ['Inter', 'sans-serif'], 'display-lg': ['Hanken Grotesk', 'sans-serif'], 'body-lg': ['Inter', 'sans-serif'], 'caption': ['Inter', 'sans-serif'], 'headline-lg-mobile': ['Hanken Grotesk', 'sans-serif'] },
+                    fontSize: {
+                        'headline-md': ['24px', { lineHeight: '1.3', fontWeight: '600' }],
+                        'label-md': ['14px', { lineHeight: '1.2', letterSpacing: '0.05em', fontWeight: '600' }],
+                        'headline-lg':['32px', { lineHeight: '1.2', letterSpacing: '-0.01em', fontWeight: '700' }],
+                        'body-md': ['16px', { lineHeight: '1.5', fontWeight: '400' }],
+                        'display-lg': ['48px', { lineHeight: '1.1', letterSpacing: '-0.02em', fontWeight: '800' }],
+                        'body-lg': ['18px', { lineHeight: '1.6', fontWeight: '400' }],
+                        'caption': ['12px', { lineHeight: '1.4', fontWeight: '500' }],
+                        'headline-lg-mobile': ['24px', { lineHeight: '1.2', fontWeight: '700' }]
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- SAME CSS ORDER AS CASE STUDY -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/base/dark-background.css">
+    <link rel="stylesheet" href="css/theme-toggle.css">
+    <link rel="stylesheet" href="css/layout/container.css">
+    <link rel="stylesheet" href="css/layout/nav.css">
+    <link rel="stylesheet" href="css/components/cards.css">
+    <link rel="stylesheet" href="css/components/buttons.css">
+    <link rel="stylesheet" href="css/components/forms.css">
+    <link rel="stylesheet" href="css/components/alerts.css">
+    <link rel="stylesheet" href="css/pages/ai-generate.css">
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="js/core/firebase-init.js"></script>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; }
+       .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+       .branch-radio:checked + div { border-color: #F59E0B; background: #fff1e5; }
+       .branch-radio:checked + div.material-symbols-outlined { color: #F59E0B; }
+       .custom-textarea { width: 100%; padding: 0.625rem 0.75rem; background: var(--bg-primary, #fff); border: 1px solid var(--border-color, #e2e8f0); border-radius: 0.5rem; color: var(--text-primary, #1e293b); font-size: 0.875rem; resize: vertical; min-height: 60px; }
+       .scheme-output table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+       .scheme-output th,.scheme-output td { border: 1px solid #e2e8f0; padding: 0.75rem; text-align: left; font-size: 0.875rem; }
+    </style>
+</head>
+<body data-page="scheme" class="text-deep-navy font-body-md antialiased">
+
+<div class="app-container">
+
+    <!-- ============== TOP NAV - SAME AS CASE STUDY ============== -->
+    <nav id="main-nav" class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-desktop h-16 bg-surface dark:bg-surface-dim border-b border-outline-variant dark:border-outline shadow-sm">
+        <div class="flex items-center gap-8">
+            <button class="md:hidden text-secondary p-2 -ml-2" id="mobile-menu-toggle" aria-label="Open menu">
+                <span class="material-symbols-outlined">menu</span>
+            </button>
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 flex items-center justify-center rounded-lg overflow-hidden bg-transparent">
+                    <img src="Images/Logo/StemForge 1 (1).jfif" alt="STEM Forge Logo" class="w-8 h-8 object-contain">
+                </div>
+                <span class="brand-text font-headline-md text-headline-md text-deep-navy dark:text-on-primary hidden sm:inline">STEM Forge</span>
+            </div>
+            <div class="hidden md:flex items-center text-secondary relative">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-lg">search</span>
+                <input class="pl-10 pr-4 py-1.5 bg-surface-container-lowest border border-border-subtle rounded-full text-label-md font-label-md focus:outline-none focus:border-forge-orange focus:ring-1 focus:ring-forge-orange w-64" placeholder="Search..." type="text">
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <a href="scheme.html" class="hidden lg:block border border-border-subtle text-deep-navy font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-surface-container-highest transition-colors">New Scheme</a>
+            <a href="ai-generate.html" class="bg-forge-orange text-on-primary font-label-md text-label-md px-4 py-2 rounded-lg shadow-sm hover:opacity-90 transition-opacity">New Lesson</a>
+            <div class="flex items-center gap-2 border-l border-border-subtle pl-4 ml-2">
+                <button class="theme-toggle text-secondary hover:text-forge-orange transition-colors p-2 rounded-full hover:bg-surface-container-highest" id="theme-toggle" aria-label="Toggle theme">
+                    <svg class="icon-moon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                    </svg>
+                    <svg class="icon-sun" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                    </svg>
+                </button>
+                <a href="#" class="text-secondary hover:text-forge-orange transition-colors p-2 rounded-full hover:bg-surface-container-highest" title="Notifications">
+                    <span class="material-symbols-outlined">notifications</span>
+                </a>
+                <div class="w-8 h-8 rounded-full bg-secondary-container border border-border-subtle overflow-hidden ml-2 cursor-pointer" title="Profile">
+                    <img alt="Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJc80yCjfYmHQhgE8J2XV78EncfQuUZhU97Cwt_asCwQ25exzH4tArnE0UrvrU-O18a64A8ZBqyfYxGJGCiJVQCPPi-SyDqfO8YPioQ8JfF3kEL58gUE4e5P5h9tyug-0lq2Jo_DdkCb02sAZpx6bjDKyQdSw6fcb4p4DMTEEvu4YAYPl5QUD5p3e7LM8Gt1scdnEG95saeV0Ey4QU6nzGJ6C_07HIgAquuDm85_453RjP2MProerp"/>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============== SIDEBAR ============== -->
+    <div id="sidebar-backdrop" class="fixed inset-0 bg-black/40 z-40 hidden md:hidden"></div>
+
+    <aside id="sidebar" class="fixed left-0 top-0 h-full w-64 p-4 bg-deep-navy dark:bg-surface-container-lowest text-on-primary z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-in-out flex flex-col">
+        <div class="flex items-center justify-between px-2 py-4 mb-4 border-b border-white/10">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 flex items-center justify-center rounded-lg overflow-hidden bg-transparent">
+                    <img src="Images/Logo/StemForge 1 (1).jfif" alt="STEM Forge Logo" class="w-8 h-8 object-contain">
+                </div>
+                <div>
+                    <h1 class="font-headline-md text-headline-md tracking-tight leading-none mb-1">STEM Forge</h1>
+                    <p class="font-caption text-caption opacity-60">Educator Portal</p>
+                </div>
+            </div>
+            <button id="sidebar-close" class="md:hidden text-white/80 hover:text-white" aria-label="Close menu">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+
+        <nav class="flex-1 space-y-1 overflow-y-auto">
+            <a href="index.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
+                <span class="material-symbols-outlined">dashboard</span> Dashboard
+            </a>
+            <a href="ai-generate.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
+                <span class="material-symbols-outlined">psychology</span> AI Generation
+            </a>
+            <a href="scheme.html" class="nav-btn active flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white/10 transition-all font-label-md text-label-md">
+                <span class="material-symbols-outlined">inventory_2</span> Schemes
+            </a>
+            <a href="attendance.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
+                <span class="material-symbols-outlined">event_available</span> Attendance
+            </a>
+            <a href="students.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
+                <span class="material-symbols-outlined">group</span> Students
+            </a>
+            <a href="classes.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
+                <span class="material-symbols-outlined">school</span> Classes
+            </a>
+            <a href="attendance-reports.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
+                <span class="material-symbols-outlined">analytics</span> Reports
+            </a>
+            <a href="pricing.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
+                <span class="material-symbols-outlined">payments</span> Pricing
+            </a>
+            <a href="exams.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
+                <span class="material-symbols-outlined">quiz</span> Exams
+            </a>
+            <a href="virtual.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
+                <span class="material-symbols-outlined">video_call</span> Virtual Class
+            </a>
+            <a href="about.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
+                <span class="material-symbols-outlined">info</span> About
+            </a>
+            <a href="services.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
+                <span class="material-symbols-outlined">handyman</span> Services
+            </a>
+            <a href="contact.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
+                <span class="material-symbols-outlined">mail</span> Contact
+            </a>
+        </nav>
+
+        <div class="mt-auto pt-4 border-t border-white/10 space-y-1">
+            <a href="login.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/10 transition-all font-label-md text-caption">
+                <span class="material-symbols-outlined text-">logout</span> Log Out
+            </a>
+        </div>
+    </aside>
+
+    <!-- ============== MAIN CONTENT ============== -->
+    <main class="md:ml-64 pt-20 md:pt-24 min-h-screen flex flex-col bg-surface-gray">
+        <div class="max-w- w-full mx-auto p-6 md:p-gutter flex-1 space-y-6 pb-24">
+
+            <!-- Page Header -->
+            <header class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                    <h2 class="font-headline-lg text-headline-lg text-deep-navy flex items-center gap-3">
+                        <span class="material-symbols-outlined text-forge-orange text-3xl">calendar_month</span>
+                        Multi-Branch STEM Scheme Generator
+                    </h2>
+                    <p class="font-body-md text-body-md text-secondary mt-1">For Schools | Grade 1 (Beginner) to Grade 12 (Advanced) | Robotics • Web Dev • App Dev • Custom</p>
+                </div>
+                <button class="font-label-md text-label-md px-5 py-2.5 rounded-lg border border-border-subtle text-deep-navy hover:bg-surface-container-highest transition-colors bg-white shadow-sm flex items-center gap-2 shrink-0">
+                    <span class="material-symbols-outlined text-">folder_open</span> Load Preset
+                </button>
+            </header>
+
+            <!-- ============ GENERATOR FORM - ID PRESERVED ============ -->
+            <form id="scheme-form" class="space-y-6">
+
+                <!-- STEP 1: BRANCH SELECTION -->
+                <section class="bg-white rounded-xl border border-border-subtle shadow-sm p-card-padding">
+                    <h3 class="font-headline-md text-headline-md text-deep-navy flex items-center gap-3 mb-4">
+                        <span class="w-8 h-8 rounded-full bg-deep-navy text-white flex items-center justify-center text-sm font-bold">1</span>
+                        Choose Your STEM Branch
+                    </h3>
+                    <div id="branch-selector" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="branch" value="robotics" checked class="sr-only branch-radio">
+                            <div class="border border-border-subtle rounded-xl p-4 hover:shadow-md transition-all h-full bg-surface-gray">
+                                <span class="material-symbols-outlined text-secondary text-3xl mb-2 block">smart_toy</span>
+                                <div class="font-label-md text-label-md text-deep-navy">Robotics</div>
+                                <div class="font-caption text-caption text-secondary">Hardware, Electronics, Programming</div>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="branch" value="webdev" class="sr-only branch-radio">
+                            <div class="border border-border-subtle rounded-xl p-4 hover:shadow-md transition-all h-full bg-surface-gray">
+                                <span class="material-symbols-outlined text-secondary text-3xl mb-2 block">language</span>
+                                <div class="font-label-md text-label-md text-deep-navy">Web Development</div>
+                                <div class="font-caption text-caption text-secondary">HTML, CSS, JavaScript, Frameworks</div>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="branch" value="appdev" class="sr-only branch-radio">
+                            <div class="border border-border-subtle rounded-xl p-4 hover:shadow-md transition-all h-full bg-surface-gray">
+                                <span class="material-symbols-outlined text-secondary text-3xl mb-2 block">smartphone</span>
+                                <div class="font-label-md text-label-md text-deep-navy">App Development</div>
+                                <div class="font-caption text-caption text-secondary">Scratch, Block Coding, Games</div>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="branch" value="custom" class="sr-only branch-radio" onchange="document.getElementById('custom-branch-input').style.display = this.checked? 'block' : 'none'">
+                            <div class="border border-border-subtle rounded-xl p-4 hover:shadow-md transition-all h-full bg-surface-gray">
+                                <span class="material-symbols-outlined text-secondary text-3xl mb-2 block">tune</span>
+                                <div class="font-label-md text-label-md text-deep-navy">Custom Branch</div>
+                                <div class="font-caption text-caption text-secondary">Define your own</div>
+                            </div>
+                        </label>
+                    </div>
+                    <div id="custom-branch-input" class="mt-4" style="display:none;">
+                        <label for="custom-branch-name" class="block font-label-md text-label-md text-secondary mb-2">Custom Branch Name</label>
+                        <input type="text" id="custom-branch-name" placeholder="e.g., Data Science, AI/Machine Learning, Cybersecurity" class="w-full px-4 py-3 bg-surface-gray border border-border-subtle rounded-lg focus:border-forge-orange focus:ring-1 focus:ring-forge-orange font-body-md text-body-md">
+                    </div>
+                </section>
+
+                <!-- STEP 2: GRADE RANGE -->
+                <section class="bg-white rounded-xl border border-border-subtle shadow-sm p-card-padding">
+                    <h3 class="font-headline-md text-headline-md text-deep-navy flex items-center gap-3 mb-4">
+                        <span class="w-8 h-8 rounded-full bg-deep-navy text-white flex items-center justify-center text-sm font-bold">2</span>
+                        Select Grade Range
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="start-grade" class="block font-label-md text-label-md text-secondary mb-2">Starting Grade</label>
+                            <select id="start-grade" required class="w-full px-4 py-3 bg-surface-gray border border-border-subtle rounded-lg focus:border-forge-orange focus:ring-1 focus:ring-forge-orange font-body-md text-body-md">
+                                <option value="1">Grade 1 (Beginner)</option>
+                                <option value="2">Grade 2</option>
+                                <option value="3">Grade 3</option>
+                                <option value="4" selected>Grade 4 (Basic Entry)</option>
+                                <option value="5">Grade 5</option>
+                                <option value="6">Grade 6</option>
+                                <option value="7">Grade 7</option>
+                                <option value="8">Grade 8</option>
+                                <option value="9">Grade 9 (Intermediate)</option>
+                                <option value="10">Grade 10 (Advanced)</option>
+                                <option value="11">Grade 11</option>
+                                <option value="12">Grade 12 (Mastery)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="end-grade" class="block font-label-md text-label-md text-secondary mb-2">Target Grade</label>
+                            <select id="end-grade" required class="w-full px-4 py-3 bg-surface-gray border border-border-subtle rounded-lg focus:border-forge-orange focus:ring-1 focus:ring-forge-orange font-body-md text-body-md">
+                                <option value="1">Grade 1</option>
+                                <option value="2">Grade 2</option>
+                                <option value="3">Grade 3</option>
+                                <option value="4">Grade 4</option>
+                                <option value="5">Grade 5</option>
+                                <option value="6">Grade 6</option>
+                                <option value="7">Grade 7</option>
+                                <option value="8">Grade 8</option>
+                                <option value="9" selected>Grade 9 (Mastery)</option>
+                                <option value="10">Grade 10</option>
+                                <option value="11">Grade 11</option>
+                                <option value="12">Grade 12 (Advanced)</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- STEP 3: SUBJECT AREAS -->
+                <section class="bg-white rounded-xl border border-border-subtle shadow-sm p-card-padding">
+                    <h3 class="font-headline-md text-headline-md text-deep-navy flex items-center gap-3 mb-4">
+                        <span class="w-8 h-8 rounded-full bg-deep-navy text-white flex items-center justify-center text-sm font-bold">3</span>
+                        Select Subject Areas
+                    </h3>
+                    <div id="subject-areas-container" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+                    <div class="flex gap-2 mt-4">
+                        <input type="text" id="custom-subject-input" placeholder="Add custom subject area..." class="flex-1 px-4 py-2.5 bg-surface-gray border border-border-subtle rounded-lg focus:border-forge-orange focus:ring-1 focus:ring-forge-orange font-body-md text-body-md text-sm">
+                        <button type="button" id="add-custom-subject-btn" class="border border-border-subtle bg-white text-deep-navy font-label-md text-label-md px-4 py-2.5 rounded-lg hover:bg-surface-gray transition-colors">Add</button>
+                    </div>
+                </section>
+
+                <!-- STEP 4: COMPETITIONS -->
+                <section class="bg-white rounded-xl border border-border-subtle shadow-sm p-card-padding">
+                    <h3 class="font-headline-md text-headline-md text-deep-navy flex items-center gap-3 mb-4">
+                        <span class="w-8 h-8 rounded-full bg-deep-navy text-white flex items-center justify-center text-sm font-bold">4</span>
+                        Competitions & Challenges
+                    </h3>
+                    <div id="competitions-container" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+                    <div class="flex gap-2 mt-4">
+                        <input type="text" id="custom-competition-input" placeholder="Add custom competition..." class="flex-1 px-4 py-2.5 bg-surface-gray border border-border-subtle rounded-lg focus:border-forge-orange focus:ring-1 focus:ring-forge-orange font-body-md text-body-md text-sm">
+                        <button type="button" id="add-custom-competition-btn" class="border border-border-subtle bg-white text-deep-navy font-label-md text-label-md px-4 py-2.5 rounded-lg hover:bg-surface-gray transition-colors">Add</button>
+                    </div>
+                </section>
+
+                <!-- STEP 5: INDUSTRY -->
+                <section class="bg-white rounded-xl border border-border-subtle shadow-sm p-card-padding">
+                    <h3 class="font-headline-md text-headline-md text-deep-navy flex items-center gap-3 mb-4">
+                        <span class="w-8 h-8 rounded-full bg-deep-navy text-white flex items-center justify-center text-sm font-bold">5</span>
+                        Industry Applications
+                    </h3>
+                    <div id="industry-container" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+                    <div class="flex gap-2 mt-4">
+                        <input type="text" id="custom-industry-input" placeholder="Add custom industry application..." class="flex-1 px-4 py-2.5 bg-surface-gray border border-border-subtle rounded-lg focus:border-forge-orange focus:ring-1 focus:ring-forge-orange font-body-md text-body-md text-sm">
+                        <button type="button" id="add-custom-industry-btn" class="border border-border-subtle bg-white text-deep-navy font-label-md text-label-md px-4 py-2.5 rounded-lg hover:bg-surface-gray transition-colors">Add</button>
+                    </div>
+                </section>
+
+                <!-- STEP 6: ADDITIONAL -->
+                <section class="bg-white rounded-xl border border-border-subtle shadow-sm p-card-padding">
+                    <h3 class="font-headline-md text-headline-md text-deep-navy flex items-center gap-3 mb-4">
+                        <span class="w-8 h-8 rounded-full bg-deep-navy text-white flex items-center justify-center text-sm font-bold">6</span>
+                        Additional Focus Areas
+                    </h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="scheme-notes" class="block font-label-md text-label-md text-secondary mb-2">Custom Notes (Optional)</label>
+                            <textarea id="scheme-notes" rows="3" placeholder="e.g., Focus on local Nigerian context, include solar-powered projects..." class="w-full px-4 py-3 bg-surface-gray border border-border-subtle rounded-lg focus:border-forge-orange focus:ring-1 focus:ring-forge-orange font-body-md text-body-md resize-none"></textarea>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="weeks-per-term" class="block font-label-md text-label-md text-secondary mb-2">Weeks per Term</label>
+                                <select id="weeks-per-term" class="w-full px-4 py-3 bg-surface-gray border border-border-subtle rounded-lg focus:border-forge-orange focus:ring-1 focus:ring-forge-orange font-body-md text-body-md">
+                                    <option value="10">10 weeks</option>
+                                    <option value="12" selected>12 weeks</option>
+                                    <option value="14">14 weeks</option>
+                                    <option value="16">16 weeks</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="periods-per-week" class="block font-label-md text-label-md text-secondary mb-2">Periods per Week</label>
+                                <select id="periods-per-week" class="w-full px-4 py-3 bg-surface-gray border border-border-subtle rounded-lg focus:border-forge-orange focus:ring-1 focus:ring-forge-orange font-body-md text-body-md">
+                                    <option value="1">1 period (40 min)</option>
+                                    <option value="2" selected>2 periods (80 min)</option>
+                                    <option value="3">3 periods (120 min)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- GENERATE BUTTON - ID PRESERVED -->
+                <div class="bg-white rounded-xl border border-border-subtle shadow-sm p-card-padding">
+                    <button type="submit" id="generate-scheme-btn" class="w-full bg-forge-orange text-white font-label-md text-label-md py-3.5 px-6 rounded-xl shadow-lg flex items-center justify-center gap-2 hover:opacity-90 transition-opacity text-base">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Scheme of Work <i class="fa-solid fa-rocket"></i>
+                    </button>
+                    <div id="scheme-status" class="text-center font-body-md text-body-md text-sm mt-3"></div>
+                </div>
+            </form>
+
+            <!-- OUTPUT - IDs PRESERVED -->
+            <div id="scheme-output" class="bg-white rounded-xl border border-border-subtle shadow-sm p-card-padding" style="display:none;">
+                <div class="flex flex-wrap items-center justify-between gap-4 border-b border-border-subtle pb-4 mb-4">
+                    <h2 class="font-headline-md text-headline-md text-deep-navy">Generated Scheme of Work</h2>
+                    <div class="flex flex-wrap gap-2">
+                        <button id="save-scheme" class="border border-border-subtle text-deep-navy font-label-md text-label-md px-3 py-1.5 rounded-lg hover:bg-surface-gray transition text-sm flex items-center gap-1"><span class="material-symbols-outlined text-">save</span> Save</button>
+                        <button id="copy-scheme" class="border border-border-subtle text-deep-navy font-label-md text-label-md px-3 py-1.5 rounded-lg hover:bg-surface-gray transition text-sm flex items-center gap-1"><span class="material-symbols-outlined text-">content_copy</span> Copy</button>
+                        <button id="print-scheme" class="border border-border-subtle text-deep-navy font-label-md text-label-md px-3 py-1.5 rounded-lg hover:bg-surface-gray transition text-sm flex items-center gap-1"><span class="material-symbols-outlined text-">print</span> Print</button>
+                    </div>
+                </div>
+                <div id="scheme-content" class="scheme-output overflow-x-auto"></div>
+            </div>
+
+        </div>
+    </main>
+</div>
+
+<script type="module" src="js/main.js"></script>
+
+<script>
+    const mobileBtn = document.getElementById('mobile-menu-toggle');
+    const sidebar = document.getElementById('sidebar');
+    const backdrop = document.getElementById('sidebar-backdrop');
+    const closeBtn = document.getElementById('sidebar-close');
+    function openSidebar() { sidebar.classList.remove('-translate-x-full'); backdrop.classList.remove('hidden'); }
+    function closeSidebar() { sidebar.classList.add('-translate-x-full'); backdrop.classList.add('hidden'); }
+    mobileBtn?.addEventListener('click', openSidebar);
+    closeBtn?.addEventListener('click', closeSidebar);
+    backdrop?.addEventListener('click', closeSidebar);
+</script>
+
+<script src="js/include-nav.js"></script>
+</body>
+</html>

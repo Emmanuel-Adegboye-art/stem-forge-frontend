@@ -1,0 +1,244 @@
+/* ============================================
+   STEM FORGE — DESIGN TOKENS
+   Brand: Indigo #6366f1 + Emerald #10b981
+   ============================================ */
+
+:root {
+    /* =========================================
+       BRAND COLORS
+       ========================================= */
+    --color-primary: #6366f1;
+    --color-primary-hover: #4f46e5;
+    --color-primary-active: #4338ca;
+    --color-primary-light: #eef2ff;
+    --color-primary-dark: #312e81;
+    
+    --color-secondary: #10b981;
+    --color-secondary-hover: #059669;
+    --color-secondary-active: #047857;
+    --color-secondary-light: #ecfdf5;
+    --color-secondary-dark: #064e3b;
+    
+    --color-accent: #f59e0b;
+    --color-accent-hover: #d97706;
+    
+    /* =========================================
+       SEMANTIC COLORS
+       ========================================= */
+    --color-success: #10b981;
+    --color-success-light: #d1fae5;
+    --color-success-dark: #047857;
+    
+    --color-warning: #f59e0b;
+    --color-warning-light: #fef3c7;
+    --color-warning-dark: #d97706;
+    
+    --color-error: #ef4444;
+    --color-error-light: #fee2e2;
+    --color-error-dark: #dc2626;
+    
+    --color-info: #3b82f6;
+    --color-info-light: #dbeafe;
+    --color-info-dark: #1d4ed8;
+    
+    /* =========================================
+       LIGHT MODE BACKGROUNDS
+       ========================================= */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8fafc;
+    --bg-tertiary: #f1f5f9;
+    --bg-elevated: #ffffff;
+    --bg-overlay: rgba(15, 23, 42, 0.5);
+    --bg-code: #f1f5f9;
+    
+    /* =========================================
+       LIGHT MODE TEXT
+       ========================================= */
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-tertiary: #94a3b8;
+    --text-inverse: #ffffff;
+    --text-link: var(--color-primary);
+    
+    /* =========================================
+       LIGHT MODE BORDERS
+       ========================================= */
+    --border-color: #e2e8f0;
+    --border-strong: #cbd5e0;
+    --border-subtle: #f1f5f9;
+    
+    /* =========================================
+       SHADOWS
+       ========================================= */
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.04);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.07), 0 4px 6px rgba(0, 0, 0, 0.04);
+    --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.08), 0 10px 10px rgba(0, 0, 0, 0.03);
+    --shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.12);
+    --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.3);
+    
+    /* =========================================
+       SPACING (8px grid)
+       ========================================= */
+    --space-0: 0;
+    --space-1: 0.25rem;   /* 4px */
+    --space-2: 0.5rem;    /* 8px */
+    --space-3: 0.75rem;   /* 12px */
+    --space-4: 1rem;      /* 16px */
+    --space-5: 1.25rem;   /* 20px */
+    --space-6: 1.5rem;    /* 24px */
+    --space-8: 2rem;      /* 32px */
+    --space-10: 2.5rem;   /* 40px */
+    --space-12: 3rem;     /* 48px */
+    --space-16: 4rem;     /* 64px */
+    --space-20: 5rem;     /* 80px */
+    --space-24: 6rem;     /* 96px */
+    
+    /* =========================================
+       TYPOGRAPHY
+       ========================================= */
+    --font-primary: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-heading: 'Poppins', system-ui, -apple-system, sans-serif;
+    --font-mono: 'Fira Code', 'Courier New', monospace;
+    
+    --text-xs: 0.75rem;     /* 12px */
+    --text-sm: 0.875rem;    /* 14px */
+    --text-base: 1rem;      /* 16px */
+    --text-lg: 1.125rem;    /* 18px */
+    --text-xl: 1.25rem;     /* 20px */
+    --text-2xl: 1.5rem;     /* 24px */
+    --text-3xl: 1.875rem;   /* 30px */
+    --text-4xl: 2.25rem;    /* 36px */
+    --text-5xl: 3rem;       /* 48px */
+    --text-6xl: 3.75rem;    /* 60px */
+    
+    --leading-tight: 1.2;
+    --leading-normal: 1.5;
+    --leading-relaxed: 1.75;
+    
+    --weight-normal: 400;
+    --weight-medium: 500;
+    --weight-semibold: 600;
+    --weight-bold: 700;
+    
+    /* =========================================
+       BORDER RADIUS
+       ========================================= */
+    --radius-none: 0;
+    --radius-sm: 0.25rem;    /* 4px */
+    --radius-md: 0.5rem;     /* 8px */
+    --radius-lg: 0.75rem;    /* 12px */
+    --radius-xl: 1rem;       /* 16px */
+    --radius-2xl: 1.5rem;    /* 24px */
+    --radius-3xl: 2rem;
+    --radius-full: 9999px;
+    
+    /* =========================================
+       TRANSITIONS
+       ========================================= */
+    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: 500ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    
+    /* =========================================
+       LAYOUT
+       ========================================= */
+    --max-width-sm: 640px;
+    --max-width-md: 768px;
+    --max-width-lg: 1024px;
+    --max-width-xl: 1280px;
+    --max-width-2xl: 1536px;
+    --max-width: var(--max-width-xl);
+    
+    --nav-height: 72px;
+    --footer-height: 200px;
+    --sidebar-width: 280px;
+    
+    /* =========================================
+       Z-INDEX SCALE
+       ========================================= */
+    --z-dropdown: 1000;
+    --z-sticky: 1100;
+    --z-fixed: 1200;
+    --z-modal-backdrop: 1300;
+    --z-modal: 1400;
+    --z-popover: 1500;
+    --z-tooltip: 1600;
+    --z-toast: 1700;
+}
+
+/* ============================================
+   DARK MODE OVERRIDES
+   Triggered by: <html data-theme="dark">
+   ============================================ */
+
+[data-theme="dark"] {
+    /* Brand colors slightly desaturated for dark mode */
+    --color-primary: #818cf8;
+    --color-primary-hover: #a5b4fc;
+    --color-primary-active: #6366f1;
+    --color-primary-light: #1e1b4b;
+    --color-primary-dark: #c7d2fe;
+    
+    --color-secondary: #34d399;
+    --color-secondary-hover: #6ee7b7;
+    --color-secondary-active: #10b981;
+    --color-secondary-light: #022c22;
+    --color-secondary-dark: #a7f3d0;
+    
+    --color-accent: #fbbf24;
+    --color-accent-hover: #fcd34d;
+    
+    /* Semantic colors for dark */
+    --color-success-light: #022c22;
+    --color-warning-light: #451a03;
+    --color-error-light: #450a0a;
+    --color-info-light: #172554;
+    
+    /* Dark backgrounds */
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --bg-tertiary: #334155;
+    --bg-elevated: #1e293b;
+    --bg-overlay: rgba(0, 0, 0, 0.7);
+    --bg-code: #1e293b;
+    
+    /* Dark text */
+    --text-primary: #f1f5f9;
+    --text-secondary: #cbd5e0;
+    --text-tertiary: #94a3b8;
+    --text-inverse: #0f172a;
+    
+    /* Dark borders */
+    --border-color: #334155;
+    --border-strong: #475569;
+    --border-subtle: #1e293b;
+    
+    /* Dark shadows (more dramatic) */
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5), 0 4px 6px rgba(0, 0, 0, 0.3);
+    --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.5), 0 10px 10px rgba(0, 0, 0, 0.2);
+    --shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.6);
+    --shadow-glow: 0 0 30px rgba(129, 140, 248, 0.4);
+}
+
+/* ============================================
+   AUTO-DETECT SYSTEM PREFERENCE
+   Only applies if user hasn't set a preference
+   ============================================ */
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]):not([data-theme="dark"]) {
+        --color-primary: #818cf8;
+        --color-secondary: #34d399;
+        --bg-primary: #0f172a;
+        --bg-secondary: #1e293b;
+        --text-primary: #f1f5f9;
+        --text-secondary: #cbd5e0;
+        --border-color: #334155;
+    }
+}

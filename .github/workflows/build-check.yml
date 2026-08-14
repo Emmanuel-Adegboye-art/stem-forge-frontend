@@ -1,0 +1,54 @@
+﻿name: Front-end Build Check
+
+# Run on every push to main, and on every pull request that targets main
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: Build & Smoke‑test
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+      # 1️⃣  Get the source code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2️⃣  Set up Node.js
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'               # caches npm to speed up installs
+
+      # 3️⃣  Install dependencies (use ci for reproducible installs)
+      - name: Install dependencies
+        run: npm ci || npm install
+
+      # 4️⃣  Build the front‑end (change the script name if yours is different)
+      - name: Build
+        run: npm run build
+
+      # 5️⃣  Smoke‑test: serve the built site and make sure it responds
+      - name: Smoke‑test built site
+        run: |
+          echo "Starting local server..."
+          # serve the dist folder in the background
+          npx http-server dist -p 8080 --silent &
+          SERVER_PID=$!
+          sleep 3
+          # request the root page – fail if it doesn't return 200
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/)
+          echo "Server responded with $STATUS"
+          if [ "$STATUS" -ne 200 ]; then
+            echo "❌ Build smoke‑test failed: expected 200, got $STATUS"
+            exit 1
+          fi
+          kill $SERVER_PID || true

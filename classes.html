@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ffffff">
+    <title>Class Management | STEM Forge</title>
+
+    <!-- Prevent theme flash -->
+    <script>
+        (function() {
+            const saved = localStorage.getItem('stemforge-theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = saved || (prefersDark? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+            const meta = document.querySelector('meta[name="theme-color"]');
+            if (meta) meta.setAttribute('content', theme === 'dark'? '#0f172a' : '#ffffff');
+        })();
+    </script>
+
+    <!-- Fonts & Icons - SAME AS CASE STUDY -->
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&family=Inter:wght@400;500&family=Material+Symbols+Outlined&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CDN - SAME CONFIG -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'on-primary': '#ffffff',
+                        'background': '#fff8f4',
+                        'secondary-fixed': '#dae2fd',
+                        'error-container': '#ffdad6',
+                        'on-surface': '#221a12',
+                        'secondary': '#565e74',
+                        'outline-variant': '#d8c3ad',
+                        'surface-container-low': '#fff1e5',
+                        'deep-navy': '#0F172A',
+                        'on-error': '#ffffff',
+                        'surface-tint': '#855300',
+                        'on-error-container': '#93000a',
+                        'surface-container-highest': '#f0e0d1',
+                        'surface-bright': '#fff8f4',
+                        'secondary-fixed-dim': '#bec6e0',
+                        'error': '#ba1a1a',
+                        'tertiary': '#00658b',
+                        'on-tertiary': '#ffffff',
+                        'action-blue': '#2563EB',
+                        'primary': '#855300',
+                        'on-secondary-fixed': '#131b2e',
+                        'surface': '#fff8f4',
+                        'tertiary-fixed-dim': '#7fd0ff',
+                        'inverse-surface': '#382f25',
+                        'tertiary-fixed': '#c5e7ff',
+                        'primary-container': '#f59e0b',
+                        'surface-container-high': '#f5e6d7',
+                        'surface-dim': '#e7d7c9',
+                        'inverse-on-surface': '#feeedf',
+                        'forge-orange': '#F59E0B',
+                        'surface-container': '#fbebdd',
+                        'secondary-container': '#dae2fd',
+                        'surface-gray': '#F8FAFC',
+                        'inverse-primary': '#ffb95f',
+                        'tertiary-container': '#1abdff',
+                        'on-primary-fixed-variant': '#653e00',
+                        'on-tertiary-container': '#004966',
+                        'on-tertiary-fixed': '#001e2d',
+                        'on-tertiary-fixed-variant': '#004c6a',
+                        'on-secondary-fixed-variant': '#3f465c',
+                        'on-primary-fixed': '#2a1700',
+                        'primary-fixed': '#ffddb8',
+                        'surface-container-lowest': '#ffffff',
+                        'surface-variant': '#f0e0d1',
+                        'outline': '#867461',
+                        'on-surface-variant': '#534434',
+                        'on-secondary-container': '#5c647a',
+                        'on-primary-container': '#613b00',
+                        'on-background': '#221a12',
+                        'primary-fixed-dim': '#ffb95f',
+                        'on-secondary': '#ffffff',
+                        'border-subtle': '#E2E8F0'
+                    },
+                    borderRadius: { DEFAULT: '0.25rem', lg: '0.5rem', xl: '0.75rem', full: '9999px' },
+                    spacing: { 'card-padding': '24px', 'base': '8px', 'container-max': '1280px', 'gutter': '24px', 'margin-mobile': '16px', 'margin-desktop': '32px' },
+                    fontFamily: { 'headline-md': ['Hanken Grotesk', 'sans-serif'], 'label-md': ['Hanken Grotesk', 'sans-serif'], 'headline-lg': ['Hanken Grotesk', 'sans-serif'], 'body-md': ['Inter', 'sans-serif'], 'display-lg': ['Hanken Grotesk', 'sans-serif'], 'body-lg': ['Inter', 'sans-serif'], 'caption': ['Inter', 'sans-serif'], 'headline-lg-mobile': ['Hanken Grotesk', 'sans-serif'] },
+                    fontSize: {
+                        'headline-md': ['24px', { lineHeight: '1.3', fontWeight: '600' }],
+                        'label-md': ['14px', { lineHeight: '1.2', letterSpacing: '0.05em', fontWeight: '600' }],
+                        'headline-lg':['32px', { lineHeight: '1.2', letterSpacing: '-0.01em', fontWeight: '700' }],
+                        'body-md': ['16px', { lineHeight: '1.5', fontWeight: '400' }],
+                        'display-lg': ['48px', { lineHeight: '1.1', letterSpacing: '-0.02em', fontWeight: '800' }],
+                        'body-lg': ['18px', { lineHeight: '1.6', fontWeight: '400' }],
+                        'caption': ['12px', { lineHeight: '1.4', fontWeight: '500' }],
+                        'headline-lg-mobile': ['24px', { lineHeight: '1.2', fontWeight: '700' }]
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- SAME CSS ORDER AS CASE STUDY -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/base/dark-background.css">
+    <link rel="stylesheet" href="css/theme-toggle.css">
+    <link rel="stylesheet" href="css/layout/container.css">
+    <link rel="stylesheet" href="css/layout/nav.css">
+    <link rel="stylesheet" href="css/components/cards.css">
+    <link rel="stylesheet" href="css/components/buttons.css">
+    <link rel="stylesheet" href="css/components/forms.css">
+    <link rel="stylesheet" href="css/components/alerts.css">
+    <link rel="stylesheet" href="css/pages/ai-generate.css">
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="js/core/firebase-init.js"></script>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; }
+      .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+      .icon-fill { font-variation-settings: 'FILL' 1; }
+      .glass-card { transition: box-shadow 0.2s, transform 0.2s; }
+      .glass-card:hover { box-shadow: 0 8px 24px rgba(15,23,42,0.08); transform: translateY(-2px); }
+    </style>
+</head>
+<body data-page="classes" class="text-deep-navy font-body-md antialiased">
+
+<div class="app-container">
+
+    <!-- ============== TOP NAV - SAME AS CASE STUDY ============== -->
+    <nav id="main-nav" class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-desktop h-16 bg-surface dark:bg-surface-dim border-b border-outline-variant dark:border-outline shadow-sm">
+        <div class="flex items-center gap-8">
+            <button class="md:hidden text-secondary p-2 -ml-2" id="mobile-menu-toggle" aria-label="Open menu">
+                <span class="material-symbols-outlined">menu</span>
+            </button>
+
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 flex items-center justify-center rounded-lg overflow-hidden bg-transparent">
+                    <img src="Images/Logo/StemForge 1 (1).jfif" alt="STEM Forge Logo" class="w-8 h-8 object-contain">
+                </div>
+                <span class="brand-text font-headline-md text-headline-md text-deep-navy dark:text-on-primary hidden sm:inline">STEM Forge</span>
+            </div>
+
+            <div class="hidden md:flex items-center text-secondary relative">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-lg">search</span>
+                <input class="pl-10 pr-4 py-1.5 bg-surface-container-lowest border border-border-subtle rounded-full text-label-md font-label-md focus:outline-none focus:border-forge-orange focus:ring-1 focus:ring-forge-orange w-64" placeholder="Search..." type="text">
+            </div>
+        </div>
+
+        <div class="flex items-center gap-4">
+            <a href="scheme.html" class="hidden lg:block border border-border-subtle text-deep-navy font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-surface-container-highest transition-colors">New Scheme</a>
+            <a href="ai-generate.html" class="bg-forge-orange text-on-primary font-label-md text-label-md px-4 py-2 rounded-lg shadow-sm hover:opacity-90 transition-opacity">New Lesson</a>
+
+            <div class="flex items-center gap-2 border-l border-border-subtle pl-4 ml-2">
+                <button class="theme-toggle text-secondary hover:text-forge-orange transition-colors p-2 rounded-full hover:bg-surface-container-highest" id="theme-toggle" aria-label="Toggle theme">
+                    <svg class="icon-moon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                    </svg>
+                    <svg class="icon-sun" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                    </svg>
+                </button>
+
+                <a href="#" class="text-secondary hover:text-forge-orange transition-colors p-2 rounded-full hover:bg-surface-container-highest" title="Notifications">
+                    <span class="material-symbols-outlined">notifications</span>
+                </a>
+
+                <div class="w-8 h-8 rounded-full bg-secondary-container border border-border-subtle overflow-hidden ml-2 cursor-pointer" title="Profile">
+                    <img alt="Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJc80yCjfYmHQhgE8J2XV78EncfQuUZhU97Cwt_asCwQ25exzH4tArnE0UrvrU-O18a64A8ZBqyfYxGJGCiJVQCPPi-SyDqfO8YPioQ8JfF3kEL58gUE4e5P5h9tyug-0lq2Jo_DdkCb02sAZpx6bjDKyQdSw6fcb4p4DMTEEvu4YAYPl5QUD5p3e7LM8Gt1scdnEG95saeV0Ey4QU6nzGJ6C_07HIgAquuDm85_453RjP2MProerp"/>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============== SIDEBAR ============== -->
+    <div id="sidebar-backdrop" class="fixed inset-0 bg-black/40 z-40 hidden md:hidden"></div>
+
+    <aside id="sidebar" class="fixed left-0 top-0 h-full w-64 p-4 bg-deep-navy dark:bg-surface-container-lowest text-on-primary z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-in-out flex flex-col">
+        <div class="flex items-center justify-between px-2 py-4 mb-4 border-b border-white/10">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 flex items-center justify-center rounded-lg overflow-hidden bg-transparent">
+                    <img src="Images/Logo/StemForge 1 (1).jfif" alt="STEM Forge Logo" class="w-8 h-8 object-contain">
+                </div>
+                <div>
+                    <h1 class="font-headline-md text-headline-md tracking-tight leading-none mb-1">STEM Forge</h1>
+                    <p class="font-caption text-caption opacity-60">Educator Portal</p>
+                </div>
+            </div>
+            <button id="sidebar-close" class="md:hidden text-white/80 hover:text-white" aria-label="Close menu">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+
+        <nav class="flex-1 space-y-1 overflow-y-auto" id="nav-links">
+            <a href="index.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
+                <span class="material-symbols-outlined">dashboard</span> Dashboard
+            </a>
+            <a href="ai-generate.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
+                <span class="material-symbols-outlined">psychology</span> AI Generation
+            </a>
+            <a href="scheme.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
+                <span class="material-symbols-outlined">inventory_2</span> Schemes
+            </a>
+            <a href="attendance.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
+                <span class="material-symbols-outlined">event_available</span> Attendance
+            </a>
+            <a href="students.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
+                <span class="material-symbols-outlined">group</span> Students
+            </a>
+            <a href="classes.html" class="nav-btn active flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
+                <span class="material-symbols-outlined icon-fill">school</span> Classes
+            </a>
+            <a href="attendance-reports.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
+                <span class="material-symbols-outlined">analytics</span> Reports
+            </a>
+            <a href="pricing.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
+                <span class="material-symbols-outlined">payments</span> Pricing
+            </a>
+            <a href="exams.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
+                <span class="material-symbols-outlined">quiz</span> Exams
+            </a>
+            <a href="virtual.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
+                <span class="material-symbols-outlined">video_call</span> Virtual Class
+            </a>
+            <a href="about.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
+                <span class="material-symbols-outlined">info</span> About
+            </a>
+            <a href="services.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
+                <span class="material-symbols-outlined">handyman</span> Services
+            </a>
+            <a href="contact.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
+                <span class="material-symbols-outlined">mail</span> Contact
+            </a>
+        </nav>
+
+        <div class="mt-auto pt-4 border-t border-white/10 space-y-1">
+            <a href="login.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/10 transition-all font-label-md text-caption">
+                <span class="material-symbols-outlined text-">logout</span> Log Out
+            </a>
+        </div>
+    </aside>
+
+    <!-- ============== MAIN CONTENT ============== -->
+    <main class="md:ml-64 pt-20 md:pt-24 min-h-screen flex flex-col bg-surface-gray">
+        <div class="max-w- w-full mx-auto p-6 md:p-gutter flex-1 space-y-8 pb-24">
+
+            <!-- Page Header - IDs PRESERVED -->
+            <header class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                    <h2 class="font-headline-lg text-headline-lg text-deep-navy flex items-center gap-2">
+                        <span class="material-symbols-outlined text-forge-orange icon-fill">school</span> Class Management
+                    </h2>
+                    <p class="font-body-lg text-body-lg text-secondary mt-1">Create classes, manage arms, and upgrade students at the end of session</p>
+                </div>
+                <div class="flex items-center gap-3 shrink-0">
+                    <a href="students.html" class="border border-border-subtle bg-white text-deep-navy font-label-md text-label-md px-5 py-2.5 rounded-lg hover:bg-surface-container-highest transition flex items-center gap-2">
+                        <span class="material-symbols-outlined text-">group</span> Manage Students
+                    </a>
+                    <button id="create-class-btn" class="bg-forge-orange text-white font-label-md text-label-md px-5 py-2.5 rounded-lg shadow-sm hover:opacity-90 transition flex items-center gap-2">
+                        <span class="material-symbols-outlined text-">add_circle</span> Create New Class
+                    </button>
+                </div>
+            </header>
+
+            <!-- Classes Container - IDs PRESERVED -->
+            <div id="classes-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div id="loading-state" class="col-span-full flex flex-col items-center justify-center py-20">
+                    <span class="material-symbols-outlined animate-spin text-forge-orange text- mb-4">progress_activity</span>
+                    <p class="font-body-lg text-body-lg text-secondary">Loading class structures...</p>
+                </div>
+
+                <div id="empty-state" class="col-span-full bg-white rounded-xl border border-border-subtle p-12 text-center flex-col items-center justify-center shadow-sm max-w-2xl mx-auto hidden">
+                    <div class="text-6xl mb-4">🏫</div>
+                    <h3 class="font-headline-lg text-headline-lg text-deep-navy mb-2">No Classes Yet</h3>
+                    <p class="font-body-md text-body-md text-secondary mb-6">Create your first class to start organizing students</p>
+                    <button id="empty-create-btn" class="bg-forge-orange text-white font-label-md text-label-md px-6 py-3 rounded-xl hover:opacity-90 transition flex items-center gap-2 mx-auto">
+                        <span class="material-symbols-outlined">add</span> Create First Class
+                    </button>
+                </div>
+            </div>
+
+            <div class="text-center border-t border-border-subtle pt-6">
+                <p class="font-caption text-caption text-secondary flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined text-forge-orange text-sm">school</span>
+                    Organize students by class and arm | <a href="students.html" class="text-forge-orange hover:underline">View Students →</a>
+                </p>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- CREATE CLASS MODAL - IDs PRESERVED -->
+<div id="create-class-modal" class="fixed inset-0 z-[100] bg-deep-navy/40 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg border border-border-subtle overflow-hidden flex flex-col max-h-">
+        <div class="px-6 py-4 border-b border-border-subtle flex justify-between items-center bg-surface-gray">
+            <h3 class="font-headline-md text-headline-md text-deep-navy flex items-center gap-2"><span class="material-symbols-outlined text-forge-orange">school</span> Create New Class</h3>
+            <button id="close-create-modal" class="text-secondary hover:text-deep-navy p-1 rounded-full hover:bg-border-subtle"><span class="material-symbols-outlined">close</span></button>
+        </div>
+        <div class="p-6 overflow-y-auto">
+            <form id="create-class-form" class="flex flex-col gap-5">
+                <div>
+                    <label for="new-class-name" class="block font-label-md text-label-md text-deep-navy mb-2">📚 Class Name <span class="text-error">*</span></label>
+                    <input type="text" id="new-class-name" required placeholder="e.g. JSS 1, Grade 5, SS 2" class="w-full px-4 py-3 bg-surface-gray border border-border-subtle rounded-lg focus:outline-none focus:border-forge-orange focus:ring-1 focus:ring-forge-orange font-body-md text-body-md">
+                    <p class="font-caption text-caption text-secondary mt-1">The display name for this class level.</p>
+                </div>
+                <div>
+                    <label for="new-class-level" class="block font-label-md text-label-md text-deep-navy mb-2">🎓 Class Level (Optional)</label>
+                    <input type="number" id="new-class-level" min="1" max="12" placeholder="e.g. 1, 5, 10" class="w-full px-4 py-3 bg-surface-gray border border-border-subtle rounded-lg focus:outline-none focus:border-forge-orange focus:ring-1 focus:ring-forge-orange font-body-md text-body-md">
+                    <p class="font-caption text-caption text-secondary mt-1">Used for upgrades (JSS 1 → JSS 2)</p>
+                </div>
+                <div>
+                    <label class="block font-label-md text-label-md text-deep-navy mb-2">🏫 Default Arms (Optional)</label>
+                    <div id="default-arms-selector" class="flex flex-wrap gap-2">
+                        <label class="cursor-pointer"><input type="checkbox" value="A" checked class="peer sr-only"><span class="px-4 py-2 rounded-full border border-border-subtle bg-white text-secondary text-sm peer-checked:bg-forge-orange/10 peer-checked:border-forge-orange peer-checked:text-forge-orange">A</span></label>
+                        <label class="cursor-pointer"><input type="checkbox" value="B" class="peer sr-only"><span class="px-4 py-2 rounded-full border border-border-subtle bg-white text-secondary text-sm peer-checked:bg-forge-orange/10 peer-checked:border-forge-orange peer-checked:text-forge-orange">B</span></label>
+                        <label class="cursor-pointer"><input type="checkbox" value="C" class="peer sr-only"><span class="px-4 py-2 rounded-full border border-border-subtle bg-white text-secondary text-sm peer-checked:bg-forge-orange/10 peer-checked:border-forge-orange peer-checked:text-forge-orange">C</span></label>
+                        <label class="cursor-pointer"><input type="checkbox" value="D" class="peer sr-only"><span class="px-4 py-2 rounded-full border border-border-subtle bg-white text-secondary text-sm peer-checked:bg-forge-orange/10 peer-checked:border-forge-orange peer-checked:text-forge-orange">D</span></label>
+                    </div>
+                    <p class="font-caption text-caption text-secondary mt-1">Pre-select common arms, you can add more later</p>
+                </div>
+            </form>
+        </div>
+        <div class="px-6 py-4 border-t border-border-subtle bg-surface-gray flex justify-end gap-3">
+            <button id="cancel-create-btn" class="border border-border-subtle bg-white text-deep-navy font-label-md text-label-md px-5 py-2.5 rounded-lg hover:bg-surface-container-highest transition">Cancel</button>
+            <button id="confirm-create-btn" class="bg-deep-navy text-white font-label-md text-label-md px-6 py-2.5 rounded-lg hover:opacity-90 transition">Save Class</button>
+        </div>
+    </div>
+</div>
+
+<!-- ADD ARM MODAL - IDs PRESERVED -->
+<div id="add-arm-modal" class="fixed inset-0 z-[100] bg-deep-navy/40 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-md border border-border-subtle overflow-hidden">
+        <div class="px-6 py-4 border-b border-border-subtle flex justify-between items-center bg-surface-gray">
+            <h3 class="font-headline-md text-headline-md text-deep-navy flex items-center gap-2"><span class="material-symbols-outlined text-forge-orange">add_circle</span> Add Arm to <span id="add-arm-class-name"></span></h3>
+            <button id="close-add-arm-modal" class="text-secondary hover:text-deep-navy p-1 rounded-full hover:bg-border-subtle"><span class="material-symbols-outlined">close</span></button>
+        </div>
+        <div class="p-6">
+            <form id="add-arm-form" class="flex flex-col gap-5">
+                <div>
+                    <label for="new-arm-name" class="block font-label-md text-label-md text-deep-navy mb-2">🏫 Arm Name <span class="text-error">*</span></label>
+                    <input type="text" id="new-arm-name" required placeholder="e.g. A, B, Gold, Silver, Diamond" class="w-full px-4 py-3 bg-surface-gray border border-border-subtle rounded-lg focus:outline-none focus:border-forge-orange focus:ring-1 focus:ring-forge-orange font-body-md text-body-md">
+                    <p class="font-caption text-caption text-secondary mt-1">Letters (A, B, C) or custom names (Gold, Silver)</p>
+                </div>
+            </form>
+        </div>
+        <div class="px-6 py-4 border-t border-border-subtle bg-surface-gray flex justify-end gap-3">
+            <button id="cancel-add-arm-btn" class="border border-border-subtle bg-white text-deep-navy font-label-md text-label-md px-5 py-2.5 rounded-lg hover:bg-surface-container-highest transition">Cancel</button>
+            <button id="confirm-add-arm-btn" class="bg-deep-navy text-white font-label-md text-label-md px-6 py-2.5 rounded-lg hover:opacity-90 transition">Add Arm</button>
+        </div>
+    </div>
+</div>
+
+<!-- UPGRADE CLASS MODAL - IDs PRESERVED -->
+<div id="upgrade-class-modal" class="fixed inset-0 z-[100] bg-deep-navy/40 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg border border-border-subtle overflow-hidden flex flex-col max-h-">
+        <div class="px-6 py-4 border-b border-border-subtle flex justify-between items-center bg-surface-gray">
+            <h3 class="font-headline-md text-headline-md text-deep-navy flex items-center gap-2"><span class="material-symbols-outlined text-forge-orange">upgrade</span> Upgrade Class to Next Level</h3>
+            <button id="close-upgrade-modal" class="text-secondary hover:text-deep-navy p-1 rounded-full hover:bg-border-subtle"><span class="material-symbols-outlined">close</span></button>
+        </div>
+        <div class="p-6 overflow-y-auto space-y-4">
+            <p class="font-body-md text-body-md text-secondary">You're about to upgrade: <strong id="upgrade-class-name" class="text-deep-navy"></strong></p>
+            <p class="font-body-md text-body-md text-secondary">Total students: <strong id="upgrade-student-count" class="text-deep-navy"></strong></p>
+            <div>
+                <label for="upgrade-target-class" class="block font-label-md text-label-md text-deep-navy mb-2">📚 Promote to Class <span class="text-error">*</span></label>
+                <select id="upgrade-target-class" required class="w-full px-4 py-3 bg-surface-gray border border-border-subtle rounded-lg focus:outline-none focus:border-forge-orange focus:ring-1 focus:ring-forge-orange font-body-md text-body-md">
+                    <option value="">Select target class</option>
+                    <option value="JSS 1">JSS 1</option><option value="JSS 2">JSS 2</option><option value="JSS 3">JSS 3</option>
+                    <option value="SS 1">SS 1</option><option value="SS 2">SS 2</option><option value="SS 3">SS 3</option>
+                    <option value="Grade 1">Grade 1</option><option value="Grade 2">Grade 2</option><option value="Grade 3">Grade 3</option>
+                    <option value="Grade 4">Grade 4</option><option value="Grade 5">Grade 5</option><option value="Grade 6">Grade 6</option>
+                </select>
+            </div>
+            <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="keep-arms" checked class="rounded border-border-subtle text-forge-orange focus:ring-forge-orange"><span class="font-body-md text-body-md text-deep-navy">Keep same arms (A→A, B→B, etc.)</span></label>
+            <div class="bg-surface-gray border border-border-subtle p-4 rounded-lg flex gap-3">
+                <span class="material-symbols-outlined text-forge-orange shrink-0">info</span>
+                <div class="text-sm text-secondary space-y-1"><p class="font-semibold text-deep-navy">What happens:</p><ul class="list-disc list-inside"><li>All active students will be moved to the new class</li><li>Arm names will be preserved if checked</li><li>This action cannot be undone</li></ul></div>
+            </div>
+        </div>
+        <div class="px-6 py-4 border-t border-border-subtle bg-surface-gray flex justify-end gap-3">
+            <button id="cancel-upgrade-btn" class="border border-border-subtle bg-white text-deep-navy font-label-md text-label-md px-5 py-2.5 rounded-lg hover:bg-surface-container-highest transition">Cancel</button>
+            <button id="confirm-upgrade-btn" class="bg-forge-orange text-white font-label-md text-label-md px-6 py-2.5 rounded-lg hover:opacity-90 transition">⬆ Upgrade Students</button>
+        </div>
+    </div>
+</div>
+
+<script type="module" src="js/main.js"></script>
+
+<script>
+    const mobileBtn = document.getElementById('mobile-menu-toggle');
+    const sidebar = document.getElementById('sidebar');
+    const backdrop = document.getElementById('sidebar-backdrop');
+    const closeBtn = document.getElementById('sidebar-close');
+    function openSidebar() { sidebar.classList.remove('-translate-x-full'); backdrop.classList.remove('hidden'); sidebar.parentElement.querySelectorAll('.modal').forEach(m=>{}); }
+    function closeSidebar() { sidebar.classList.add('-translate-x-full'); backdrop.classList.add('hidden'); }
+    function showModal(id) { const el = document.getElementById(id); if(el){ el.classList.remove('hidden'); el.classList.add('flex'); } }
+    function hideModal(id) { const el = document.getElementById(id); if(el){ el.classList.add('hidden'); el.classList.remove('flex'); } }
+
+    mobileBtn?.addEventListener('click', openSidebar);
+    closeBtn?.addEventListener('click', closeSidebar);
+    backdrop?.addEventListener('click', closeSidebar);
+
+    document.getElementById('create-class-btn')?.addEventListener('click', () => showModal('create-class-modal'));
+    document.getElementById('empty-create-btn')?.addEventListener('click', () => showModal('create-class-modal'));
+    document.getElementById('close-create-modal')?.addEventListener('click', () => hideModal('create-class-modal'));
+    document.getElementById('cancel-create-btn')?.addEventListener('click', () => hideModal('create-class-modal'));
+
+    document.getElementById('close-add-arm-modal')?.addEventListener('click', () => hideModal('add-arm-modal'));
+    document.getElementById('cancel-add-arm-btn')?.addEventListener('click', () => hideModal('add-arm-modal'));
+
+    document.getElementById('close-upgrade-modal')?.addEventListener('click', () => hideModal('upgrade-class-modal'));
+    document.getElementById('cancel-upgrade-btn')?.addEventListener('click', () => hideModal('upgrade-class-modal'));
+</script>
+
+<script src="js/include-nav.js"></script>
+</body>
+</html>

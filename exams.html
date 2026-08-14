@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ffffff">
+    <title>STEM Forge | Coming Soon</title>
+    
+    <!-- Prevent theme flash -->
+    <script>
+        (function() {
+            const saved = localStorage.getItem('stemforge-theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = saved || (prefersDark ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+            const meta = document.querySelector('meta[name="theme-color"]');
+            if (meta) meta.setAttribute('content', theme === 'dark' ? '#0f172a' : '#ffffff');
+        })();
+    </script>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/base/dark-background.css">
+    <link rel="stylesheet" href="css/theme-toggle.css">
+    <link rel="stylesheet" href="css/layout/container.css">
+    <link rel="stylesheet" href="css/layout/nav.css">
+    <link rel="stylesheet" href="css/layout/footer.css">
+    <link rel="stylesheet" href="css/components/cards.css">
+    <link rel="stylesheet" href="css/components/buttons.css">
+    <link rel="stylesheet" href="css/pages/coming-soon.css">
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="js/core/firebase-init.js"></script>
+</head>
+<body data-page="coming-soon">
+
+<div class="app-container">
+    
+    <!-- Navigation -->
+    <!-- Navigation Bar -->
+    <nav id="main-nav">
+    <div class="nav-brand">
+        <span class="brand-icon">⚡</span>
+        <span class="brand-text">STEM Forge</span>
+    </div>
+    
+    <button class="mobile-menu-toggle" id="mobile-menu-toggle">☰ Menu</button>
+    
+    <div class="nav-links" id="nav-links">
+        <a href="index.html" class="nav-btn hidden lg:block border border-border-subtle text-deep-navy font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-surface-container-highest transition-colors">Dashboard</a>
+        <a href="ai-generate.html" class="nav-btn hidden lg:block border border-border-subtle text-deep-navy font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-surface-container-highest transition-colors">AI Generate</a>
+        <a href="scheme.html" class="nav-btn hidden lg:block border border-border-subtle text-deep-navy font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-surface-container-highest transition-colors">Scheme</a>
+        <a href="attendance.html" class="nav-btn hidden lg:block border border-border-subtle text-deep-navy font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-surface-container-highest transition-colors">Attendance</a>
+        <a href="students.html" class="nav-btn hidden lg:block border border-border-subtle text-deep-navy font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-surface-container-highest transition-colors">Students</a>
+        <a href="classes.html" class="nav-btn hidden lg:block border border-border-subtle text-deep-navy font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-surface-container-highest transition-colors">Classes</a>
+        <a href="attendance-reports.html" class="nav-btn hidden lg:block border border-border-subtle text-deep-navy font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-surface-container-highest transition-colors">Reports</a>
+        
+        <div class="nav-dropdown hidden lg:block">
+            <button class="nav-dropdown-btn border border-border-subtle text-deep-navy font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-surface-container-highest transition-colors">More ▼</button>
+            <div class="nav-dropdown-content">
+                <a href="pricing.html" class="block px-4 py-2 hover:bg-surface-container-highest transition-colors">Pricing</a>
+                <a href="exams.html" class="block px-4 py-2 hover:bg-surface-container-highest transition-colors">Exams</a>
+                <a href="virtual.html" class="block px-4 py-2 hover:bg-surface-container-highest transition-colors">Virtual Class</a>
+                <a href="about.html" class="block px-4 py-2 hover:bg-surface-container-highest transition-colors">About</a>
+                <a href="services.html" class="block px-4 py-2 hover:bg-surface-container-highest transition-colors">Services</a>
+                <a href="contact.html" class="block px-4 py-2 hover:bg-surface-container-highest transition-colors">Contact</a>
+            </div>
+        </div>
+        
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+            <svg class="icon-moon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+            </svg>
+            <svg class="icon-sun" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+            </svg>
+        </button>
+    </div>
+</nav>
+
+    <!-- Coming Soon Content (dynamically updated by JS) -->
+    <div class="coming-soon-container" id="coming-soon-content">
+        <!-- Content will be injected by JS based on URL parameter -->
+        <div class="loading">Loading...</div>
+    </div>
+
+    <div class="footer-note">
+        🚀 More features coming soon! Stay tuned.
+    </div>
+</div>
+
+<!-- Modular JavaScript -->
+<script type="module" src="js/main.js"></script>
+</body>
+<script src="js/include-nav.js"></script>
+</html>
+
