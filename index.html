@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -170,8 +170,7 @@
                     <span class="material-symbols-outlined">notifications</span>
                 </a>
 
-                <div class="w-8 h-8 rounded-full bg-secondary-container border border-border-subtle overflow-hidden ml-2 cursor-pointer" title="Profile">
-                    <img alt="Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJc80yCjfYmHQhgE8J2XV78EncfQuUZhU97Cwt_asCwQ25exzH4tArnE0UrvrU-O18a64A8ZBqyfYxGJGCiJVQCPPi-SyDqfO8YPioQ8JfF3kEL58gUE4e5P5h9tyug-0lq2Jo_DdkCb02sAZpx6bjDKyQdSw6fcb4p4DMTEEvu4YAYPl5QUD5p3e7LM8Gt1scdnEG95saeV0Ey4QU6nzGJ6C_07HIgAquuDm85_453RjP2MProerp"/>
+                <div class="w-8 h-8 rounded-full bg-secondary-container border border-border-subtle overflow-hidden ml-2 cursor-pointer" id="user-avatar" title="Profile">
                 </div>
             </div>
         </div>
@@ -254,7 +253,7 @@
                 <div>
                     <p class="font-body-md text-body-md text-secondary mb-1" id="welcome-date"></p>
                     <h2 class="font-display-lg text-headline-lg-mobile md:text-display-lg text-deep-navy tracking-tight" id="welcome-name">
-                        👋 Welcome back, Educator!
+                        ?? Welcome back, Educator!
                     </h2>
                     <p class="font-body-lg text-body-lg text-secondary mt-2 max-w-2xl">Here's your STEM Forge dashboard overview. Ready to build the future?</p>
                 </div>
@@ -365,7 +364,7 @@
                                     <h4 class="font-label-md text-label-md">Engineering Design Process</h4>
                                 </div>
                                 <div class="flex flex-wrap gap-2 font-caption text-caption opacity-80 bg-white/5 p-3 rounded-lg border border-white/10">
-                                    <span>Ask</span><span class="text-forge-orange">→</span><span>Imagine</span><span class="text-forge-orange">→</span><span>Plan</span><span class="text-forge-orange">→</span><span>Create</span><span class="text-forge-orange">→</span><span>Test &amp; Improve</span>
+                                    <span>Ask</span><span class="text-forge-orange">?</span><span>Imagine</span><span class="text-forge-orange">?</span><span>Plan</span><span class="text-forge-orange">?</span><span>Create</span><span class="text-forge-orange">?</span><span>Test &amp; Improve</span>
                                 </div>
                             </div>
                             <div>
@@ -408,7 +407,7 @@
     try {
         const u = JSON.parse(localStorage.getItem('stemforge:user') || 'null');
         const el = document.getElementById('welcome-name');
-        if (u && u.name && el) el.textContent = '👋 Welcome back, ' + u.name + '!';
+        if (u && u.name && el) el.textContent = '?? Welcome back, ' + u.name + '!';
     } catch (_) {}
 </script>
 

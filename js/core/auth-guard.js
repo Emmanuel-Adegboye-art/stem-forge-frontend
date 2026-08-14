@@ -66,6 +66,7 @@ function updateUserUI(user) {
     // Save user info in localStorage for quick access
     const savedUser = JSON.parse(localStorage.getItem('stemforge:user') || '{}');
     const displayName = user.displayName || savedUser.name || user.email.split('@')[0];
+    localStorage.setItem('stemforge:userName', displayName);
 
     // Update Welcome Banner on Dashboard if element exists
     const welcomeHeader = document.querySelector('.welcome-banner h2');
