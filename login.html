@@ -140,8 +140,8 @@
     </button>
 
     <!-- Login Container -->
-    <main class="w-full max-w-">
-        <div class="bg-white rounded-xl border border-border-subtle shadow-sm p-card-padding md:p-">
+    <main class="w-full max-w-md">
+        <div class="bg-white rounded-xl border border-border-subtle shadow-sm p-card-padding md:p-6">
 
             <div class="flex justify-center mb-6">
                 <div class="w-20 h-20 flex items-center justify-center rounded-full bg-surface-gray border border-border-subtle overflow-hidden">
@@ -163,7 +163,7 @@
                 <div>
                     <label for="login-email" class="block font-label-md text-label-md text-secondary mb-2">Email</label>
                     <div class="relative">
-                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary text-">mail</span>
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary">mail</span>
                         <input type="email" id="login-email" name="email" required placeholder="you@example.com" class="w-full pl-10 pr-4 py-3 bg-surface-gray border border-border-subtle rounded-lg focus:outline-none focus:border-forge-orange focus:ring-1 focus:ring-forge-orange font-body-md text-body-md">
                     </div>
                 </div>
@@ -171,7 +171,7 @@
                 <div>
                     <label for="login-password" class="block font-label-md text-label-md text-secondary mb-2">Password</label>
                     <div class="relative">
-                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary text-">lock</span>
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary">lock</span>
                         <input type="password" id="login-password" name="password" required placeholder="••••••••" autocomplete="current-password" class="w-full pl-10 pr-10 py-3 bg-surface-gray border border-border-subtle rounded-lg focus:outline-none focus:border-forge-orange focus:ring-1 focus:ring-forge-orange font-body-md text-body-md">
                         <!-- IDs PRESERVED: toggle-password-btn, password-toggle-icon -->
                         <button type="button" id="toggle-password-btn" class="absolute right-3 top-1/2 -translate-y-1/2 text-secondary hover:text-deep-navy" aria-label="Toggle password visibility">
@@ -188,7 +188,7 @@
 
                 <!-- ID PRESERVED: login-btn -->
                 <button type="submit" id="login-btn" class="w-full flex justify-center items-center py-3 px-4 rounded-xl shadow-sm font-label-md text-label-md text-white bg-forge-orange hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-forge-orange transition-all active:scale-[0.98]">
-                    Sign In <span class="material-symbols-outlined ml-2 text-">arrow_forward</span>
+                    Sign In <span class="material-symbols-outlined ml-2">arrow_forward</span>
                 </button>
 
                 <div class="text-center">
@@ -197,4 +197,34 @@
             </form>
 
             <div class="mt-8 text-center border-t border-border-subtle pt-6">
-                <p class="font-caption text-caption text-secondary flex items-center
+                <p class="font-caption text-caption text-secondary flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined text-forge-orange text-sm">auto_awesome</span>
+                    STEM Forge — multi-branch curriculum tools and admin portal
+                </p>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- JavaScript -->
+    <script type="module" src="js/main.js"></script>
+
+    <!-- Theme toggle sync -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleBtns = document.querySelectorAll('#theme-toggle, #theme-toggle-desktop');
+            const html = document.documentElement;
+            toggleBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const currentTheme = html.getAttribute('data-theme');
+                    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                    html.setAttribute('data-theme', newTheme);
+                    localStorage.setItem('stemforge-theme', newTheme);
+                    const meta = document.querySelector('meta[name="theme-color"]');
+                    if (meta) meta.setAttribute('content', newTheme === 'dark' ? '#0f172a' : '#ffffff');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
