@@ -365,7 +365,7 @@ async function handleTeacherSubmit() {
         // 5️⃣  Sign out immediately so the user goes through the verify-email flow
         await firebase.auth().signOut();
 
-        showStatus('register-status', 'Account created! Check your email to verify, then log in.', 'success', 0);
+        showStatus('register-status', 'Account created! Check your email (including the spam folder) to verify, then log in.', 'success', 0);
         setTimeout(() => {
             window.location.href = 'verify-email.html';
         }, 1800);
