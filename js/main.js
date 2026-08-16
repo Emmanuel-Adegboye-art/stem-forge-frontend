@@ -31,11 +31,8 @@ document.addEventListener('DOMContentLoaded', () => {
         case 'students':
             import('./pages/students.js').then(m => m.init?.());
             break;
-        case 'register-student':
-            import('./pages/register-student.js').then(m => m.init());
-            break;
-        case 'register-teacher':
-            import('./pages/register-teacher.js').then(m => m.init());
+        case 'register':
+            import('./pages/register.js').then(m => m.init());
             break;
         case 'login':
             import('./pages/login.js').then(m => m.init());

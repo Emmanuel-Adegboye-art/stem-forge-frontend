@@ -8,6 +8,7 @@ import { escapeHtml, showStatus } from '../core/utils.js';
 import { StudentsStore, ClassesStore } from '../core/store.js';
 
 let isSubmitting = false;
+let currentRole = 'student';
 
 // ============================================
 // INITIALIZATION
@@ -34,7 +35,9 @@ function setupPasswordToggles() {
             if (!input) return;
             const isHidden = input.type === 'password';
             input.type = isHidden ? 'text' : 'password';
-            btn.textContent = isHidden ? '🙈' : '👁️';
+
+            const icon = btn.querySelector('.material-symbols-outlined');
+            if (icon) icon.textContent = isHidden ? 'visibility_off' : 'visibility';
         });
     });
 
@@ -60,15 +63,25 @@ function setupPasswordToggles() {
 
 function setupRoleToggle() {
     const roleSelect = document.getElementById('reg-role');
-    if (!roleSelect) return;
+    roleSelect?.addEventListener('change', () => setRole(roleSelect.value));
 
-    roleSelect.addEventListener('change', updateRoleUI);
-    // Initial sync
+    document.getElementById('student-role-btn')?.addEventListener('click', () => setRole('student'));
+    document.getElementById('teacher-role-btn')?.addEventListener('click', () => setRole('teacher'));
+
+    setRole(roleSelect?.value || document.body.dataset.role || 'student');
+}
+
+function setRole(role) {
+    currentRole = role === 'teacher' ? 'teacher' : 'student';
+
+    const roleSelect = document.getElementById('reg-role');
+    if (roleSelect) roleSelect.value = currentRole;
+
     updateRoleUI();
 }
 
 function updateRoleUI() {
-    const role = document.getElementById('reg-role')?.value || 'student';
+    const role = currentRole;
     const studentReq = document.getElementById('student-required-fields');
     const studentOpt = document.getElementById('student-optional-fields');
     const teacherFields = document.getElementById('teacher-fields');
@@ -76,6 +89,17 @@ function updateRoleUI() {
     const pageTitle = document.getElementById('page-title');
     const pageSubtitle = document.getElementById('page-subtitle');
     const formHeading = document.getElementById('form-heading');
+
+    const activeBtn = document.getElementById(`${role}-role-btn`);
+    [document.getElementById('student-role-btn'), document.getElementById('teacher-role-btn')]
+        .filter(Boolean)
+        .forEach(btn => {
+            const isActive = btn === activeBtn;
+            btn.classList.toggle('bg-white', isActive);
+            btn.classList.toggle('shadow-sm', isActive);
+            btn.classList.toggle('text-deep-navy', isActive);
+            btn.classList.toggle('text-secondary', !isActive);
+        });
 
     if (role === 'teacher') {
         if (studentReq) studentReq.style.display = 'none';
@@ -135,11 +159,7 @@ function checkUrlParams() {
     const armParam = urlParams.get('arm');
     
     if (roleParam) {
-        const roleSelect = document.getElementById('reg-role');
-        if (roleSelect) {
-            roleSelect.value = roleParam;
-            updateRoleUI();
-        }
+        setRole(roleParam);
     }
 
     if (classParam) {
@@ -197,9 +217,7 @@ async function handleSubmit(e) {
     e.preventDefault();
     if (isSubmitting) return;
 
-    const role = document.getElementById('reg-role')?.value || 'student';
-
-    if (role === 'teacher') {
+    if (currentRole === 'teacher') {
         await handleTeacherSubmit();
     } else {
         await handleStudentSubmit();
