@@ -116,6 +116,7 @@
     <link rel="stylesheet" href="css/components/forms.css">
     <link rel="stylesheet" href="css/components/alerts.css">
     <link rel="stylesheet" href="css/pages/ai-generate.css">
+    <link rel="stylesheet" href="css/pages/students.css">
 
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -329,6 +330,34 @@
         <div class="px-6 py-4 border-t border-border-subtle bg-surface-gray flex justify-end gap-3">
             <button id="cancel-create-btn" class="border border-border-subtle bg-white text-deep-navy font-label-md text-label-md px-5 py-2.5 rounded-lg hover:bg-surface-container-highest transition">Cancel</button>
             <button id="confirm-create-btn" class="bg-deep-navy text-white font-label-md text-label-md px-6 py-2.5 rounded-lg hover:opacity-90 transition">Save Class</button>
+        </div>
+    </div>
+</div>
+
+<!-- RENAME CLASS MODAL -->
+<div id="rename-class-modal" class="fixed inset-0 z-[100] bg-deep-navy/40 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-md border border-border-subtle overflow-hidden">
+        <div class="px-6 py-4 border-b border-border-subtle flex justify-between items-center bg-surface-gray">
+            <h3 class="font-headline-md text-headline-md text-deep-navy flex items-center gap-2"><span class="material-symbols-outlined text-forge-orange">edit</span> Rename Class</h3>
+            <button id="close-rename-modal" class="text-secondary hover:text-deep-navy p-1 rounded-full hover:bg-border-subtle"><span class="material-symbols-outlined">close</span></button>
+        </div>
+        <div class="p-6">
+            <form id="rename-class-form" class="flex flex-col gap-5">
+                <p class="font-body-md text-body-md text-secondary">Current name: <strong id="rename-current-name" class="text-deep-navy"></strong></p>
+                <div>
+                    <label for="rename-class-name" class="block font-label-md text-label-md text-deep-navy mb-2">📚 New Class Name <span class="text-error">*</span></label>
+                    <input type="text" id="rename-class-name" required placeholder="e.g. JSS 1, Grade 5, SS 2" class="w-full px-4 py-3 bg-surface-gray border border-border-subtle rounded-lg focus:outline-none focus:border-forge-orange focus:ring-1 focus:ring-forge-orange font-body-md text-body-md">
+                    <p class="font-caption text-caption text-secondary mt-1"><span id="rename-student-count">0</span> student record(s) and their attendance history will be updated to the new name.</p>
+                </div>
+                <div>
+                    <label for="rename-class-level" class="block font-label-md text-label-md text-deep-navy mb-2">🎓 Class Level (Optional)</label>
+                    <input type="number" id="rename-class-level" min="1" max="12" placeholder="e.g. 1, 5, 10" class="w-full px-4 py-3 bg-surface-gray border border-border-subtle rounded-lg focus:outline-none focus:border-forge-orange focus:ring-1 focus:ring-forge-orange font-body-md text-body-md">
+                </div>
+            </form>
+        </div>
+        <div class="px-6 py-4 border-t border-border-subtle bg-surface-gray flex justify-end gap-3">
+            <button id="cancel-rename-btn" class="border border-border-subtle bg-white text-deep-navy font-label-md text-label-md px-5 py-2.5 rounded-lg hover:bg-surface-container-highest transition">Cancel</button>
+            <button id="confirm-rename-btn" class="bg-deep-navy text-white font-label-md text-label-md px-6 py-2.5 rounded-lg hover:opacity-90 transition">Save Name</button>
         </div>
     </div>
 </div>
