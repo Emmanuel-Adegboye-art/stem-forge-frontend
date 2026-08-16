@@ -4,6 +4,9 @@
 // ============================================
 
 const PUBLIC_PAGES = ['login.html', 'register-teacher.html', 'register-student.html', 'verify-email.html'];
+// Signing up signs the user in; redirecting off these pages would abort the
+// rest of the registration (display name, verification email, sign-out).
+const REGISTRATION_PAGES = ['register-teacher.html', 'register-student.html'];
 const ADMIN_PAGES = ['admin-promo.html'];
 
 export function initAuthGuard() {
@@ -27,7 +30,7 @@ export function initAuthGuard() {
         } else {
             // User is signed in
             // Check email verification if required
-            if (!user.emailVerified && currentPath !== 'verify-email.html') {
+            if (!user.emailVerified && currentPath !== 'verify-email.html' && !REGISTRATION_PAGES.includes(currentPath)) {
                 console.warn('⚠️ Email not verified. Redirecting to verify-email.html');
                 window.location.href = 'verify-email.html';
                 return;

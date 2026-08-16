@@ -263,6 +263,10 @@ async function handleStudentSubmit() {
         formData.updatedAt = new Date().toISOString();
 
         StudentsStore.save(formData);
+
+        const status = document.getElementById('register-status');
+        if (status) status.textContent = '';
+
         showStudentSuccessCard(formData);
     } catch (error) {
         console.error('Student registration error:', error);
@@ -289,7 +293,7 @@ async function handleTeacherSubmit() {
 
     // Validate password match
     if (password !== passwordConfirm) {
-        showStatus('register-status', '❌ Passwords do not match — please re-enter', 'error');
+        showStatus('register-status', 'Passwords do not match — please re-enter', 'error');
         document.getElementById('reg-password-confirm')?.focus();
         return;
     }
@@ -311,7 +315,7 @@ async function handleTeacherSubmit() {
 
     // Make sure Firebase Client SDK is available
     if (typeof firebase === 'undefined' || !firebase.auth) {
-        showStatus('register-status', '❌ Authentication service unavailable. Please refresh and try again.', 'error');
+        showStatus('register-status', 'Authentication service unavailable. Please refresh and try again.', 'error');
         return;
     }
 
@@ -361,7 +365,7 @@ async function handleTeacherSubmit() {
         // 5️⃣  Sign out immediately so the user goes through the verify-email flow
         await firebase.auth().signOut();
 
-        showStatus('register-status', '✅ Account created! Check your email to verify, then log in.', 'success', 0);
+        showStatus('register-status', 'Account created! Check your email to verify, then log in.', 'success', 0);
         setTimeout(() => {
             window.location.href = 'verify-email.html';
         }, 1800);
@@ -370,10 +374,10 @@ async function handleTeacherSubmit() {
         console.error('Teacher registration error:', error);
         // Surface friendly Firebase error messages
         const firebaseMessages = {
-            'auth/email-already-in-use': '⚠️ This email is already registered. Try logging in instead.',
-            'auth/invalid-email': '⚠️ Please enter a valid email address.',
-            'auth/weak-password': '⚠️ Password is too weak. Use at least 8 characters.',
-            'auth/network-request-failed': '⚠️ Network error — please check your connection and try again.',
+            'auth/email-already-in-use': 'This email is already registered. Try logging in instead.',
+            'auth/invalid-email': 'Please enter a valid email address.',
+            'auth/weak-password': 'Password is too weak. Use at least 8 characters.',
+            'auth/network-request-failed': 'Network error — please check your connection and try again.',
         };
         const msg = firebaseMessages[error.code] || error.message || 'Unable to create account';
         showStatus('register-status', msg, 'error', 6000);
@@ -391,8 +395,8 @@ async function handleTeacherSubmit() {
 // ============================================
 
 function showStudentSuccessCard(student) {
-    const formCard = document.querySelector('.generator-card');
-    if (formCard) formCard.style.display = 'none';
+    const form = document.getElementById('register-form');
+    if (form) form.style.display = 'none';
 
     const successTitle = document.getElementById('success-title');
     if (successTitle) successTitle.textContent = 'Student Registered Successfully!';
@@ -410,13 +414,17 @@ function showStudentSuccessCard(student) {
 
 function resetForm() {
     const form = document.getElementById('register-form');
-    if (form) form.reset();
-    
+    if (form) {
+        form.reset();
+        form.style.display = 'block';
+    }
+
     const successCard = document.getElementById('success-card');
     if (successCard) successCard.style.display = 'none';
-    
-    const formCard = document.querySelector('.generator-card');
-    if (formCard) formCard.style.display = 'block';
+
+    const status = document.getElementById('register-status');
+    if (status) status.textContent = '';
 
     updateRoleUI();
+    updateIdPreview();
 }
