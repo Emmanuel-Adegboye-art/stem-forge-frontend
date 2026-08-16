@@ -8,6 +8,7 @@ import { escapeHtml, showStatus } from '../core/utils.js';
 import { StudentsStore, ClassesStore } from '../core/store.js';
 
 let isSubmitting = false;
+let currentRole = 'student';
 
 // ============================================
 // INITIALIZATION
@@ -34,7 +35,9 @@ function setupPasswordToggles() {
             if (!input) return;
             const isHidden = input.type === 'password';
             input.type = isHidden ? 'text' : 'password';
-            btn.textContent = isHidden ? '🙈' : '👁️';
+
+            const icon = btn.querySelector('.material-symbols-outlined');
+            if (icon) icon.textContent = isHidden ? 'visibility_off' : 'visibility';
         });
     });
 
@@ -60,15 +63,25 @@ function setupPasswordToggles() {
 
 function setupRoleToggle() {
     const roleSelect = document.getElementById('reg-role');
-    if (!roleSelect) return;
+    roleSelect?.addEventListener('change', () => setRole(roleSelect.value));
 
-    roleSelect.addEventListener('change', updateRoleUI);
-    // Initial sync
+    document.getElementById('student-role-btn')?.addEventListener('click', () => setRole('student'));
+    document.getElementById('teacher-role-btn')?.addEventListener('click', () => setRole('teacher'));
+
+    setRole(roleSelect?.value || document.body.dataset.role || 'student');
+}
+
+function setRole(role) {
+    currentRole = role === 'teacher' ? 'teacher' : 'student';
+
+    const roleSelect = document.getElementById('reg-role');
+    if (roleSelect) roleSelect.value = currentRole;
+
     updateRoleUI();
 }
 
 function updateRoleUI() {
-    const role = document.getElementById('reg-role')?.value || 'student';
+    const role = currentRole;
     const studentReq = document.getElementById('student-required-fields');
     const studentOpt = document.getElementById('student-optional-fields');
     const teacherFields = document.getElementById('teacher-fields');
@@ -76,6 +89,17 @@ function updateRoleUI() {
     const pageTitle = document.getElementById('page-title');
     const pageSubtitle = document.getElementById('page-subtitle');
     const formHeading = document.getElementById('form-heading');
+
+    const activeBtn = document.getElementById(`${role}-role-btn`);
+    [document.getElementById('student-role-btn'), document.getElementById('teacher-role-btn')]
+        .filter(Boolean)
+        .forEach(btn => {
+            const isActive = btn === activeBtn;
+            btn.classList.toggle('bg-white', isActive);
+            btn.classList.toggle('shadow-sm', isActive);
+            btn.classList.toggle('text-deep-navy', isActive);
+            btn.classList.toggle('text-secondary', !isActive);
+        });
 
     if (role === 'teacher') {
         if (studentReq) studentReq.style.display = 'none';
@@ -135,11 +159,7 @@ function checkUrlParams() {
     const armParam = urlParams.get('arm');
     
     if (roleParam) {
-        const roleSelect = document.getElementById('reg-role');
-        if (roleSelect) {
-            roleSelect.value = roleParam;
-            updateRoleUI();
-        }
+        setRole(roleParam);
     }
 
     if (classParam) {
@@ -197,9 +217,7 @@ async function handleSubmit(e) {
     e.preventDefault();
     if (isSubmitting) return;
 
-    const role = document.getElementById('reg-role')?.value || 'student';
-
-    if (role === 'teacher') {
+    if (currentRole === 'teacher') {
         await handleTeacherSubmit();
     } else {
         await handleStudentSubmit();
@@ -245,6 +263,10 @@ async function handleStudentSubmit() {
         formData.updatedAt = new Date().toISOString();
 
         StudentsStore.save(formData);
+
+        const status = document.getElementById('register-status');
+        if (status) status.textContent = '';
+
         showStudentSuccessCard(formData);
     } catch (error) {
         console.error('Student registration error:', error);
@@ -271,7 +293,7 @@ async function handleTeacherSubmit() {
 
     // Validate password match
     if (password !== passwordConfirm) {
-        showStatus('register-status', '❌ Passwords do not match — please re-enter', 'error');
+        showStatus('register-status', 'Passwords do not match — please re-enter', 'error');
         document.getElementById('reg-password-confirm')?.focus();
         return;
     }
@@ -293,7 +315,7 @@ async function handleTeacherSubmit() {
 
     // Make sure Firebase Client SDK is available
     if (typeof firebase === 'undefined' || !firebase.auth) {
-        showStatus('register-status', '❌ Authentication service unavailable. Please refresh and try again.', 'error');
+        showStatus('register-status', 'Authentication service unavailable. Please refresh and try again.', 'error');
         return;
     }
 
@@ -343,7 +365,7 @@ async function handleTeacherSubmit() {
         // 5️⃣  Sign out immediately so the user goes through the verify-email flow
         await firebase.auth().signOut();
 
-        showStatus('register-status', '✅ Account created! Check your email to verify, then log in.', 'success', 0);
+        showStatus('register-status', 'Account created! Check your email to verify, then log in.', 'success', 0);
         setTimeout(() => {
             window.location.href = 'verify-email.html';
         }, 1800);
@@ -352,10 +374,10 @@ async function handleTeacherSubmit() {
         console.error('Teacher registration error:', error);
         // Surface friendly Firebase error messages
         const firebaseMessages = {
-            'auth/email-already-in-use': '⚠️ This email is already registered. Try logging in instead.',
-            'auth/invalid-email': '⚠️ Please enter a valid email address.',
-            'auth/weak-password': '⚠️ Password is too weak. Use at least 8 characters.',
-            'auth/network-request-failed': '⚠️ Network error — please check your connection and try again.',
+            'auth/email-already-in-use': 'This email is already registered. Try logging in instead.',
+            'auth/invalid-email': 'Please enter a valid email address.',
+            'auth/weak-password': 'Password is too weak. Use at least 8 characters.',
+            'auth/network-request-failed': 'Network error — please check your connection and try again.',
         };
         const msg = firebaseMessages[error.code] || error.message || 'Unable to create account';
         showStatus('register-status', msg, 'error', 6000);
@@ -373,8 +395,8 @@ async function handleTeacherSubmit() {
 // ============================================
 
 function showStudentSuccessCard(student) {
-    const formCard = document.querySelector('.generator-card');
-    if (formCard) formCard.style.display = 'none';
+    const form = document.getElementById('register-form');
+    if (form) form.style.display = 'none';
 
     const successTitle = document.getElementById('success-title');
     if (successTitle) successTitle.textContent = 'Student Registered Successfully!';
@@ -392,13 +414,17 @@ function showStudentSuccessCard(student) {
 
 function resetForm() {
     const form = document.getElementById('register-form');
-    if (form) form.reset();
-    
+    if (form) {
+        form.reset();
+        form.style.display = 'block';
+    }
+
     const successCard = document.getElementById('success-card');
     if (successCard) successCard.style.display = 'none';
-    
-    const formCard = document.querySelector('.generator-card');
-    if (formCard) formCard.style.display = 'block';
+
+    const status = document.getElementById('register-status');
+    if (status) status.textContent = '';
 
     updateRoleUI();
+    updateIdPreview();
 }
