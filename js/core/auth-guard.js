@@ -74,21 +74,15 @@ function updateUserUI(user) {
         welcomeHeader.textContent = `👋 Welcome back, ${displayName}!`;
     }
 
-    // Add sign out button to main navigation if needed
-    const navLinks = document.getElementById('nav-links');
-    if (navLinks && !document.getElementById('logout-btn')) {
-        const logoutBtn = document.createElement('button');
-        logoutBtn.id = 'logout-btn';
-        logoutBtn.className = 'nav-btn';
-        logoutBtn.style.background = 'transparent';
-        logoutBtn.style.border = 'none';
-        logoutBtn.style.cursor = 'pointer';
-        logoutBtn.textContent = `🚪 Logout (${displayName})`;
-        logoutBtn.addEventListener('click', async () => {
+    // The sidebar "Log Out" link only navigates, so sign out before following it
+    document.querySelectorAll('a[href="login.html"]').forEach(link => {
+        if (!/log\s*out/i.test(link.textContent)) return;
+        link.addEventListener('click', async (event) => {
+            event.preventDefault();
             await firebase.auth().signOut();
             localStorage.removeItem('stemforge:user');
+            localStorage.removeItem('stemforge:userName');
             window.location.href = 'login.html';
         });
-        navLinks.appendChild(logoutBtn);
-    }
+    });
 }
