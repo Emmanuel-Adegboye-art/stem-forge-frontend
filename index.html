@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#ffffff">
     <title>STEM Forge | Dashboard</title>
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
     <!-- Prevent theme flash -->
     <script>
@@ -135,7 +138,11 @@
     <!-- ============== TOP NAV (ID: main-nav - SAME AS CASE STUDY) ============== -->
     <nav id="main-nav" class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-desktop h-16 bg-surface dark:bg-surface-dim border-b border-outline-variant dark:border-outline shadow-sm">
         <div class="flex items-center gap-8">
-            <button class="md:hidden text-secondary p-2 -ml-2" id                        <a href="index.html" class="flex items-center gap-2 mr-3 sm:mr-4 hover:opacity-90 transition-opacity">
+            <button class="md:hidden text-secondary p-2 -ml-2" id="mobile-menu-toggle" aria-label="Open menu">
+                <span class="material-symbols-outlined">menu</span>
+            </button>
+
+                        <a href="index.html" class="flex items-center gap-2 mr-3 sm:mr-4 hover:opacity-90 transition-opacity">
                 <div class="w-8 h-8 flex items-center justify-center rounded-lg overflow-hidden bg-transparent">
                     <img src="Images/Logo/StemForge 1 (1).jfif" alt="STEM Forge Logo" class="w-8 h-8 object-contain">
                 </div>
@@ -407,15 +414,5 @@
     } catch (_) {}
 </script>
 
-DateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-    }
-    try {
-        const u = JSON.parse(localStorage.getItem('stemforge:user') || 'null');
-        const el = document.getElementById('welcome-name');
-        if (u && u.name && el) el.textContent = '👋 Welcome back, ' + u.name + '!';
-    } catch (_) {}
-</script>
-
-<script src="js/include-nav.js"></script>
 </body>
 </html>
