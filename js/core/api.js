@@ -179,6 +179,28 @@ export const AuthAPI = {
             body: JSON.stringify({ code })
         });
     }
+
+    // ----- Password reset -----
+    async forgotPassword(email) {
+        return await apiFetch(CONFIG.ENDPOINTS.auth.forgotPassword, {
+            method: 'POST',
+            body: JSON.stringify({ email })
+        });
+    },
+    async resetPassword(token, newPassword) {
+        return await apiFetch(CONFIG.ENDPOINTS.auth.resetPassword, {
+            method: 'POST',
+            body: JSON.stringify({ token, newPassword })
+        });
+    },
+
+    // ----- Feedback -----
+    async submitFeedback(payload) {
+        return await apiFetch(CONFIG.ENDPOINTS.feedback, {
+            method: 'POST',
+            body: JSON.stringify(payload)
+        });
+    }
 };
 
 // ============================================

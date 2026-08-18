@@ -5,6 +5,7 @@
 
 import { escapeHtml, showStatus } from '../core/utils.js';
 import { StudentsStore, ClassesStore } from '../core/store.js';
+import { StudentsAPI } from '../core/api.js';
 
 let allStudents = [];
 let filteredStudents = [];
@@ -51,8 +52,17 @@ function loadFromLocalStorage() {
     return StudentsStore.getAll();
 }
 
-function saveToLocalStorage() {
-    // Students are saved via StudentsStore.save() individually
+function saveToLocalStorage(student) {
+    StudentsStore.save(student);
+}
+
+/** The backend is optional: local storage stays the source of truth either way. */
+async function syncToBackend(operation) {
+    try {
+        await operation();
+    } catch (error) {
+        console.warn('Backend sync failed, kept local change:', error.message);
+    }
 }
 
 // ============================================
@@ -296,7 +306,7 @@ function openEditModal(student) {
     document.getElementById('edit-address').value = student.address || '';
     
     // Show modal
-    document.getElementById('edit-student-modal').style.display = 'flex';
+    document.getElementById('edit-student-modal').classList.remove('hidden');
 }
 
 function setupModals() {
@@ -337,7 +347,7 @@ function setupModals() {
 }
 
 function closeEditModal() {
-    document.getElementById('edit-student-modal').style.display = 'none';
+    document.getElementById('edit-student-modal').classList.add('hidden');
     currentEditingStudent = null;
 }
 
@@ -359,32 +369,17 @@ async function saveEdit() {
         return;
     }
     
-    try {
-        // Try API first
-        await StudentsAPI.update(currentEditingStudent.id, updatedData);
-        
-        // Update local data
-        const index = allStudents.findIndex(s => s.id === currentEditingStudent.id);
-        if (index >= 0) {
-            allStudents[index] = { ...allStudents[index], ...updatedData };
-            saveToLocalStorage();
-        }
-        
-        closeEditModal();
-        applyFilters();
-        
-    } catch (error) {
-        console.error('Update failed:', error);
-        
-        // Fallback to localStorage
-        const index = allStudents.findIndex(s => s.id === currentEditingStudent.id);
-        if (index >= 0) {
-            allStudents[index] = { ...allStudents[index], ...updatedData };
-            saveToLocalStorage();
-            closeEditModal();
-            applyFilters();
-        }
+    const studentId = currentEditingStudent.id;
+    const index = allStudents.findIndex(s => s.id === studentId);
+    if (index >= 0) {
+        allStudents[index] = { ...allStudents[index], ...updatedData };
+        saveToLocalStorage(allStudents[index]);
     }
+
+    closeEditModal();
+    applyFilters();
+
+    await syncToBackend(() => StudentsAPI.update(studentId, updatedData));
 }
 
 // ============================================
@@ -400,10 +395,9 @@ function openMoveModal(student) {
     
     // Populate target class dropdown
     const targetClass = document.getElementById('move-target-class');
-    const uniqueClasses = [...new Set(allStudents.map(s => s.class).filter(Boolean))].sort();
-    
+
     targetClass.innerHTML = '<option value="">Select class</option>';
-    uniqueClasses.forEach(className => {
+    knownClassNames().forEach(className => {
         const option = document.createElement('option');
         option.value = className;
         option.textContent = className;
@@ -414,19 +408,15 @@ function openMoveModal(student) {
     document.getElementById('move-target-arm').innerHTML = '<option value="">Select arm first</option>';
     
     // Show modal
-    document.getElementById('move-student-modal').style.display = 'flex';
+    document.getElementById('move-student-modal').classList.remove('hidden');
 }
 
 function populateTargetArms(className) {
     const targetArm = document.getElementById('move-target-arm');
     if (!targetArm) return;
     
-    // Get unique arms for this class
-    const arms = [...new Set(allStudents
-        .filter(s => s.class === className && s.arm)
-        .map(s => s.arm)
-    )].sort();
-    
+    const arms = knownArms(className);
+
     targetArm.innerHTML = '<option value="">Select arm</option>';
     arms.forEach(arm => {
         const option = document.createElement('option');
@@ -436,8 +426,25 @@ function populateTargetArms(className) {
     });
 }
 
+/**
+ * Classes/arms come from the class register, not only from where students already
+ * sit — otherwise a newly created class or an empty arm can never be moved into.
+ */
+function knownClassNames() {
+    const fromClasses = ClassesStore.getAll().map(c => c.name);
+    const fromStudents = allStudents.map(s => s.class);
+    return [...new Set([...fromClasses, ...fromStudents].filter(Boolean))].sort();
+}
+
+function knownArms(className) {
+    const cls = ClassesStore.getAll().find(c => c.name === className);
+    const fromClass = cls?.arms || [];
+    const fromStudents = allStudents.filter(s => s.class === className).map(s => s.arm);
+    return [...new Set([...fromClass, ...fromStudents].filter(Boolean))].sort();
+}
+
 function closeMoveModal() {
-    document.getElementById('move-student-modal').style.display = 'none';
+    document.getElementById('move-student-modal').classList.add('hidden');
     currentMovingStudent = null;
 }
 
@@ -462,44 +469,20 @@ async function confirmMove() {
         return;
     }
     
-    try {
-        // Try API first
-        await StudentsAPI.move(currentMovingStudent.id, {
-            targetClass,
-            targetArm,
-            reason
-        });
-        
-        // Update local data
-        const index = allStudents.findIndex(s => s.id === currentMovingStudent.id);
-        if (index >= 0) {
-            allStudents[index].class = targetClass;
-            allStudents[index].arm = targetArm;
-            allStudents[index].currentClass = `${targetClass} ${targetArm}`.trim();
-            allStudents[index].updatedAt = new Date().toISOString();
-            saveToLocalStorage();
-        }
-        
-        closeMoveModal();
-        applyFilters();
-        populateClassFilter();
-        
-    } catch (error) {
-        console.error('Move failed:', error);
-        
-        // Fallback to localStorage
-        const index = allStudents.findIndex(s => s.id === currentMovingStudent.id);
-        if (index >= 0) {
-            allStudents[index].class = targetClass;
-            allStudents[index].arm = targetArm;
-            allStudents[index].currentClass = `${targetClass} ${targetArm}`.trim();
-            allStudents[index].updatedAt = new Date().toISOString();
-            saveToLocalStorage();
-            closeMoveModal();
-            applyFilters();
-            populateClassFilter();
-        }
+    const studentId = currentMovingStudent.id;
+    const index = allStudents.findIndex(s => s.id === studentId);
+    if (index >= 0) {
+        allStudents[index].class = targetClass;
+        allStudents[index].arm = targetArm;
+        allStudents[index].currentClass = `${targetClass} ${targetArm}`.trim();
+        StudentsStore.move(studentId, targetClass, targetArm);
     }
+
+    closeMoveModal();
+    applyFilters();
+    populateClassFilter();
+
+    await syncToBackend(() => StudentsAPI.move(studentId, { targetClass, targetArm, reason }));
 }
 
 // ============================================
@@ -515,32 +498,13 @@ function confirmDelete(student) {
 }
 
 async function deleteStudent(student) {
-    try {
-        // Try API first
-        await StudentsAPI.delete(student.id);
-        
-        // Soft delete locally
-        const index = allStudents.findIndex(s => s.id === student.id);
-        if (index >= 0) {
-            allStudents[index].active = false;
-            allStudents[index].deletedAt = new Date().toISOString();
-            saveToLocalStorage();
-        }
-        
-        applyFilters();
-        
-    } catch (error) {
-        console.error('Delete failed:', error);
-        
-        // Fallback to localStorage
-        const index = allStudents.findIndex(s => s.id === student.id);
-        if (index >= 0) {
-            allStudents[index].active = false;
-            allStudents[index].deletedAt = new Date().toISOString();
-            saveToLocalStorage();
-            applyFilters();
-        }
-    }
+    StudentsStore.delete(student.id);
+    allStudents = allStudents.filter(s => s.id !== student.id);
+
+    applyFilters();
+    populateClassFilter();
+
+    await syncToBackend(() => StudentsAPI.delete(student.id));
 }
 
 // ============================================

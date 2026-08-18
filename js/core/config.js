@@ -7,6 +7,12 @@ export const CONFIG = {
     API_URL: 'https://stemforge-backend-1.onrender.com',
     
     ENDPOINTS: {
+        // ----- Password reset -----
+        forgotPassword: '/api/auth/forgot-password',
+        resetPassword:  '/api/auth/reset-password',
+
+        // ----- Feedback -----
+        feedback: '/api/feedback',
         generate: '/api/generate',
         aiGenerate: '/api/ai-generate',
         auth: {
