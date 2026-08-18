@@ -178,7 +178,7 @@ export const AuthAPI = {
             method: 'POST',
             body: JSON.stringify({ code })
         });
-    }
+    },
 
     // ----- Password reset -----
     async forgotPassword(email) {

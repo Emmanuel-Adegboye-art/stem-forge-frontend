@@ -42,9 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
         case 'register-teacher':
             import('./pages/register-teacher.js').then(m => m.init?.());
             break;
-        case 'feedback':
-            import('./pages/feedback.js').then(m => m.init?.()).catch(() => {});
-            break;
         case 'login':
             import('./pages/login.js').then(m => m.init());
             break;
