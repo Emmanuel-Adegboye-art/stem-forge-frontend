@@ -4,13 +4,12 @@
 // ============================================
 
 import { escapeHtml, showStatus } from '../core/utils.js';
-import { ClassesStore, StudentsStore, AttendanceStore } from '../core/store.js';
+import { ClassesStore, StudentsStore } from '../core/store.js';
 
 let allClasses = [];
 let allStudents = [];
 let currentUpgradeClass = null;
 let currentAddArmClass = null;
-let currentRenameClass = null;
 
 // ============================================
 // INITIALIZATION
@@ -96,14 +95,6 @@ function setupEventListeners() {
     if (cancelAddArmBtn) cancelAddArmBtn.addEventListener('click', closeAddArmModal);
     if (confirmAddArmBtn) confirmAddArmBtn.addEventListener('click', addArmToClass);
     
-    // Rename modal
-    const closeRenameBtn = document.getElementById('close-rename-modal');
-    const cancelRenameBtn = document.getElementById('cancel-rename-btn');
-    const confirmRenameBtn = document.getElementById('confirm-rename-btn');
-    if (closeRenameBtn) closeRenameBtn.addEventListener('click', closeRenameModal);
-    if (cancelRenameBtn) cancelRenameBtn.addEventListener('click', closeRenameModal);
-    if (confirmRenameBtn) confirmRenameBtn.addEventListener('click', confirmRename);
-
     // Upgrade modal
     const closeUpgradeBtn = document.getElementById('close-upgrade-modal');
     const cancelUpgradeBtn = document.getElementById('cancel-upgrade-btn');
@@ -162,7 +153,6 @@ function renderClassCard(cls) {
                 </div>
                 <div class="class-card-actions">
                     <button class="action-btn add-arm-btn" data-class-id="${escapeHtml(cls.id)}" title="Add Arm">➕</button>
-                    <button class="action-btn rename-class-btn" data-class-id="${escapeHtml(cls.id)}" title="Rename Class">✏️</button>
                     <button class="action-btn upgrade-btn" data-class-id="${escapeHtml(cls.id)}" title="Upgrade Class">⬆️</button>
                     <button class="action-btn download-btn" data-class-id="${escapeHtml(cls.id)}" title="Download PDF">📄</button>
                     <button class="action-btn delete-class-btn" data-class-id="${escapeHtml(cls.id)}" title="Delete Class">🗑️</button>
@@ -216,13 +206,6 @@ function setupClassActions() {
         });
     });
     
-    // Rename class
-    document.querySelectorAll('.rename-class-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            openRenameModal(e.currentTarget.dataset.classId);
-        });
-    });
-
     // Upgrade class
     document.querySelectorAll('.upgrade-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -255,86 +238,6 @@ function setupClassActions() {
             deleteArm(classId, arm);
         });
     });
-}
-
-// ============================================
-// RENAME CLASS
-// ============================================
-
-function openRenameModal(classId) {
-    const cls = allClasses.find(c => c.id === classId);
-    if (!cls) return;
-
-    currentRenameClass = cls;
-
-    document.getElementById('rename-current-name').textContent = cls.name;
-    document.getElementById('rename-student-count').textContent = countStudentsInClass(cls);
-    document.getElementById('rename-class-name').value = cls.name;
-    document.getElementById('rename-class-level').value = cls.level || '';
-
-    document.getElementById('rename-class-modal').style.display = 'flex';
-}
-
-function closeRenameModal() {
-    document.getElementById('rename-class-modal').style.display = 'none';
-    currentRenameClass = null;
-}
-
-function confirmRename() {
-    if (!currentRenameClass) return;
-
-    const newName = document.getElementById('rename-class-name').value.trim();
-    const levelValue = document.getElementById('rename-class-level').value;
-    const oldName = currentRenameClass.name;
-
-    if (!newName) {
-        alert('Class name is required');
-        return;
-    }
-
-    const clash = allClasses.some(c => c.id !== currentRenameClass.id &&
-        c.name.toLowerCase() === newName.toLowerCase());
-    if (clash) {
-        alert(`A class named "${newName}" already exists`);
-        return;
-    }
-
-    currentRenameClass.name = newName;
-    currentRenameClass.level = levelValue ? parseInt(levelValue, 10) : currentRenameClass.level;
-    currentRenameClass.updatedAt = new Date().toISOString();
-    saveClasses();
-
-    if (newName !== oldName) {
-        renameClassInStudents(oldName, newName);
-        renameClassInAttendance(oldName, newName);
-    }
-
-    closeRenameModal();
-    renderClasses();
-}
-
-/** Student IDs keep their original prefix — only the class label changes. */
-function renameClassInStudents(oldName, newName) {
-    const stored = JSON.parse(localStorage.getItem('stemforge:students') || '[]');
-    stored.forEach(student => {
-        if (student.class !== oldName) return;
-        student.class = newName;
-        student.currentClass = `${newName} ${student.arm || ''}`.trim();
-        student.updatedAt = new Date().toISOString();
-    });
-    localStorage.setItem('stemforge:students', JSON.stringify(stored));
-    allStudents = StudentsStore.getAll();
-}
-
-function renameClassInAttendance(oldName, newName) {
-    const records = AttendanceStore.getAll();
-    let changed = false;
-    records.forEach(record => {
-        if (record.class !== oldName) return;
-        record.class = newName;
-        changed = true;
-    });
-    if (changed) localStorage.setItem('stemforge:attendance', JSON.stringify(records));
 }
 
 // ============================================

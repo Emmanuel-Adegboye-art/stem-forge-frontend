@@ -21,7 +21,7 @@ export function init() {
         dateInput.value = new Date().toISOString().split('T')[0];
     }
 
-    // Build class dropdown from saved classes
+    // Build class dropdown from saved classes + students
     populateClassDropdown(classSelect);
 
     // Inject arm dropdown if it doesn't exist yet
@@ -38,6 +38,29 @@ export function init() {
     if (loadPrevBtn) loadPrevBtn.addEventListener('click', loadPreviousAttendance);
     if (markAllBtn)  markAllBtn.addEventListener('click', markAllPresent);
 
+    // ── Auto-select from URL params (e.g. coming from Classes page) ──
+    const params = new URLSearchParams(window.location.search);
+    const urlClass = params.get('class');
+    const urlArm   = params.get('arm');
+    if (urlClass) {
+        classSelect.value = urlClass;
+        currentClass = urlClass;
+        // Populate arms then auto-select the arm
+        populateArmDropdown(urlClass);
+        if (urlArm) {
+            // Give the DOM a tick to render arm dropdown before setting value
+            requestAnimationFrame(() => {
+                const armSel = document.getElementById('attendance-arm');
+                if (armSel) {
+                    armSel.value = urlArm;
+                    currentArm = urlArm;
+                    renderRoster();
+                }
+            });
+        }
+        loadHistory();
+    }
+
     // Show history panel
     const historyPanel = document.getElementById('attendance-history');
     if (historyPanel) historyPanel.style.display = 'block';
@@ -47,17 +70,30 @@ export function init() {
 // ── Dropdowns ─────────────────────────────────────────────
 
 function populateClassDropdown(select) {
-    const classes = ClassesStore.getAll();
+    // Pull from ClassesStore (primary source)
+    const storedClasses = ClassesStore.getAll();
+
+    // Also collect any class names from already-registered students
+    // (safety net: catches students registered before classes were created)
+    const allStudents = StudentsStore.getAll();
+    const studentClassNames = [...new Set(allStudents.map(s => s.class).filter(Boolean))];
+
+    // Merge: start with ClassesStore names, add any extras from students
+    const classNames = [...new Set([
+        ...storedClasses.map(c => c.name),
+        ...studentClassNames
+    ])].sort();
+
     select.innerHTML = '<option value="">-- Select class --</option>';
 
-    if (classes.length === 0) {
+    if (classNames.length === 0) {
         select.innerHTML += '<option disabled>No classes yet — create one in Classes page</option>';
         return;
     }
-    classes.forEach(cls => {
+    classNames.forEach(name => {
         const opt = document.createElement('option');
-        opt.value = cls.name;
-        opt.textContent = cls.name;
+        opt.value = name;
+        opt.textContent = name;
         select.appendChild(opt);
     });
 }
@@ -89,17 +125,30 @@ function populateArmDropdown(className) {
     const armGroup  = document.getElementById('arm-group');
     if (!armSelect || !armGroup) return;
 
+    // First check ClassesStore for defined arms
     const cls = ClassesStore.getAll().find(c => c.name === className);
-    if (!cls || !cls.arms || cls.arms.length === 0) {
+    let arms = cls && cls.arms && cls.arms.length > 0 ? cls.arms : null;
+
+    // Fallback: derive arms from already-registered students for this class
+    if (!arms) {
+        const studentArms = [...new Set(
+            StudentsStore.getAll()
+                .filter(s => s.class === className && s.arm)
+                .map(s => s.arm)
+        )].sort();
+        arms = studentArms.length > 0 ? studentArms : null;
+    }
+
+    if (!arms) {
         armGroup.style.display = 'none';
-        // No arms defined — treat entire class as one group
+        // No arms at all — treat entire class as one group
         currentArm = '';
         renderRoster();
         return;
     }
 
     armSelect.innerHTML = '<option value="">-- Select arm --</option>';
-    cls.arms.forEach(arm => {
+    arms.forEach(arm => {
         const opt = document.createElement('option');
         opt.value = arm;
         opt.textContent = `Arm ${arm}`;

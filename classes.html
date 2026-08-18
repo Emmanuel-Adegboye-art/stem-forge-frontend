@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#ffffff">
     <title>Class Management | STEM Forge</title>
-    <link rel="icon" href="/favicon.ico" sizes="any">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
     <!-- Prevent theme flash -->
     <script>
@@ -119,7 +116,6 @@
     <link rel="stylesheet" href="css/components/forms.css">
     <link rel="stylesheet" href="css/components/alerts.css">
     <link rel="stylesheet" href="css/pages/ai-generate.css">
-    <link rel="stylesheet" href="css/pages/students.css">
 
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -145,7 +141,7 @@
                 <span class="material-symbols-outlined">menu</span>
             </button>
 
-                        <a href="index.html" class="flex items-center gap-2 mr-3 sm:mr-4 hover:opacity-90 transition-opacity">
+                        <a href="index.html" class="flex items-center gap-2 hover:opacity-90 transition-opacity">
                 <div class="w-8 h-8 flex items-center justify-center rounded-lg overflow-hidden bg-transparent">
                     <img src="Images/Logo/StemForge 1 (1).jfif" alt="STEM Forge Logo" class="w-8 h-8 object-contain">
                 </div>
@@ -160,7 +156,7 @@
 
         <div class="flex items-center gap-4">
             <a href="scheme.html" class="hidden lg:block border border-border-subtle text-deep-navy font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-surface-container-highest transition-colors">New Scheme</a>
-            <a href="ai-generate.html" class="bg-forge-orange text-on-primary font-label-md text-label-md text-sm px-3 py-1.5 ml-1 rounded-lg shadow-sm whitespace-nowrap hover:opacity-90 transition-opacity">New Lesson</a>
+            <a href="ai-generate.html" class="bg-forge-orange text-on-primary font-label-md text-label-md px-4 py-2 rounded-lg shadow-sm hover:opacity-90 transition-opacity">New Lesson</a>
 
             <div class="flex items-center gap-2 border-l border-border-subtle pl-4 ml-2">
                 <button class="theme-toggle text-secondary hover:text-forge-orange transition-colors p-2 rounded-full hover:bg-surface-container-highest" id="theme-toggle" aria-label="Toggle theme">
@@ -226,10 +222,10 @@
             <a href="pricing.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
                 <span class="material-symbols-outlined">payments</span> Pricing
             </a>
-            <a href="coming-soon.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
+            <a href="exams.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
                 <span class="material-symbols-outlined">quiz</span> Exams
             </a>
-            <a href="coming-soon.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
+            <a href="virtual.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
                 <span class="material-symbols-outlined">video_call</span> Virtual Class
             </a>
             <a href="about.html" class="nav-btn flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all font-label-md text-label-md">
@@ -337,34 +333,6 @@
     </div>
 </div>
 
-<!-- RENAME CLASS MODAL -->
-<div id="rename-class-modal" class="fixed inset-0 z-[100] bg-deep-navy/40 backdrop-blur-sm hidden items-center justify-center p-4">
-    <div class="bg-white rounded-xl shadow-2xl w-full max-w-md border border-border-subtle overflow-hidden">
-        <div class="px-6 py-4 border-b border-border-subtle flex justify-between items-center bg-surface-gray">
-            <h3 class="font-headline-md text-headline-md text-deep-navy flex items-center gap-2"><span class="material-symbols-outlined text-forge-orange">edit</span> Rename Class</h3>
-            <button id="close-rename-modal" class="text-secondary hover:text-deep-navy p-1 rounded-full hover:bg-border-subtle"><span class="material-symbols-outlined">close</span></button>
-        </div>
-        <div class="p-6">
-            <form id="rename-class-form" class="flex flex-col gap-5">
-                <p class="font-body-md text-body-md text-secondary">Current name: <strong id="rename-current-name" class="text-deep-navy"></strong></p>
-                <div>
-                    <label for="rename-class-name" class="block font-label-md text-label-md text-deep-navy mb-2">📚 New Class Name <span class="text-error">*</span></label>
-                    <input type="text" id="rename-class-name" required placeholder="e.g. JSS 1, Grade 5, SS 2" class="w-full px-4 py-3 bg-surface-gray border border-border-subtle rounded-lg focus:outline-none focus:border-forge-orange focus:ring-1 focus:ring-forge-orange font-body-md text-body-md">
-                    <p class="font-caption text-caption text-secondary mt-1"><span id="rename-student-count">0</span> student record(s) and their attendance history will be updated to the new name.</p>
-                </div>
-                <div>
-                    <label for="rename-class-level" class="block font-label-md text-label-md text-deep-navy mb-2">🎓 Class Level (Optional)</label>
-                    <input type="number" id="rename-class-level" min="1" max="12" placeholder="e.g. 1, 5, 10" class="w-full px-4 py-3 bg-surface-gray border border-border-subtle rounded-lg focus:outline-none focus:border-forge-orange focus:ring-1 focus:ring-forge-orange font-body-md text-body-md">
-                </div>
-            </form>
-        </div>
-        <div class="px-6 py-4 border-t border-border-subtle bg-surface-gray flex justify-end gap-3">
-            <button id="cancel-rename-btn" class="border border-border-subtle bg-white text-deep-navy font-label-md text-label-md px-5 py-2.5 rounded-lg hover:bg-surface-container-highest transition">Cancel</button>
-            <button id="confirm-rename-btn" class="bg-deep-navy text-white font-label-md text-label-md px-6 py-2.5 rounded-lg hover:opacity-90 transition">Save Name</button>
-        </div>
-    </div>
-</div>
-
 <!-- ADD ARM MODAL - IDs PRESERVED -->
 <div id="add-arm-modal" class="fixed inset-0 z-[100] bg-deep-navy/40 backdrop-blur-sm hidden items-center justify-center p-4">
     <div class="bg-white rounded-xl shadow-2xl w-full max-w-md border border-border-subtle overflow-hidden">
@@ -449,5 +417,6 @@
     document.getElementById('cancel-upgrade-btn')?.addEventListener('click', () => hideModal('upgrade-class-modal'));
 </script>
 
+<script src="js/include-nav.js"></script>
 </body>
 </html>

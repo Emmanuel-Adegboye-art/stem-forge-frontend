@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#ffffff">
     <title>Registration | STEM Forge</title>
-    <link rel="icon" href="/favicon.ico" sizes="any">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
     <!-- Prevent theme flash -->
     <script>
@@ -131,7 +128,7 @@
        .form-tabs { display: flex; gap: 0.5rem; background: var(--bg-tertiary, #f1f5f9); padding: 0.25rem; border-radius: 0.75rem; }
     </style>
 </head>
-<body data-page="register" data-role="student" class="text-deep-navy font-body-md antialiased min-h-screen flex items-center justify-center p-margin-mobile md:p-margin-desktop bg-surface-gray">
+<body data-page="register" class="text-deep-navy font-body-md antialiased min-h-screen flex items-center justify-center p-margin-mobile md:p-margin-desktop bg-surface-gray">
 
     <!-- Theme Toggle - ID PRESERVED -->
     <button class="theme-toggle fixed top-4 right-4 z-50 p-2 rounded-full bg-white border border-border-subtle shadow-sm hover:bg-surface-container-highest transition-colors" id="theme-toggle" aria-label="Toggle theme">
@@ -335,5 +332,100 @@
 
     <script type="module" src="js/main.js"></script>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const studentRoleBtn = document.getElementById('student-role-btn');
+            const teacherRoleBtn = document.getElementById('teacher-role-btn');
+            const teacherFields = document.getElementById('teacher-fields');
+            const studentRequiredFields = document.getElementById('student-required-fields');
+            const studentOptionalFields = document.getElementById('student-optional-fields');
+            const pageTitle = document.getElementById('page-title');
+            const pageSubtitle = document.getElementById('page-subtitle');
+            const classSelect = document.getElementById('reg-class');
+            const armSelect = document.getElementById('reg-arm');
+            const idPreviewValue = document.getElementById('id-preview-value');
+            const form = document.getElementById('register-form');
+            const successCard = document.getElementById('success-card');
+
+            function setRole(role) {
+                [studentRoleBtn, teacherRoleBtn].forEach(btn => {
+                    btn.classList.remove('bg-white','shadow-sm','text-deep-navy');
+                    btn.classList.add('text-secondary');
+                });
+                const active = role==='student'? studentRoleBtn : teacherRoleBtn;
+                active.classList.add('bg-white','shadow-sm','text-deep-navy');
+                active.classList.remove('text-secondary');
+
+                if (role==='student') {
+                    teacherFields.style.display='none';
+                    studentRequiredFields.style.display='block';
+                    studentOptionalFields.style.display='block';
+                    pageTitle.textContent='Student Registration';
+                    pageSubtitle.textContent='Add a student to your class roster';
+                } else {
+                    teacherFields.style.display='block';
+                    studentRequiredFields.style.display='none';
+                    studentOptionalFields.style.display='none';
+                    pageTitle.textContent='Teacher / Org Registration';
+                    pageSubtitle.textContent='Create a teacher or organization admin account';
+                }
+            }
+
+            studentRoleBtn.addEventListener('click', ()=>setRole('student'));
+            teacherRoleBtn.addEventListener('click', ()=>setRole('teacher'));
+            setRole('student');
+
+            document.querySelectorAll('.toggle-password-btn').forEach(btn => {
+                btn.addEventListener('click', function(){
+                    const input = document.getElementById(this.dataset.target);
+                    const icon = this.querySelector('.material-symbols-outlined');
+                    if(input.type==='password'){ input.type='text'; if(icon) icon.textContent='visibility_off'; }
+                    else { input.type='password'; if(icon) icon.textContent='visibility'; }
+                });
+            });
+
+            const password = document.getElementById('reg-password');
+            const confirmPassword = document.getElementById('reg-password-confirm');
+            const matchHint = document.getElementById('password-match-hint');
+            function checkMatch(){
+                if(password.value && confirmPassword.value){
+                    if(password.value===confirmPassword.value){ matchHint.textContent='Passwords match'; matchHint.style.color='green'; }
+                    else { matchHint.textContent='Passwords do not match'; matchHint.style.color='red'; }
+                } else matchHint.textContent='';
+            }
+            password?.addEventListener('input', checkMatch);
+            confirmPassword?.addEventListener('input', checkMatch);
+
+            function updateIdPreview(){
+                const c=classSelect.value, a=armSelect.value;
+                if(c&&a){ const prefix=c.replace(/\s/g,'').slice(0,2).toUpperCase(); const armCode=a.slice(0,1).toUpperCase(); const rand=Math.floor(Math.random()*1000).toString().padStart(3,'0'); idPreviewValue.textContent=`${prefix}${armCode}${rand}`; }
+                else idPreviewValue.textContent='Select class & arm first';
+            }
+            classSelect?.addEventListener('change', updateIdPreview);
+            armSelect?.addEventListener('change', updateIdPreview);
+
+            form?.addEventListener('submit', function(e){
+                e.preventDefault();
+                document.getElementById('success-name').textContent=document.getElementById('reg-name').value||'Student';
+                document.getElementById('success-id').textContent=idPreviewValue.textContent||'STU-000';
+                const isTeacher=teacherFields.style.display!=='none';
+                document.getElementById('success-class').textContent=isTeacher? 'Teacher / Admin' : (classSelect.value||'Unassigned');
+                document.getElementById('success-title').textContent=isTeacher? 'Teacher Registered Successfully!' : 'Student Registered Successfully!';
+                successCard.style.display='block';
+                form.style.display='none';
+            });
+
+            document.getElementById('success-register-another')?.addEventListener('click', function(){
+                successCard.style.display='none';
+                form.style.display='block';
+                form.reset();
+                updateIdPreview();
+                document.getElementById('register-status').textContent='';
+            });
+
+            document.getElementById('cancel-btn')?.addEventListener('click', ()=>window.location.href='students.html');
+        });
+    </script>
+    <script src="js/include-nav.js"></script>
 </body>
 </html>
