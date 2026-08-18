@@ -1,4 +1,4 @@
-﻿/**
+/**
  * STEM Forge Feedback Widget
  * Injects a floating 💬 button (bottom-right) on every page.
  * Opens a modal with Name, Subject, Description, Gmail fields.
@@ -105,6 +105,29 @@ import { CONFIG } from '../core/config.js';
     }
     #sfb-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
     #sfb-toast .sfb-toast-dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; flex-shrink: 0; }
+
+    /* ─── Dark Mode Support for Modal ──────────── */
+    [data-theme="dark"] #sfb-modal {
+        background: #0f172a;
+        border: 1px solid #334155;
+        box-shadow: 0 24px 60px rgba(0,0,0,.55);
+    }
+    [data-theme="dark"] .sfb-field label {
+        color: #cbd5e1;
+    }
+    [data-theme="dark"] .sfb-input {
+        background: #1e293b;
+        color: #f8fafc;
+        border-color: #334155;
+    }
+    [data-theme="dark"] .sfb-input::placeholder {
+        color: #94a3b8;
+    }
+    [data-theme="dark"] .sfb-input:focus {
+        background: #0c1222;
+        border-color: #f59e0b;
+        box-shadow: 0 0 0 3px rgba(245,158,11,.25);
+    }
     `;
     document.head.appendChild(style);
 })();

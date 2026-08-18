@@ -1,10 +1,10 @@
 /* ============================================
-   DARK MODE PAGE BACKGROUNDS
+   DARK MODE PAGE BACKGROUNDS & FORM STYLES
    Applied to all pages in dark mode
    ============================================ */
 
 [data-theme="dark"] body {
-    background: linear-gradient(135deg, #151929 0%, #3d2556 100%) !important;
+    background: linear-gradient(135deg, #090d16 0%, #0f172a 50%, #1e1b4b 100%) !important;
     background-attachment: fixed !important;
     color: #f1f5f9;
     min-height: 100vh;
@@ -19,32 +19,85 @@
 [data-theme="dark"] body[data-page="services"],
 [data-theme="dark"] body[data-page="contact"],
 [data-theme="dark"] body[data-page="pricing"],
-[data-theme="dark"] body[data-page="coming-soon"] {
-    background: linear-gradient(135deg, #151929 0%, #3d2556 100%) !important;
+[data-theme="dark"] body[data-page="coming-soon"],
+[data-theme="dark"] body[data-page="classes"],
+[data-theme="dark"] body[data-page="students"],
+[data-theme="dark"] body[data-page="manage-students"],
+[data-theme="dark"] body[data-page="attendance-reports"],
+[data-theme="dark"] body[data-page="feedback"],
+[data-theme="dark"] body[data-page="forgot-password"],
+[data-theme="dark"] body[data-page="reset-password"],
+[data-theme="dark"] body[data-page="login"] {
+    background: linear-gradient(135deg, #090d16 0%, #0f172a 50%, #1e1b4b 100%) !important;
     background-attachment: fixed !important;
 }
 
-/* Keep AI Generate's specific gradient if you want it different */
-/* Uncomment below if AI generate should keep its own gradient in dark mode */
-/*
-[data-theme="dark"] body[data-page="ai-generate"] {
-    background: linear-gradient(135deg, #1a1f3a 0%, #4a2c5e 100%) !important;
-}
-*/
+/* ============================================
+   DARK MODE FORM INPUTS & TEXTAREAS (DARK BLUE)
+   High-contrast dark navy surfaces (#0f172a / #1e293b)
+   Crisp white text (#f8fafc) & visible placeholders (#94a3b8)
+   ============================================ */
 
-/* Override light mode backgrounds that used var(--bg-secondary) */
-[data-theme="dark"] body[data-page="dashboard"],
-[data-theme="dark"] body[data-page="scheme"],
-[data-theme="dark"] body[data-page="attendance"],
-[data-theme="dark"] body[data-page="about"],
-[data-theme="dark"] body[data-page="services"],
-[data-theme="dark"] body[data-page="contact"],
-[data-theme="dark"] body[data-page="pricing"],
-[data-theme="dark"] body[data-page="coming-soon"] {
-    background-color: transparent !important;
+[data-theme="dark"] input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="range"]),
+[data-theme="dark"] textarea,
+[data-theme="dark"] select,
+[data-theme="dark"] .input-field,
+[data-theme="dark"] .form-control {
+    background-color: #0f172a !important;
+    color: #f8fafc !important;
+    border-color: #334155 !important;
+}
+
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder,
+[data-theme="dark"] .input-field::placeholder {
+    color: #94a3b8 !important;
+    opacity: 0.9 !important;
+}
+
+[data-theme="dark"] input:focus,
+[data-theme="dark"] textarea:focus,
+[data-theme="dark"] select:focus,
+[data-theme="dark"] .input-field:focus {
+    background-color: #0c1222 !important;
+    border-color: #f59e0b !important;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.25) !important;
+    color: #ffffff !important;
+}
+
+/* Labels and section headers in dark mode */
+[data-theme="dark"] label,
+[data-theme="dark"] .form-label,
+[data-theme="dark"] .form-group label {
+    color: #e2e8f0 !important;
+}
+
+/* Dark mode containers & cards */
+[data-theme="dark"] .bg-white {
+    background-color: #1e293b !important;
+    color: #f8fafc !important;
+    border-color: #334155 !important;
+}
+
+[data-theme="dark"] .bg-surface-gray,
+[data-theme="dark"] .bg-surface-container-lowest {
+    background-color: #0f172a !important;
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .text-deep-navy {
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .text-secondary {
+    color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .border-border-subtle {
+    border-color: #334155 !important;
 }
 
 /* Smooth transition when switching themes */
 body {
-    transition: background 0.5s ease, color 0.3s ease;
+    transition: background 0.3s ease, color 0.3s ease;
 }
