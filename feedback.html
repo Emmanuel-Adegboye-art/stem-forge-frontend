@@ -1,0 +1,211 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ffffff">
+    <title>Send Feedback | STEM Forge</title>
+    <meta name="description" content="Share your thoughts, suggestions or bug reports with the STEM Forge team.">
+
+    <script>
+        (function() {
+            const saved = localStorage.getItem('stemforge-theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+        })();
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&family=Material+Symbols+Outlined&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'forge-orange': '#F59E0B', 'deep-navy': '#0F172A',
+                        'secondary': '#565e74', 'surface-gray': '#F8FAFC',
+                        'border-subtle': '#e5e7eb', 'action-blue': '#2563EB'
+                    },
+                    fontFamily: { sans: ['Hanken Grotesk', 'sans-serif'] }
+                }
+            }
+        };
+    </script>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="js/core/firebase-init.js"></script>
+
+    <style>
+        body { font-family: 'Hanken Grotesk', sans-serif; }
+        .input-field {
+            width: 100%; padding: 12px 16px;
+            border: 1.5px solid #e5e7eb; border-radius: 10px;
+            font-size: 15px; background: #F8FAFC; font-family: inherit;
+            transition: border-color .2s, box-shadow .2s; outline: none; box-sizing: border-box;
+        }
+        .input-field:focus { border-color: #F59E0B; box-shadow: 0 0 0 3px rgba(245,158,11,.12); background: #fff; }
+        .btn-primary {
+            width: 100%; background: #F59E0B; color: #fff; font-weight: 700;
+            padding: 14px; border-radius: 10px; border: none; cursor: pointer;
+            font-size: 15px; font-family: inherit;
+            transition: opacity .2s, transform .1s; display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-primary:hover:not(:disabled) { opacity: .92; }
+        .btn-primary:active:not(:disabled) { transform: scale(.98); }
+        .btn-primary:disabled { opacity: .65; cursor: not-allowed; }
+        #success-state { display: none; }
+    </style>
+</head>
+<body data-page="feedback" class="bg-surface-gray min-h-screen flex items-center justify-center p-6 font-sans">
+
+    <main class="w-full max-w-lg">
+
+        <!-- Back nav -->
+        <div class="mb-4">
+            <a href="javascript:history.back()" class="inline-flex items-center gap-1.5 text-sm text-secondary hover:text-deep-navy transition-colors font-semibold">
+                <span class="material-symbols-outlined text-sm">arrow_back</span>
+                Go back
+            </a>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-border-subtle shadow-sm overflow-hidden">
+
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-deep-navy to-slate-700 px-8 py-7">
+                <div class="flex items-center gap-3 mb-1">
+                    <span class="text-3xl">💬</span>
+                    <h1 class="text-white text-2xl font-bold">Send us feedback</h1>
+                </div>
+                <p class="text-white/70 text-sm">We read every message and reply within 48 hours.</p>
+            </div>
+
+            <div class="px-8 py-8">
+
+                <!-- FORM STATE -->
+                <div id="form-state">
+                    <form id="feedback-form" class="space-y-5" novalidate>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="fb-name" class="block text-sm font-bold text-deep-navy mb-1.5 uppercase tracking-wide text-xs">Your name</label>
+                                <input type="text" id="fb-name" required placeholder="Jane Doe" class="input-field">
+                            </div>
+                            <div>
+                                <label for="fb-email" class="block text-sm font-bold text-deep-navy mb-1.5 uppercase tracking-wide text-xs">Gmail / Email</label>
+                                <input type="email" id="fb-email" required placeholder="you@gmail.com" class="input-field">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="fb-subject" class="block text-sm font-bold text-deep-navy mb-1.5 uppercase tracking-wide text-xs">Subject</label>
+                            <input type="text" id="fb-subject" required placeholder="e.g. Love the scheme generator!" class="input-field">
+                        </div>
+
+                        <div>
+                            <label for="fb-desc" class="block text-sm font-bold text-deep-navy mb-1.5 uppercase tracking-wide text-xs">Description</label>
+                            <textarea id="fb-desc" rows="5" required
+                                      placeholder="Tell us what you love, what could be better, or report a bug…"
+                                      class="input-field resize-y"></textarea>
+                        </div>
+
+                        <div id="fb-error" class="hidden p-3 rounded-lg bg-red-50 border border-red-200 text-red-800 text-sm"></div>
+
+                        <button type="submit" id="fb-btn" class="btn-primary">
+                            <span class="material-symbols-outlined text-xl">send</span>
+                            Send Feedback
+                        </button>
+
+                    </form>
+                </div>
+
+                <!-- SUCCESS STATE -->
+                <div id="success-state" class="text-center py-6">
+                    <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5">
+                        <span class="material-symbols-outlined text-green-500 text-4xl">mark_email_read</span>
+                    </div>
+                    <h2 class="text-2xl font-bold text-deep-navy mb-2">Thank you!</h2>
+                    <p class="text-secondary text-sm leading-relaxed mb-2">
+                        Your feedback has been received and saved.
+                    </p>
+                    <div class="inline-flex items-center gap-2 bg-amber-50 border border-amber-200 text-amber-800 px-4 py-2 rounded-full text-sm font-semibold mb-6">
+                        <span class="material-symbols-outlined text-sm">schedule</span>
+                        We'll reply within 48 hours
+                    </div>
+                    <div>
+                        <button id="send-another-btn" class="btn-primary">
+                            <span class="material-symbols-outlined text-xl">add_comment</span>
+                            Send another message
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Footer note -->
+        <p class="text-center text-xs text-secondary mt-4">
+            Urgent? Email us at
+            <a href="mailto:supportstemforge@gmail.com" class="text-forge-orange font-semibold hover:underline">supportstemforge@gmail.com</a>
+        </p>
+
+    </main>
+
+    <script type="module">
+        import { CONFIG } from './js/core/config.js';
+
+        // Pre-fill from localStorage if logged in
+        try {
+            const user = JSON.parse(localStorage.getItem('stemforge:user') || '{}');
+            if (user.name)  document.getElementById('fb-name').value  = user.name;
+            if (user.email) document.getElementById('fb-email').value = user.email;
+        } catch (_) {}
+
+        document.getElementById('feedback-form').addEventListener('submit', async e => {
+            e.preventDefault();
+            const payload = {
+                name:        document.getElementById('fb-name').value.trim(),
+                email:       document.getElementById('fb-email').value.trim(),
+                subject:     document.getElementById('fb-subject').value.trim(),
+                description: document.getElementById('fb-desc').value.trim()
+            };
+            const btn    = document.getElementById('fb-btn');
+            const errBox = document.getElementById('fb-error');
+            errBox.classList.add('hidden');
+
+            if (!payload.name || !payload.email || !payload.subject || !payload.description) {
+                errBox.textContent = '⚠️ Please fill in all fields.';
+                errBox.classList.remove('hidden'); return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-xl">autorenew</span> Sending…';
+
+            try {
+                const res = await fetch(`${CONFIG.API_URL}/api/feedback`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!res.ok) throw new Error('Server error');
+
+                document.getElementById('form-state').style.display = 'none';
+                document.getElementById('success-state').style.display = 'block';
+            } catch (err) {
+                errBox.textContent = '❌ Failed to send feedback. Please try again.';
+                errBox.classList.remove('hidden');
+                btn.disabled = false;
+                btn.innerHTML = '<span class="material-symbols-outlined text-xl">send</span> Send Feedback';
+            }
+        });
+
+        document.getElementById('send-another-btn').addEventListener('click', () => {
+            document.getElementById('feedback-form').reset();
+            document.getElementById('success-state').style.display = 'none';
+            document.getElementById('form-state').style.display = 'block';
+        });
+    </script>
+
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>

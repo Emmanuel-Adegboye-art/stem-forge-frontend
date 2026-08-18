@@ -1,6 +1,7 @@
 import { themeManager } from './core/theme.js';
 import { navigation } from './components/nav.js';
 import { initAuthGuard } from './core/auth-guard.js';
+import { initFeedbackWidget } from './components/feedback-widget.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     // Chrome/UI init must never block page-specific logic
@@ -8,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
         themeManager.init();
         navigation.init();
         initAuthGuard();
+        initFeedbackWidget(); // floating 💬 button on all pages
     } catch (error) {
         console.error('Shell init failed:', error);
     }
@@ -31,11 +33,17 @@ document.addEventListener('DOMContentLoaded', () => {
         case 'students':
             import('./pages/students.js').then(m => m.init?.());
             break;
+        case 'register':
+            import('./pages/register.js').then(m => m.init());
+            break;
         case 'register-student':
-            import('./pages/register-student.js').then(m => m.init());
+            import('./pages/register-student.js').then(m => m.init?.());
             break;
         case 'register-teacher':
-            import('./pages/register-teacher.js').then(m => m.init());
+            import('./pages/register-teacher.js').then(m => m.init?.());
+            break;
+        case 'feedback':
+            import('./pages/feedback.js').then(m => m.init?.()).catch(() => {});
             break;
         case 'login':
             import('./pages/login.js').then(m => m.init());
