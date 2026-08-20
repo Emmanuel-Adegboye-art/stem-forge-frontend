@@ -97,6 +97,41 @@
     border-color: #334155 !important;
 }
 
+/* Sidebar nav links in dark mode */
+[data-theme="dark"] #sidebar .nav-btn,
+[data-theme="dark"] aside .nav-btn {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] #sidebar .nav-btn:hover,
+[data-theme="dark"] aside .nav-btn:hover {
+    color: #94a3b8 !important;
+}
+
+[data-theme="dark"] #sidebar .nav-btn.active,
+[data-theme="dark"] aside .nav-btn.active {
+    background: #F59E0B !important;
+    color: #ffffff !important;
+}
+
+/* About page text colors in dark mode (light soft orange on dark background) */
+[data-theme="dark"] .text-on-surface-variant,
+[data-theme="dark"] body[data-page="about"] .text-on-surface-variant,
+[data-theme="dark"] body[data-page="about"] p.text-on-surface-variant {
+    color: #fed7aa !important; /* light soft orange */
+}
+
+/* Hamburger & toggle buttons in dark mode */
+[data-theme="dark"] #sidebar-toggle,
+[data-theme="dark"] .mobile-menu-toggle {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] #sidebar-toggle:hover,
+[data-theme="dark"] .mobile-menu-toggle:hover {
+    color: #f59e0b !important;
+}
+
 /* Smooth transition when switching themes */
 body {
     transition: background 0.3s ease, color 0.3s ease;
