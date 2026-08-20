@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#ffffff">
+        <!-- Favicon -->
+    <link rel="icon" type="image/jfif" href="Images/Logo/StemForge 1 (1).jfif">
+    <link rel="shortcut icon" type="image/jfif" href="Images/Logo/StemForge 1 (1).jfif">
+    <link rel="apple-touch-icon" href="Images/Logo/StemForge 1 (1).jfif">
     <title>STEM Forge | Coming Soon</title>
     
     <!-- Prevent theme flash -->
@@ -42,44 +46,42 @@
     <!-- Navigation -->
     <!-- Navigation Bar -->
     <nav id="main-nav">
-    <div class="nav-brand">
-        <span class="brand-icon">⚡</span>
-        <span class="brand-text">STEM Forge</span>
-    </div>
-    
-    <button class="mobile-menu-toggle" id="mobile-menu-toggle">☰ Menu</button>
-    
-    <div class="nav-links" id="nav-links">
-        <a href="index.html" class="nav-btn hidden lg:block border border-border-subtle text-deep-navy font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-surface-container-highest transition-colors">Dashboard</a>
-        <a href="ai-generate.html" class="nav-btn hidden lg:block border border-border-subtle text-deep-navy font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-surface-container-highest transition-colors">AI Generate</a>
-        <a href="scheme.html" class="nav-btn hidden lg:block border border-border-subtle text-deep-navy font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-surface-container-highest transition-colors">Scheme</a>
-        <a href="attendance.html" class="nav-btn hidden lg:block border border-border-subtle text-deep-navy font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-surface-container-highest transition-colors">Attendance</a>
-        <a href="students.html" class="nav-btn hidden lg:block border border-border-subtle text-deep-navy font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-surface-container-highest transition-colors">Students</a>
-        <a href="classes.html" class="nav-btn hidden lg:block border border-border-subtle text-deep-navy font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-surface-container-highest transition-colors">Classes</a>
-        <a href="attendance-reports.html" class="nav-btn hidden lg:block border border-border-subtle text-deep-navy font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-surface-container-highest transition-colors">Reports</a>
-        
-        <div class="nav-dropdown hidden lg:block">
-            <button class="nav-dropdown-btn border border-border-subtle text-deep-navy font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-surface-container-highest transition-colors">More ▼</button>
-            <div class="nav-dropdown-content">
-                <a href="pricing.html" class="block px-4 py-2 hover:bg-surface-container-highest transition-colors">Pricing</a>
-                <a href="coming-soon.html" class="block px-4 py-2 hover:bg-surface-container-highest transition-colors">Exams</a>
-                <a href="coming-soon.html" class="block px-4 py-2 hover:bg-surface-container-highest transition-colors">Virtual Class</a>
-                <a href="about.html" class="block px-4 py-2 hover:bg-surface-container-highest transition-colors">About</a>
-                <a href="services.html" class="block px-4 py-2 hover:bg-surface-container-highest transition-colors">Services</a>
-                <a href="contact.html" class="block px-4 py-2 hover:bg-surface-container-highest transition-colors">Contact</a>
+        <div class="flex items-center gap-2 sm:gap-4 shrink-0">
+            <button id="sidebar-toggle" class="md:hidden text-deep-navy dark:text-white hover:text-forge-orange p-1 rounded-lg flex items-center justify-center shrink-0" aria-label="Open menu">
+                <span class="material-symbols-outlined text-2xl">menu</span>
+            </button>
+            <a href="index.html" class="flex items-center gap-2 sm:gap-3 shrink-0">
+                <div class="w-8 h-8 flex items-center justify-center rounded-lg overflow-hidden bg-transparent shrink-0">
+                    <img src="Images/Logo/StemForge 1 (1).jfif" alt="STEM Forge Logo" class="w-8 h-8 object-contain">
+                </div>
+                <span class="brand-text font-headline-md text-headline-md text-deep-navy dark:text-white hidden sm:inline">STEM Forge</span>
+            </a>
+
+            <div class="hidden md:flex items-center text-secondary relative">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-lg">search</span>
+                <input class="pl-10 pr-4 py-1.5 bg-surface-container-lowest border border-border-subtle rounded-full text-label-md font-label-md focus:outline-none focus:border-forge-orange focus:ring-1 focus:ring-forge-orange w-64" placeholder="Search..." type="text">
             </div>
         </div>
-        
-        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
-            <svg class="icon-moon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
-            </svg>
-            <svg class="icon-sun" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
-            </svg>
-        </button>
-    </div>
-</nav>
+
+        <div class="flex items-center gap-1 sm:gap-2.5 shrink-0">
+            <a href="scheme.html" class="hidden lg:block border border-border-subtle text-deep-navy dark:text-slate-200 font-label-md text-label-md px-3.5 py-1.5 rounded-lg hover:bg-surface-container-highest transition-colors shrink-0">New Scheme</a>
+            <a href="ai-generate.html" class="hidden sm:inline-flex bg-forge-orange text-white font-label-md text-xs sm:text-sm px-2.5 sm:px-3 py-1.5 rounded-lg shadow-sm whitespace-nowrap hover:opacity-90 transition-opacity shrink-0">New Lesson</a>
+
+            <div class="flex items-center gap-1 sm:gap-2 border-l border-border-subtle pl-1.5 sm:pl-3 ml-1 sm:ml-2 shrink-0">
+                <button class="theme-toggle text-secondary hover:text-forge-orange transition-colors p-1.5 rounded-full hover:bg-surface-container-highest shrink-0" id="theme-toggle" aria-label="Toggle theme">
+                    <svg class="icon-moon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                    </svg>
+                    <svg class="icon-sun w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                    </svg>
+                </button>
+
+                <div class="w-8 h-8 rounded-full bg-secondary-container border border-border-subtle overflow-hidden cursor-pointer shrink-0" id="user-avatar" title="Profile">
+                </div>
+            </div>
+        </div>
+    </nav>
 
     <!-- Coming Soon Content (dynamically updated by JS) -->
     <div class="coming-soon-container" id="coming-soon-content">
